@@ -106,3 +106,9 @@ class Scheme(Lang):
 class Javascript(Lang):
     source_ext = '.js'
     interpreter = 'node'
+
+
+class Brainfuck(Lang):
+    # Todo: this one requires two compilers (bf and C++), no idea how to do
+    # that cleanly.
+    pass
