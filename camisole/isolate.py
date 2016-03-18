@@ -67,11 +67,9 @@ class Isolator:
         self.cmd_base = ['isolate', '--box-id', str(box_id), '--cg']
 
         # Directory containing all the info of the program
-        self.info_dir = tempfile.TemporaryDirectory()
-        self.info_dir_path = pathlib.Path(self.info_dir)
-        self.info_stdout = self.info_dir_path / 'stdout'
-        self.info_stderr = self.info_dir_path / 'stderr'
-        self.info_meta = self.info_dir_path / 'meta'
+        self.meta_file = tempfile.NamedTemporaryFile()
+        self.stdout_file = '._stdout'
+        self.stderr_file = '._stderr'
 
         # Cache the result of the program
         self._stdout = None
@@ -95,6 +93,7 @@ class Isolator:
         await communicate(cmd_init)
         if self.restore_id_cb is not None:
             self.restore_id_cb(self.box_id)
+        self.info_dir.cleanup()
 
     async def run(self, cmdline, data=None, **kwargs):
         cmd_run = self.cmd_base
@@ -110,9 +109,9 @@ class Isolator:
             cmd_run += ['--fsize', str(self.fsize_limit)]
 
         cmd_run += [
-            '--meta={}'.format(self.info_meta),
-            '--stdout={}'.format(self.info_stdout),
-            '--stderr={}'.format(self.info_stderr),
+            '--meta={}'.format(self.meta_file.name),
+            '--stdout={}'.format(self.stdout_file),
+            '--stderr={}'.format(self.stderr_file),
             '--processes={}'.format(str(processes)),
             '--run', '--'
         ]
@@ -124,20 +123,22 @@ class Isolator:
     @property
     def meta(self):
         if self._meta is None:
-            meta_content = (l.strip() for l in self.info_meta.open())
+            meta_content = (l.strip() for l in self.meta_file.open())
             self._meta = dict(l.split(':') for l in meta_content if l)
         return self._meta
 
     @property
     def stdout(self):
         if self._stdout is None:
-            self._stdout = self.info_stdout.open().read()
+            path = self.path / 'box' / self.stdout_file
+            self._stdout = path.open().read()
         return self._stdout
 
     @property
     def stderr(self):
         if self._stderr is None:
-            self._stderr = self.info_stderr.open().read()
+            path = self.path / 'box' / self.stderr_file
+            self._stderr = path.open().read()
         return self._stderr
 
 
