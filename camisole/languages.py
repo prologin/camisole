@@ -39,6 +39,7 @@ class Pascal(Lang):
     version_opt = '-h'
     version_lines = 1
 
+    @staticmethod
     def compile_opt_out(output):
         return ['-o' + output]
 
@@ -55,6 +56,7 @@ class CSharp(Lang):
     compile_opts = ['-optimize+']
     interpreter = 'mono'
 
+    @staticmethod
     def compile_opts_out(output):
         return ['-out:' + output]
 
@@ -73,6 +75,7 @@ class VisualBasic(Lang):
     compile_opts = ['/optimize+']
     interpreter = 'mono'
 
+    @staticmethod
     def compile_opts_out(output):
         return ['/out:' + output]
 
