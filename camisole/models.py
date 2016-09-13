@@ -1,4 +1,6 @@
-import subprocess
+from pathlib import Path
+
+import camisole.isolate
 
 class Lang:
     source_ext = None
@@ -9,19 +11,40 @@ class Lang:
     version_opt = '--version'
     version_lines = None
 
-    @staticmethod
-    def compile_opt_out(out):
-        return ['-o', out]
+    def __init__(source_data, opts):
+        self.source_data = source_data
+        self.opts = opts
 
-    @staticmethod
-    def compile_command(inp, out):
-        if compiler is None:
+    async def __aenter__(self):
+        self.isolator = camisole.isolate.get_isolator(time_limit=opts[)
+        await self.isolator.__aenter__()
+
+        self.wd = Path(self.isolator.path)
+
+        self.compiled = Path(wd) / 'compiled'
+        self.source = self.wd / ('source' + self.source_ext)
+        self.source.open('w').write(self.source_data)
+
+    async def __aexit__(self, exc, value, tb):
+        await self.isolator.__aexit__()
+
+    async def compile(self):
+        pass
+
+    async def execute(source, opts):
+        pass
+
+    def compile_opt_out(self):
+        return ['-o', str(self.compiled)]
+
+    def compile_command(self):
+        if self.compiler is None:
             return None
-        return [compiler] + compile_opts + compile_opt_out(out) + [inp]
+        return ([self.compiler] + self.compile_opts + self.compile_opt_out() +
+                [str(self.source)])
 
-    @staticmethod
-    def run_command(code):
+    def run_command(self):
         cmd = []
-        if interpreter is not None:
-            cmd += [interpreter] + interpret_opts
-        return cmd + [code]
+        if self.interpreter is not None:
+            cmd += [self.interpreter] + self.interpret_opts
+        return cmd + [str(self.compiled)]

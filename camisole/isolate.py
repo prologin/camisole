@@ -81,16 +81,14 @@ class Isolator:
         self.isolate_stdout = None
         self.isolate_stderr = None
 
-
-    async def init(self):
+    async def __aenter__(self):
         cmd_init = self.cmd_base + ['--init']
         retcode, stdout, _ = await communicate(cmd_init)
         self.path = pathlib.Path(stdout)
-        return self.path
 
-    async def cleanup(self):
+    async def __aexit__(self, exc, value, tb):
         cmd_cleanup = self.cmd_base + ['--cleanup']
-        await communicate(cmd_init)
+        await communicate(cmd_cleanup)
         if self.restore_id_cb is not None:
             self.restore_id_cb(self.box_id)
         self.info_dir.cleanup()
