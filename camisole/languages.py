@@ -39,8 +39,8 @@ class Pascal(Lang):
     version_opt = '-h'
     version_lines = 1
 
-    def compile_opt_out(self):
-        return ['-o' + str(self.compiled)]
+    def compile_opt_out(output):
+        return ['-o' + output]
 
 
 class Java(Lang):
@@ -55,8 +55,8 @@ class CSharp(Lang):
     compile_opts = ['-optimize+']
     interpreter = 'mono'
 
-    def compile_opts_out(self):
-        return ['-out:' + str(self.compiled)]
+    def compile_opt_out(output):
+        return ['-out:' + output]
 
 
 class FSharp(Lang):
@@ -73,8 +73,8 @@ class VisualBasic(Lang):
     compile_opts = ['/optimize+']
     interpreter = 'mono'
 
-    def compile_opts_out(self):
-        return ['/out:' + str(self.compiled)]
+    def compile_opt_out(output):
+        return ['/out:' + output]
 
 
 class Php(Lang):
