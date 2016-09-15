@@ -71,7 +71,7 @@ class Lang:
         return ['-o', output]
 
     def filter_box_prefix(self, s):
-        return re.sub('/var/local/lib/isolate/[0-9]+', '', s)
+        return re.sub('/var/(local/)?lib/isolate/[0-9]+', '', s)
 
     def compile_command(self, source, output):
         if self.compiler is None:
