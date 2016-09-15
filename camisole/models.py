@@ -28,16 +28,24 @@ class Lang:
             source.open('w').write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
             await isolator.run(cmd)
-            return (isolator.isolate_retcode, isolator.info, compiled.read())
+            try:
+                compiled = compiled.open('rb').read()
+            except FileNotFoundError:
+                compiled = None
+            return (isolator.isolate_retcode,
+                    isolator.info,
+                    compiled)
 
     async def execute(self, binary, input_data=None):
+        if input_data is not None:
+            input_data = input_data.encode()
         isolator = camisole.isolate.get_isolator(self.opts.get('execute', {}))
         async with isolator:
             wd = isolator.path
             compiled = Path(wd) / 'compiled'
             compiled.open('wb').write(binary)
             await isolator.run(self.execute_command(str(compiled)),
-                    data=input_data.encode())
+                    data=input_data)
             return (isolator.isolate_retcode, isolator.info)
 
     async def run(self):
@@ -46,6 +54,9 @@ class Lang:
             cretcode, info, binary = await self.compile()
             result['compile'] = info
             if cretcode != 0:
+                return result
+            if binary is None:
+                result['compile']['stderr'] += '\n\nCannot find result binary.'
                 return result
         else:
             binary = self.opts.get('source', '').encode()
@@ -78,7 +89,7 @@ class Lang:
             return None
         return [self.compiler,
                 *self.compile_opts,
-                *self.compile_opt_out(output),
+                *self.compile_opt_out(self.filter_box_prefix(output)),
                 self.filter_box_prefix(source)]
 
     def execute_command(self, output):

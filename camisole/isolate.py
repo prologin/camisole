@@ -82,7 +82,7 @@ class Isolator:
         cmd_init = self.cmd_base + ['--init']
         retcode, stdout, _ = await communicate(cmd_init)
         self.path = pathlib.Path(stdout.strip().decode()) / 'box'
-        self.meta_file = tempfile.NamedTemporaryFile(prefix='meta')
+        self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-')
         self.meta_file.__enter__()
 
     async def __aexit__(self, exc, value, tb):
@@ -101,6 +101,12 @@ class Isolator:
             v = self.opts.get(opt)
             if v is not None:
                 cmd_run += ['--' + opt, str(v)]
+            # Unlike isolate, we don't limit the number of processes by default
+            elif opt == 'processes':
+                cmd_run += ['-p']
+
+        for e in ['PATH', 'LD_LIBRARY_PATH']:
+            cmd_run += ['--env', e]
 
         cmd_run += [
             '--meta={}'.format(self.meta_file.name),
