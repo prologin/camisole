@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import camisole.isolate
@@ -27,11 +28,7 @@ class Lang:
             source.open('w').write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
             await isolator.run(cmd)
-            return (isolator.isolate_retcode,
-                    isolator.isolate_stdout,
-                    isolator.isolate_stderr,
-                    isolator.meta,
-                    compiled.read())
+            return (isolator.isolate_retcode, isolator.info, compiled.read())
 
     async def execute(self, binary, input_data=None):
         isolator = camisole.isolate.get_isolator(self.opts.get('execute', {}))
@@ -41,23 +38,13 @@ class Lang:
             compiled.open('wb').write(binary)
             await isolator.run(self.execute_command(str(compiled)),
                     data=input_data)
-            return (isolator.isolate_retcode,
-                    isolator.isolate_stdout,
-                    isolator.isolate_stderr,
-                    isolator.meta)
+            return (isolator.isolate_retcode, isolator.info)
 
     async def run(self):
         result = {}
         if self.compiler is not None:
-            cretcode, cstdout, cstderr, cmeta, binary = await self.compile()
-            cstdout = cstdout.decode()
-            cstderr = cstderr.decode()
-            result['compile'] = {
-                'retcode': cretcode,
-                'stdout': cstdout,
-                'stderr': cstderr,
-                'meta': cmeta,
-            }
+            cretcode, info, binary = await self.compile()
+            result['compile'] = info
             if cretcode != 0:
                 return result
         else:
@@ -67,15 +54,10 @@ class Lang:
         if tests:
             result['tests'] = [{}] * len(tests)
         for i, test in enumerate(self.opts.get('tests', [])):
-            retcode, stdout, stderr, meta = await self.execute(binary, test.get('input'))
-            stdout = stdout.decode()
-            stderr = stderr.decode()
+            retcode, info = await self.execute(binary, test.get('input'))
             result['tests'][i] = {
                 'name': test.get('name', 'test{:03d}'.format(i)),
-                'retcode': retcode,
-                'stdout': stdout,
-                'stderr': stderr,
-                'meta': meta,
+                **info
             }
 
             if retcode != 0 and (
@@ -88,16 +70,19 @@ class Lang:
     def compile_opt_out(self, output):
         return ['-o', output]
 
+    def filter_box_prefix(self, s):
+        return re.sub('/var/local/lib/isolate/[0-9]+', '', s)
+
     def compile_command(self, source, output):
         if self.compiler is None:
             return None
         return [self.compiler,
                 *self.compile_opts,
                 *self.compile_opt_out(output),
-                source]
+                self.filter_box_prefix(source)]
 
     def execute_command(self, output):
         cmd = []
         if self.interpreter is not None:
             cmd += [self.interpreter] + self.interpret_opts
-        return cmd + [output]
+        return cmd + [self.filter_box_prefix(output)]

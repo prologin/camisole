@@ -110,6 +110,7 @@ class Isolator:
         ]
         cmd_run += cmdline
 
+        print(' '.join(cmd_run))
         self.isolate_retcode, self.isolate_stdout, self.isolate_stderr = (
             await communicate(cmd_run, data=data, **kwargs))
 
@@ -134,6 +135,19 @@ class Isolator:
             path = self.path / self.stderr_file
             self._stderr = path.open().read()
         return self._stderr
+
+    @property
+    def info(self):
+        return {
+            'stdout': self.stdout,
+            'stderr': self.stderr,
+            'isolate': {
+                'retcode': self.isolate_retcode,
+                'stdout': self.isolate_stdout.decode(),
+                'stderr': self.isolate_stderr.decode(),
+                'meta': self.meta,
+            }
+        }
 
 
 get_isolator = IsolatorFactory()
