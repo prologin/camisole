@@ -37,7 +37,7 @@ class Lang:
             compiled = Path(wd) / 'compiled'
             compiled.open('wb').write(binary)
             await isolator.run(self.execute_command(str(compiled)),
-                    data=input_data)
+                    data=input_data.encode())
             return (isolator.isolate_retcode, isolator.info)
 
     async def run(self):
@@ -54,7 +54,7 @@ class Lang:
         if tests:
             result['tests'] = [{}] * len(tests)
         for i, test in enumerate(self.opts.get('tests', [])):
-            retcode, info = await self.execute(binary, test.get('input'))
+            retcode, info = await self.execute(binary, test.get('stdin'))
             result['tests'][i] = {
                 'name': test.get('name', 'test{:03d}'.format(i)),
                 **info

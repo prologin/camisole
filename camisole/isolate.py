@@ -82,7 +82,7 @@ class Isolator:
         cmd_init = self.cmd_base + ['--init']
         retcode, stdout, _ = await communicate(cmd_init)
         self.path = pathlib.Path(stdout.strip().decode()) / 'box'
-        self.meta_file = tempfile.NamedTemporaryFile()
+        self.meta_file = tempfile.NamedTemporaryFile(prefix='meta')
         self.meta_file.__enter__()
 
     async def __aexit__(self, exc, value, tb):
@@ -110,16 +110,31 @@ class Isolator:
         ]
         cmd_run += cmdline
 
-        print(' '.join(cmd_run))
         self.isolate_retcode, self.isolate_stdout, self.isolate_stderr = (
             await communicate(cmd_run, data=data, **kwargs))
 
     @property
     def meta(self):
+        meta_defaults = {
+            "cg-mem": 0,
+            "csw-forced": 0,
+            "csw-voluntary": 0,
+            "exitcode": 0,
+            "exitsig": None,
+            "killed": 0,
+            "max-rss": 0,
+            "message": None,
+            "status": "OK",
+            "time": 0.0,
+            "time-wall": 0.0,
+        }
         if self._meta is None:
-            meta_content = (l.strip() for l in
-                    open(self.meta_file.name).readlines())
-            self._meta = dict(l.split(':', 1) for l in meta_content if l)
+            m = (l.strip() for l in open(self.meta_file.name).readlines())
+            m = dict(l.split(':', 1) for l in m if l)
+            m = {k: type(meta_defaults[k])(v)
+                    if meta_defaults[k] is not None else v
+                    for k, v in m.items()}
+            self._meta = {**meta_defaults, **m}
         return self._meta
 
     @property
@@ -141,12 +156,8 @@ class Isolator:
         return {
             'stdout': self.stdout,
             'stderr': self.stderr,
-            'isolate': {
-                'retcode': self.isolate_retcode,
-                'stdout': self.isolate_stdout.decode(),
-                'stderr': self.isolate_stderr.decode(),
-                'meta': self.meta,
-            }
+            'exitcode': self.isolate_retcode,
+            'meta': self.meta
         }
 
 
