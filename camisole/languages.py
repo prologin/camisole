@@ -2,25 +2,25 @@ from camisole.models import Lang
 
 class C(Lang):
     source_ext = '.c'
-    compiler = 'gcc'
+    compiler = '/usr/bin/gcc'
     compile_opts = ['-std=c11', '-Wall', '-Wextra', '-O2']
 
 
 class CXX(Lang):
     source_ext = '.cc'
-    compiler = 'g++'
+    compiler = '/usr/bin/g++'
     compile_opts = ['-std=c++11', '-Wall', '-Wextra', '-O2']
 
 
 class Haskell(Lang):
     source_ext = '.hs'
-    compiler = 'ghc'
+    compiler = '/usr/bin/ghc'
     compile_opts = ['-dynamic', '-O2']
 
 
 class OCaml(Lang):
     source_ext = '.ml'
-    compiler = 'ocamlopt'
+    compiler = '/usr/bin/ocamlopt'
     compile_opts = ['-w', 'A']
     version_opt = '-v'
     version_lines = 1
@@ -28,13 +28,13 @@ class OCaml(Lang):
 
 class Ada(Lang):
     source_ext = '.adb'
-    compiler = 'gnatmake'
+    compiler = '/usr/bin/gnatmake'
     compile_opts = ['-f']
 
 
 class Pascal(Lang):
     source_ext = '.pas'
-    compiler = 'fpc'
+    compiler = '/usr/bin/fpc'
     compile_opts = ['-XD', '-Fainitc']
     version_opt = '-h'
     version_lines = 1
@@ -45,15 +45,15 @@ class Pascal(Lang):
 
 class Java(Lang):
     source_ext = '.java'
-    compiler = 'javac'
+    compiler = '/usr/bin/javac'
     # TODO: weird class renaming
 
 
 class CSharp(Lang):
     source_ext = '.cs'
-    compiler = 'mcs'
+    compiler = '/usr/bin/mcs'
     compile_opts = ['-optimize+']
-    interpreter = 'mono'
+    interpreter = '/usr/bin/mono'
 
     def compile_opt_out(output):
         return ['-out:' + output]
@@ -61,17 +61,17 @@ class CSharp(Lang):
 
 class FSharp(Lang):
     source_ext = '.fs'
-    compiler = 'fsharpc'
+    compiler = '/usr/bin/fsharpc'
     compile_opts = ['-O']
     version_lines = 4
-    interpreter = 'mono'
+    interpreter = '/usr/bin/mono'
 
 
 class VisualBasic(Lang):
     source_ext = '.vb'
-    compiler = 'vbnc'
+    compiler = '/usr/bin/vbnc'
     compile_opts = ['/optimize+']
-    interpreter = 'mono'
+    interpreter = '/usr/bin/mono'
 
     def compile_opt_out(output):
         return ['/out:' + output]
@@ -79,33 +79,33 @@ class VisualBasic(Lang):
 
 class Php(Lang):
     source_ext = '.php'
-    interpreter = 'php'
+    interpreter = '/usr/bin/php'
 
 
 class Python(Lang):
     source_ext = '.py'
-    interpreter = 'python3'
+    interpreter = '/usr/bin/python3'
     interpret_opts = ['-S']
 
 
 class Perl(Lang):
     source_ext = '.pl'
-    interpreter = 'perl'
+    interpreter = '/usr/bin/perl'
 
 
 class Lua(Lang):
     source_ext = '.lua'
-    interpreter = 'luajit'
+    interpreter = '/usr/bin/luajit'
 
 
 class Scheme(Lang):
     source_ext = '.scm'
-    interpreter = 'gsi'
+    interpreter = '/usr/bin/gsi'
 
 
 class Javascript(Lang):
     source_ext = '.js'
-    interpreter = 'node'
+    interpreter = '/usr/bin/node'
 
 
 class Brainfuck(Lang):

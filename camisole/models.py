@@ -26,10 +26,10 @@ class Lang:
 
             source.open('w').write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
-            await self.isolator.run(cmd)
-            return (isolator.retcode,
-                    isolator.stdout,
-                    isolator.stderr,
+            await isolator.run(cmd)
+            return (isolator.isolate_retcode,
+                    isolator.isolate_stdout,
+                    isolator.isolate_stderr,
                     isolator.meta,
                     compiled.read())
 
@@ -39,17 +39,19 @@ class Lang:
             wd = isolator.path
             compiled = Path(wd) / 'compiled'
             compiled.open('wb').write(binary)
-            await self.isolator.run(self.execute_command(str(compiled)),
+            await isolator.run(self.execute_command(str(compiled)),
                     data=input_data)
-            return (isolator.retcode,
-                    isolator.stdout,
-                    isolator.stderr,
+            return (isolator.isolate_retcode,
+                    isolator.isolate_stdout,
+                    isolator.isolate_stderr,
                     isolator.meta)
 
     async def run(self):
         result = {}
         if self.compiler is not None:
             cretcode, cstdout, cstderr, cmeta, binary = await self.compile()
+            cstdout = cstdout.decode()
+            cstderr = cstderr.decode()
             result['compile'] = {
                 'retcode': cretcode,
                 'stdout': cstdout,
@@ -61,8 +63,13 @@ class Lang:
         else:
             binary = self.opts.get('source', '').encode()
 
+        tests = self.opts.get('tests', [])
+        if tests:
+            result['tests'] = [{}] * len(tests)
         for i, test in enumerate(self.opts.get('tests', [])):
             retcode, stdout, stderr, meta = await self.execute(binary, test.get('input'))
+            stdout = stdout.decode()
+            stderr = stderr.decode()
             result['tests'][i] = {
                 'name': test.get('name', 'test{:03d}'.format(i)),
                 'retcode': retcode,

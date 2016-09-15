@@ -64,9 +64,9 @@ class Isolator:
         self.cmd_base = ['isolate', '--box-id', str(box_id), '--cg']
 
         # Directory containing all the info of the program
-        self.meta_file = tempfile.NamedTemporaryFile()
         self.stdout_file = '._stdout'
         self.stderr_file = '._stderr'
+        self.meta_file = None
 
         # Cache the result of the program
         self._stdout = None
@@ -81,17 +81,21 @@ class Isolator:
     async def __aenter__(self):
         cmd_init = self.cmd_base + ['--init']
         retcode, stdout, _ = await communicate(cmd_init)
-        self.path = pathlib.Path(stdout.strip().decode())
+        self.path = pathlib.Path(stdout.strip().decode()) / 'box'
+        self.meta_file = tempfile.NamedTemporaryFile()
+        self.meta_file.__enter__()
 
     async def __aexit__(self, exc, value, tb):
         cmd_cleanup = self.cmd_base + ['--cleanup']
         await communicate(cmd_cleanup)
         if self.restore_id_cb is not None:
             self.restore_id_cb(self.box_id)
+        self.meta_file.__exit__(exc, value, tb)
 
     async def run(self, cmdline, data=None, **kwargs):
         cmd_run = self.cmd_base
-        cmd_run += list(itertools.chain(*[('-d', d) for d in allowed_dirs]))
+        cmd_run += list(itertools.chain(
+            *[('-d', d) for d in self.allowed_dirs]))
 
         for opt in OPTIONS:
             v = self.opts.get(opt)
@@ -112,21 +116,22 @@ class Isolator:
     @property
     def meta(self):
         if self._meta is None:
-            meta_content = (l.strip() for l in self.meta_file.open())
-            self._meta = dict(l.split(':') for l in meta_content if l)
+            meta_content = (l.strip() for l in
+                    open(self.meta_file.name).readlines())
+            self._meta = dict(l.split(':', 1) for l in meta_content if l)
         return self._meta
 
     @property
     def stdout(self):
         if self._stdout is None:
-            path = self.path / 'box' / self.stdout_file
+            path = self.path / self.stdout_file
             self._stdout = path.open().read()
         return self._stdout
 
     @property
     def stderr(self):
         if self._stderr is None:
-            path = self.path / 'box' / self.stderr_file
+            path = self.path / self.stderr_file
             self._stderr = path.open().read()
         return self._stderr
 
