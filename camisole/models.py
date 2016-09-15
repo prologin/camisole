@@ -11,25 +11,20 @@ class Lang:
     version_opt = '--version'
     version_lines = None
 
-    def __init__(source_data, opts):
-        self.source_data = source_data
+    def __init__(self, opts):
         self.opts = opts
-
-    async def __aenter__(self):
-    async def __aexit__(self, exc, value, tb):
-        await self.isolator.__aexit__()
 
     async def compile(self):
         if not self.compiler:
             return 0, None, None, None
 
-        isolator = camisole.isolate.get_isolator()
-        with isolator:
+        isolator = camisole.isolate.get_isolator(self.opts.get('compile', {}))
+        async with isolator:
             wd = Path(isolator.path)
             source = wd / ('source' + self.source_ext)
             compiled = wd / 'compiled'
 
-            source.open('w').write(self.source_data)
+            source.open('w').write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
             await self.isolator.run(cmd)
             return (isolator.retcode,
@@ -38,24 +33,50 @@ class Lang:
                     isolator.meta,
                     compiled.read())
 
-    async def execute(self, compiled):
-        isolator = camisole.isolate.get_isolator()
-        with isolator:
+    async def execute(self, binary, input_data=None):
+        isolator = camisole.isolate.get_isolator(self.opts.get('execute', {}))
+        async with isolator:
             wd = isolator.path
             compiled = Path(wd) / 'compiled'
-            await self.isolator.run(self.execute_command(str(compiled)))
+            compiled.open('wb').write(binary)
+            await self.isolator.run(self.execute_command(str(compiled)),
+                    data=input_data)
             return (isolator.retcode,
                     isolator.stdout,
                     isolator.stderr,
                     isolator.meta)
 
-    async def run():
+    async def run(self):
+        result = {}
         if self.compiler is not None:
             cretcode, cstdout, cstderr, cmeta, binary = await self.compile()
+            result['compile'] = {
+                'retcode': cretcode,
+                'stdout': cstdout,
+                'stderr': cstderr,
+                'meta': cmeta,
+            }
             if cretcode != 0:
-                return None #TODO
-        retcode, stdout, stderr, meta, binary = await self.execute(binary)
-        return None #TODO
+                return result
+        else:
+            binary = self.opts.get('source', '').encode()
+
+        for i, test in enumerate(self.opts.get('tests', [])):
+            retcode, stdout, stderr, meta = await self.execute(binary, test.get('input'))
+            result['tests'][i] = {
+                'name': test.get('name', 'test{:03d}'.format(i)),
+                'retcode': retcode,
+                'stdout': stdout,
+                'stderr': stderr,
+                'meta': meta,
+            }
+
+            if retcode != 0 and (
+                    test.get('fatal', False) or
+                    self.opts.get('all_fatal', False)):
+                break
+
+        return result
 
     def compile_opt_out(self, output):
         return ['-o', output]

@@ -19,9 +19,10 @@
 import asyncio
 import itertools
 import pathlib
+import subprocess
 import tempfile
 
-async def communicate(self, cmdline, data=None, **kwargs):
+async def communicate(cmdline, data=None, **kwargs):
     proc = await asyncio.create_subprocess_exec(
         *cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.PIPE, **kwargs)
@@ -33,7 +34,7 @@ async def communicate(self, cmdline, data=None, **kwargs):
 class IsolatorFactory:
     def __init__(self, max_box_id=99):
         self.max_box_id = max_box_id
-        self.available_box_id = set(range(max_box_id + 1))
+        self.available_box_id = set(range(self.max_box_id + 1))
 
     def __call__(self, *args, **kwargs):
         try:
@@ -45,23 +46,19 @@ class IsolatorFactory:
                             **kwargs)
 
     def restore_id(self, box_id):
-        if box_id not in range(max_box_id + 1):
+        if box_id not in range(self.max_box_id + 1):
             raise RuntimeError("Trying to restore box id {} outside of id "
                                "range.".format(box_id))
         self.available_box_id.add(box_id)
 
 
+OPTIONS = ['mem', 'time', 'wall-time', 'fsize', 'processes', 'quota']
+
 class Isolator:
-    def __init__(self, box_id, time_limit=None, wall_time_limit=None,
-                 mem_limit=None, fsize_limit=None,
-                 allowed_dirs=None, processes=1, file_restore_id_cb=None):
+    def __init__(self, box_id, opts, allowed_dirs=None, restore_id_cb=None):
         self.box_id = box_id
-        self.time_limit = time_limit
-        self.wall_time_limit = wall_time_limit
-        self.mem_limit = mem_limit
-        self.fsize_limit = fsize_limit
+        self.opts = opts
         self.allowed_dirs = allowed_dirs if allowed_dirs is not None else []
-        self.processes = processes
         self.box_path = None
         self.restore_id_cb = restore_id_cb
         self.cmd_base = ['isolate', '--box-id', str(box_id), '--cg']
@@ -84,33 +81,27 @@ class Isolator:
     async def __aenter__(self):
         cmd_init = self.cmd_base + ['--init']
         retcode, stdout, _ = await communicate(cmd_init)
-        self.path = pathlib.Path(stdout)
+        self.path = pathlib.Path(stdout.strip().decode())
 
     async def __aexit__(self, exc, value, tb):
         cmd_cleanup = self.cmd_base + ['--cleanup']
         await communicate(cmd_cleanup)
         if self.restore_id_cb is not None:
             self.restore_id_cb(self.box_id)
-        self.info_dir.cleanup()
 
     async def run(self, cmdline, data=None, **kwargs):
         cmd_run = self.cmd_base
         cmd_run += list(itertools.chain(*[('-d', d) for d in allowed_dirs]))
 
-        if self.mem_limit is not None:
-            cmd_run += ['--mem', str(self.mem_limit)]
-        if self.time_limit is not None:
-            cmd_run += ['--time', str(self.time_limit)]
-        if self.wall_time_limit is not None:
-            cmd_run += ['--wall-time', str(self.wall_time_limit)]
-        if self.fsize_limit is not None:
-            cmd_run += ['--fsize', str(self.fsize_limit)]
+        for opt in OPTIONS:
+            v = self.opts.get(opt)
+            if v is not None:
+                cmd_run += ['--' + opt, str(v)]
 
         cmd_run += [
             '--meta={}'.format(self.meta_file.name),
             '--stdout={}'.format(self.stdout_file),
             '--stderr={}'.format(self.stderr_file),
-            '--processes={}'.format(str(processes)),
             '--run', '--'
         ]
         cmd_run += cmdline
