@@ -68,10 +68,10 @@ class Isolator:
         self.stderr_file = '._stderr'
         self.meta_file = None
 
-        # Cache the result of the program
-        self._stdout = None
-        self._stderr = None
-        self._meta = None
+        self.stdout = None
+        self.stderr = None
+        self.meta = None
+        self.info = None
 
         # Result of the isolate binary
         self.isolate_retcode = None
@@ -82,18 +82,55 @@ class Isolator:
         cmd_init = self.cmd_base + ['--init']
         retcode, stdout, _ = await communicate(cmd_init)
         self.path = pathlib.Path(stdout.strip().decode()) / 'box'
-        self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-')
+        self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-meta-')
         self.meta_file.__enter__()
 
     async def __aexit__(self, exc, value, tb):
+        try:
+            self.stdout = (self.path / self.stdout_file).open().read()
+            self.stderr = (self.path / self.stderr_file).open().read()
+        except PermissionError:
+            # Something went wrong, isolate was killed before changing the
+            # permissions, empty stdout/stderr
+            self.stdout = ''
+            self.stderr = ''
+
+        meta_defaults = {
+            "cg-mem": 0,
+            "csw-forced": 0,
+            "csw-voluntary": 0,
+            "exitcode": 0,
+            "exitsig": None,
+            "killed": 0,
+            "max-rss": 0,
+            "message": None,
+            "status": "OK",
+            "time": 0.0,
+            "time-wall": 0.0,
+        }
+        m = (l.strip() for l in open(self.meta_file.name).readlines())
+        m = dict(l.split(':', 1) for l in m if l)
+        m = {k: type(meta_defaults[k])(v)
+                if meta_defaults[k] is not None else v
+                for k, v in m.items()}
+        self.meta = {**meta_defaults, **m}
+
+        self.info = {
+            'stdout': self.stdout,
+            'stderr': self.stderr,
+            'exitcode': self.isolate_retcode,
+            'meta': self.meta
+        }
+
         cmd_cleanup = self.cmd_base + ['--cleanup']
         await communicate(cmd_cleanup)
+
+        self.meta_file.__exit__(exc, value, tb)
         if self.restore_id_cb is not None:
             self.restore_id_cb(self.box_id)
-        self.meta_file.__exit__(exc, value, tb)
 
     async def run(self, cmdline, data=None, **kwargs):
-        cmd_run = self.cmd_base
+        cmd_run = self.cmd_base[:]
         cmd_run += list(itertools.chain(
             *[('-d', d) for d in self.allowed_dirs]))
 
@@ -118,53 +155,6 @@ class Isolator:
 
         self.isolate_retcode, self.isolate_stdout, self.isolate_stderr = (
             await communicate(cmd_run, data=data, **kwargs))
-
-    @property
-    def meta(self):
-        meta_defaults = {
-            "cg-mem": 0,
-            "csw-forced": 0,
-            "csw-voluntary": 0,
-            "exitcode": 0,
-            "exitsig": None,
-            "killed": 0,
-            "max-rss": 0,
-            "message": None,
-            "status": "OK",
-            "time": 0.0,
-            "time-wall": 0.0,
-        }
-        if self._meta is None:
-            m = (l.strip() for l in open(self.meta_file.name).readlines())
-            m = dict(l.split(':', 1) for l in m if l)
-            m = {k: type(meta_defaults[k])(v)
-                    if meta_defaults[k] is not None else v
-                    for k, v in m.items()}
-            self._meta = {**meta_defaults, **m}
-        return self._meta
-
-    @property
-    def stdout(self):
-        if self._stdout is None:
-            path = self.path / self.stdout_file
-            self._stdout = path.open().read()
-        return self._stdout
-
-    @property
-    def stderr(self):
-        if self._stderr is None:
-            path = self.path / self.stderr_file
-            self._stderr = path.open().read()
-        return self._stderr
-
-    @property
-    def info(self):
-        return {
-            'stdout': self.stdout,
-            'stderr': self.stderr,
-            'exitcode': self.isolate_retcode,
-            'meta': self.meta
-        }
 
 
 get_isolator = IsolatorFactory()

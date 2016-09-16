@@ -32,9 +32,7 @@ class Lang:
                 compiled = compiled.open('rb').read()
             except FileNotFoundError:
                 compiled = None
-            return (isolator.isolate_retcode,
-                    isolator.info,
-                    compiled)
+        return (isolator.isolate_retcode, isolator.info, compiled)
 
     async def execute(self, binary, input_data=None):
         if input_data is not None:
@@ -44,9 +42,10 @@ class Lang:
             wd = isolator.path
             compiled = Path(wd) / 'compiled'
             compiled.open('wb').write(binary)
+            compiled.chmod(0o700)
             await isolator.run(self.execute_command(str(compiled)),
                     data=input_data)
-            return (isolator.isolate_retcode, isolator.info)
+        return (isolator.isolate_retcode, isolator.info)
 
     async def run(self):
         result = {}
@@ -56,7 +55,9 @@ class Lang:
             if cretcode != 0:
                 return result
             if binary is None:
-                result['compile']['stderr'] += '\n\nCannot find result binary.'
+                if result['compile']['stderr'].strip():
+                    result['compile']['stderr'] += '\n\n'
+                result['compile']['stderr'] += 'Cannot find result binary.\n'
                 return result
         else:
             binary = self.opts.get('source', '').encode()
