@@ -25,11 +25,13 @@ class Lang:
             source = wd / ('source' + self.source_ext)
             compiled = wd / 'compiled'
 
-            source.open('w').write(self.opts.get('source', ''))
+            with source.open('w') as sourcefile:
+                sourcefile.write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
             await isolator.run(cmd)
             try:
-                compiled = compiled.open('rb').read()
+                with compiled.open('rb') as c:
+                    compiled = c.read()
             except FileNotFoundError:
                 compiled = None
         return (isolator.isolate_retcode, isolator.info, compiled)
@@ -41,7 +43,8 @@ class Lang:
         async with isolator:
             wd = isolator.path
             compiled = Path(wd) / 'compiled'
-            compiled.open('wb').write(binary)
+            with compiled.open('wb') as c:
+                c.write(binary)
             compiled.chmod(0o700)
             await isolator.run(self.execute_command(str(compiled)),
                     data=input_data)

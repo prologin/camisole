@@ -1,28 +1,40 @@
 import aiohttp.web
+import functools
 import json
 
 import camisole.languages
 
-async def run_handler(request):
-    try:
-        data = await request.json()
-    except json.decoder.JSONDecodeError:
-        raise aiohttp.errors.HttpBadRequest('Invalid JSON')
+def json_handler(wrapped):
+    @functools.wraps(wrapped)
+    async def wrapper(request):
+        try:
+            try:
+                data = await request.json()
+            except json.decoder.JSONDecodeError:
+                raise RuntimeError('Invalid JSON')
+            result = await wrapped(data)
+        except Exception as e:
+            result = {'success': False, 'error': str(e)}
+        else:
+            result = {'success': True, **result}
+        result = json.dumps(result)
+        return aiohttp.web.Response(body=result.encode())
+    return wrapper
+
+
+@json_handler
+async def run_handler(data):
     for field in ('lang', 'source'):
         if field not in data:
-            raise aiohttp.errors.HttpBadRequest('Field {} not present in JSON'
-                    .format(field))
+            raise RuntimeError('Field {} not present in JSON'.format(field))
 
     lang_name = data['lang'].lower()
     try:
         lang = camisole.languages.languages[lang_name](data)
     except KeyError:
-        raise aiohttp.errors.HttpBadRequest('Incorrect language {}'
-                .format(lang))
+        raise RuntimeError('Incorrect language {}'.format(lang))
 
-    result = await lang.run()
-    result = json.dumps(result)
-    return aiohttp.web.Response(body=result.encode())
+    return await lang.run()
 
 
 def run():

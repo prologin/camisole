@@ -39,7 +39,7 @@ class Pascal(Lang):
     version_opt = '-h'
     version_lines = 1
 
-    def compile_opt_out(output):
+    def compile_opt_out(self, output):
         return ['-o' + output]
 
 
@@ -55,7 +55,7 @@ class CSharp(Lang):
     compile_opts = ['-optimize+']
     interpreter = '/usr/bin/mono'
 
-    def compile_opt_out(output):
+    def compile_opt_out(self, output):
         return ['-out:' + output]
 
 
@@ -73,7 +73,7 @@ class VisualBasic(Lang):
     compile_opts = ['/optimize+']
     interpreter = '/usr/bin/mono'
 
-    def compile_opt_out(output):
+    def compile_opt_out(self, output):
         return ['/out:' + output]
 
 
@@ -111,7 +111,8 @@ class Javascript(Lang):
 class Brainfuck(Lang):
     # Todo: this one requires two compilers (bf and C++), no idea how to do
     # that cleanly.
-    pass
+    source_ext = '.bf'
+    interpreter = '/usr/bin/bf'
 
 
 languages = {cls.__name__.lower(): cls for cls in Lang.__subclasses__()}

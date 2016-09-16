@@ -89,8 +89,10 @@ class Isolator:
 
     async def __aexit__(self, exc, value, tb):
         try:
-            self.stdout = (self.path / self.stdout_file).open().read()
-            self.stderr = (self.path / self.stderr_file).open().read()
+            with (self.path / self.stdout_file).open() as f:
+                self.stdout = f.read()
+            with (self.path / self.stderr_file).open() as f:
+                self.stderr = f.read()
         except PermissionError:
             # Something went wrong, isolate was killed before changing the
             # permissions, empty stdout/stderr
@@ -110,7 +112,8 @@ class Isolator:
             'time': 0.0,
             'time-wall': 0.0,
         }
-        m = (l.strip() for l in open(self.meta_file.name).readlines())
+        with open(self.meta_file.name) as f:
+            m = (l.strip() for l in f.readlines())
         m = dict(l.split(':', 1) for l in m if l)
         m = {k: type(meta_defaults[k])(v)
                 if meta_defaults[k] is not None else v
@@ -165,6 +168,7 @@ class Isolator:
 
         self.isolate_retcode, self.isolate_stdout, self.isolate_stderr = (
             await communicate(cmd_run, data=data, **kwargs))
+        print(self.isolate_stderr)
 
 
 get_isolator = IsolatorFactory()
