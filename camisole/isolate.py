@@ -18,11 +18,13 @@
 
 import asyncio
 import itertools
+import logging
 import pathlib
 import subprocess
 import tempfile
 
 async def communicate(cmdline, data=None, **kwargs):
+    logging.debug('Running %s', ' '.join(cmdline))
     proc = await asyncio.create_subprocess_exec(
         *cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.PIPE, **kwargs)
@@ -96,17 +98,17 @@ class Isolator:
             self.stderr = ''
 
         meta_defaults = {
-            "cg-mem": 0,
-            "csw-forced": 0,
-            "csw-voluntary": 0,
-            "exitcode": 0,
-            "exitsig": None,
-            "killed": 0,
-            "max-rss": 0,
-            "message": None,
-            "status": "OK",
-            "time": 0.0,
-            "time-wall": 0.0,
+            'cg-mem': 0,
+            'csw-forced': 0,
+            'csw-voluntary': 0,
+            'exitcode': 0,
+            'exitsig': None,
+            'killed': 0,
+            'max-rss': 0,
+            'message': None,
+            'status': 'OK',
+            'time': 0.0,
+            'time-wall': 0.0,
         }
         m = (l.strip() for l in open(self.meta_file.name).readlines())
         m = dict(l.split(':', 1) for l in m if l)
@@ -114,6 +116,14 @@ class Isolator:
                 if meta_defaults[k] is not None else v
                 for k, v in m.items()}
         self.meta = {**meta_defaults, **m}
+        verbose_status = {
+            'OK': 'OK',
+            'RE': 'RUNTIME_ERROR',
+            'TO': 'TIMED_OUT',
+            'SG': 'SIGNALED',
+            'XX': 'INTERNAL_ERROR',
+        }
+        self.meta['status'] = verbose_status[self.meta['status']]
 
         self.info = {
             'stdout': self.stdout,
