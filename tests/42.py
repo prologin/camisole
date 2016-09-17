@@ -1,6 +1,5 @@
 import asyncio
 import unittest
-import os.path
 from pathlib import Path
 
 import camisole.languages
