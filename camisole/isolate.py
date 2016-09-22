@@ -168,7 +168,6 @@ class Isolator:
 
         self.isolate_retcode, self.isolate_stdout, self.isolate_stderr = (
             await communicate(cmd_run, data=data, **kwargs))
-        print(self.isolate_stderr)
 
 
 get_isolator = IsolatorFactory()
