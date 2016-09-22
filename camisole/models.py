@@ -32,7 +32,7 @@ class Lang:
             try:
                 with compiled.open('rb') as c:
                     compiled = c.read()
-            except FileNotFoundError:
+            except (FileNotFoundError, PermissionError):
                 compiled = None
         return (isolator.isolate_retcode, isolator.info, compiled)
 
