@@ -1,28 +1,46 @@
-from . import AioTestCase
+import pytest
 
 import camisole.languages
 
+tolerance = .25
 
-class WalltimeTest(AioTestCase):
-    wall_time = 1.2
 
-    def python_sleep(self, duration):
-        return camisole.languages.Python({
-            'execute': {'wall-time': self.wall_time},
-            'tests': [{}],
-            'source': 'import time; time.sleep({:f})'.format(duration),
-        })
+def python_sleep(duration, limit=None):
+    args = {}
+    if limit:
+        args['execute'] = {'wall-time': limit}
+    return camisole.languages.Python({
+        'tests': [{}],
+        'source': 'import time; time.sleep({:f})'.format(duration),
+        **args
+    })
 
-    async def test_ok(self):
-        duration = 1.0
-        r = await self.python_sleep(duration).run()
-        test = r['tests'][0]['meta']
-        self.assertEqual(test['status'], 'OK')
-        self.assertAlmostEqual(test['time-wall'], duration, delta=.2)
 
-    async def test_exceed(self):
-        r = await self.python_sleep(2.0).run()
-        test = r['tests'][0]['meta']
-        self.assertEqual(test['status'], 'TIMED_OUT')
-        self.assertAlmostEqual(test['time-wall'], self.wall_time, delta=.2)
-        self.assertIn("time limit exceeded", test['message'].lower())
+@pytest.mark.asyncio
+async def test_no_limit():
+    duration = .5
+    r = await python_sleep(duration).run()
+    test = r['tests'][0]['meta']
+    assert test['status'] == 'OK'
+    assert abs(test['time-wall'] - duration) < tolerance
+
+
+@pytest.mark.asyncio
+async def test_below_limit():
+    duration = .5
+    limit = .8
+    r = await python_sleep(duration, limit).run()
+    test = r['tests'][0]['meta']
+    assert test['status'] == 'OK'
+    assert abs(test['time-wall'] - limit) < tolerance
+
+
+@pytest.mark.asyncio
+async def test_above_limit():
+    duration = 1.
+    limit = .8
+    r = await python_sleep(duration, limit).run()
+    test = r['tests'][0]['meta']
+    assert test['status'] == 'TIMED_OUT'
+    assert abs(test['time-wall'] - limit) < tolerance
+    assert "time limit exceeded" in test['message'].lower()
