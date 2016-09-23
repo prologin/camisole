@@ -4,6 +4,7 @@ import json
 
 import camisole.languages
 
+
 def json_handler(wrapped):
     @functools.wraps(wrapped)
     async def wrapper(request):
@@ -18,7 +19,8 @@ def json_handler(wrapped):
         else:
             result = {'success': True, **result}
         result = json.dumps(result)
-        return aiohttp.web.Response(body=result.encode())
+        return aiohttp.web.Response(body=result.encode(),
+                                    content_type='application/json')
     return wrapper
 
 
@@ -32,12 +34,12 @@ async def run_handler(data):
     try:
         lang = camisole.languages.languages[lang_name](data)
     except KeyError:
-        raise RuntimeError('Incorrect language {}'.format(lang))
+        raise RuntimeError('Incorrect language {}'.format(lang_name))
 
     return await lang.run()
 
 
-def run():
+def run():  # noqa
     app = aiohttp.web.Application()
     app.router.add_route('POST', '/run', run_handler)
     aiohttp.web.run_app(app)
