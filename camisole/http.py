@@ -39,7 +39,7 @@ async def run_handler(data):
     return await lang.run()
 
 
-def run():  # noqa
+def run(**kwargs):  # noqa
     app = aiohttp.web.Application()
     app.router.add_route('POST', '/run', run_handler)
-    aiohttp.web.run_app(app)
+    aiohttp.web.run_app(app, **kwargs)
