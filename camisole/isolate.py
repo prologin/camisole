@@ -117,9 +117,9 @@ class Isolator:
         with open(self.meta_file.name) as f:
             m = (l.strip() for l in f.readlines())
         m = dict(l.split(':', 1) for l in m if l)
-        m = {k: type(meta_defaults[k])(v)
-                if meta_defaults[k] is not None else v
-                for k, v in m.items()}
+        m = {k: (type(meta_defaults[k])(v)
+                 if meta_defaults[k] is not None else v)
+             for k, v in m.items()}
         self.meta = {**meta_defaults, **m}
         verbose_status = {
             'OK': 'OK',

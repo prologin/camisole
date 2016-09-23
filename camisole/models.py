@@ -3,6 +3,7 @@ from pathlib import Path
 
 import camisole.isolate
 
+
 class Lang:
     source_ext = None
     compiler = None
@@ -47,7 +48,7 @@ class Lang:
                 c.write(binary)
             compiled.chmod(0o700)
             await isolator.run(self.execute_command(str(compiled)),
-                    data=input_data)
+                               data=input_data)
         return (isolator.isolate_retcode, isolator.info)
 
     async def run(self):
@@ -85,7 +86,8 @@ class Lang:
     def compile_opt_out(self, output):
         return ['-o', output]
 
-    def filter_box_prefix(self, s):
+    @staticmethod
+    def filter_box_prefix(s):
         return re.sub('/var/(local/)?lib/isolate/[0-9]+', '', s)
 
     def compile_command(self, source, output):

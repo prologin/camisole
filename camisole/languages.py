@@ -1,5 +1,6 @@
 from camisole.models import Lang
 
+
 class C(Lang):
     source_ext = '.c'
     compiler = '/usr/bin/gcc'
