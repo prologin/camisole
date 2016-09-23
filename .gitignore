@@ -1,0 +1,5 @@
+/.coverage
+/.idea/
+/htmlcov/
+__pycache__/
+*.pyc
