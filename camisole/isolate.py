@@ -23,6 +23,7 @@ import pathlib
 import subprocess
 import tempfile
 
+
 async def communicate(cmdline, data=None, **kwargs):
     logging.debug('Running %s', ' '.join(cmdline))
     proc = await asyncio.create_subprocess_exec(
@@ -50,11 +51,12 @@ class IsolatorFactory:
     def restore_id(self, box_id):
         if box_id not in range(self.max_box_id + 1):
             raise RuntimeError("Trying to restore box id {} outside of id "
-                               "range.".format(box_id))
+                               "range.".format(box_id))  # noqa
         self.available_box_id.add(box_id)
 
 
 OPTIONS = ['mem', 'time', 'wall-time', 'fsize', 'processes', 'quota']
+
 
 class Isolator:
     def __init__(self, box_id, opts, allowed_dirs=None, restore_id_cb=None):
@@ -89,9 +91,9 @@ class Isolator:
 
     async def __aexit__(self, exc, value, tb):
         try:
-            with (self.path / self.stdout_file).open() as f:
+            with (self.path / self.stdout_file).open(errors='ignore') as f:
                 self.stdout = f.read()
-            with (self.path / self.stderr_file).open() as f:
+            with (self.path / self.stderr_file).open(errors='ignore') as f:
                 self.stderr = f.read()
         except PermissionError:
             # Something went wrong, isolate was killed before changing the
