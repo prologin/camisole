@@ -12,6 +12,7 @@ class Lang:
     interpret_opts = []
     version_opt = '--version'
     version_lines = None
+    allowed_dirs = []
 
     def __init__(self, opts):
         self.opts = opts
@@ -20,30 +21,28 @@ class Lang:
         if not self.compiler:
             return 0, None, None, None
 
-        isolator = camisole.isolate.get_isolator(self.opts.get('compile', {}))
+        isolator = camisole.isolate.get_isolator(
+            self.opts.get('compile', {}), allowed_dirs=self.allowed_dirs)
         async with isolator:
             wd = Path(isolator.path)
             source = wd / ('source' + self.source_ext)
             compiled = wd / 'compiled'
-
             with source.open('w') as sourcefile:
                 sourcefile.write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
             await isolator.run(cmd)
-            try:
-                with compiled.open('rb') as c:
-                    compiled = c.read()
-            except (FileNotFoundError, PermissionError):
-                compiled = None
-        return (isolator.isolate_retcode, isolator.info, compiled)
+            binary = self.read_compiled(str(compiled), isolator)
+
+        return (isolator.isolate_retcode, isolator.info, binary)
 
     async def execute(self, binary, input_data=None):
         if input_data is not None:
             input_data = input_data.encode()
-        isolator = camisole.isolate.get_isolator(self.opts.get('execute', {}))
+        isolator = camisole.isolate.get_isolator(
+            self.opts.get('execute', {}), allowed_dirs=self.allowed_dirs)
         async with isolator:
             wd = isolator.path
-            compiled = Path(wd) / 'compiled'
+            compiled = Path(wd) / self.execute_filename()
             with compiled.open('wb') as c:
                 c.write(binary)
             compiled.chmod(0o700)
@@ -85,6 +84,16 @@ class Lang:
 
     def compile_opt_out(self, output):
         return ['-o', output]
+
+    def read_compiled(self, path, isolator):
+        try:
+            with Path(path).open('rb') as c:
+                return c.read()
+        except (FileNotFoundError, PermissionError):
+            pass
+
+    def execute_filename(self):
+        return 'compiled'
 
     @staticmethod
     def filter_box_prefix(s):
