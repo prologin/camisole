@@ -90,17 +90,6 @@ class Isolator:
         self.meta_file.__enter__()
 
     async def __aexit__(self, exc, value, tb):
-        try:
-            with (self.path / self.stdout_file).open(errors='ignore') as f:
-                self.stdout = f.read()
-            with (self.path / self.stderr_file).open(errors='ignore') as f:
-                self.stderr = f.read()
-        except PermissionError:
-            # Something went wrong, isolate was killed before changing the
-            # permissions, empty stdout/stderr
-            self.stdout = ''
-            self.stderr = ''
-
         meta_defaults = {
             'cg-mem': 0,
             'csw-forced': 0,
@@ -170,6 +159,17 @@ class Isolator:
 
         self.isolate_retcode, self.isolate_stdout, self.isolate_stderr = (
             await communicate(cmd_run, data=data, **kwargs))
+
+        try:
+            with (self.path / self.stdout_file).open(errors='ignore') as f:
+                self.stdout = f.read()
+            with (self.path / self.stderr_file).open(errors='ignore') as f:
+                self.stderr = f.read()
+        except PermissionError:
+            # Something went wrong, isolate was killed before changing the
+            # permissions, empty stdout/stderr
+            self.stdout = ''
+            self.stderr = ''
 
 
 get_isolator = IsolatorFactory()
