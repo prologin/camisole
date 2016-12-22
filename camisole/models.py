@@ -8,8 +8,10 @@ class Lang:
     source_ext = None
     compiler = None
     compile_opts = []
+    compile_env = {}
     interpreter = None
     interpret_opts = []
+    interpret_env = {}
     version_opt = '--version'
     version_lines = None
     allowed_dirs = []
@@ -30,7 +32,7 @@ class Lang:
             with source.open('w') as sourcefile:
                 sourcefile.write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
-            await isolator.run(cmd)
+            await isolator.run(cmd, env=self.compile_env)
             binary = self.read_compiled(str(compiled), isolator)
 
         return (isolator.isolate_retcode, isolator.info, binary)
@@ -47,24 +49,26 @@ class Lang:
                 c.write(binary)
             compiled.chmod(0o700)
             await isolator.run(self.execute_command(str(compiled)),
+                               env=self.interpret_env,
                                data=input_data)
         return (isolator.isolate_retcode, isolator.info)
 
-    async def run(self):
-        result = {}
+    async def run_compilation(self, result):
         if self.compiler is not None:
             cretcode, info, binary = await self.compile()
             result['compile'] = info
             if cretcode != 0:
-                return result
+                return
             if binary is None:
                 if result['compile']['stderr'].strip():
                     result['compile']['stderr'] += '\n\n'
                 result['compile']['stderr'] += 'Cannot find result binary.\n'
-                return result
+                return
         else:
             binary = self.opts.get('source', '').encode()
+        return binary
 
+    async def run_tests(self, binary, result):
         tests = self.opts.get('tests', [])
         if tests:
             result['tests'] = [{}] * len(tests)
@@ -80,6 +84,12 @@ class Lang:
                     self.opts.get('all_fatal', False)):
                 break
 
+    async def run(self):
+        result = {}
+        binary = await self.run_compilation(result)
+        if not binary:
+            return result
+        await self.run_tests(binary, result)
         return result
 
     def compile_opt_out(self, output):

@@ -133,7 +133,7 @@ class Isolator:
         if self.restore_id_cb is not None:
             self.restore_id_cb(self.box_id)
 
-    async def run(self, cmdline, data=None, **kwargs):
+    async def run(self, cmdline, data=None, env=None, **kwargs):
         cmd_run = self.cmd_base[:]
         cmd_run += list(itertools.chain(
             *[('-d', d) for d in self.allowed_dirs]))
@@ -148,6 +148,9 @@ class Isolator:
 
         for e in ['PATH', 'LD_LIBRARY_PATH']:
             cmd_run += ['--env', e]
+
+        for key, value in (env or {}).items():
+            cmd_run += ['--env={}={}'.format(key, value)]
 
         cmd_run += [
             '--meta={}'.format(self.meta_file.name),
