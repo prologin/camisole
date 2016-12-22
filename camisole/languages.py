@@ -142,11 +142,21 @@ class Javascript(Lang):
     interpreter = '/usr/bin/node'
 
 
-class Brainfuck(Lang):
-    # Todo: this one requires two compilers (bf and C++), no idea how to do
-    # that cleanly.
+class BrainfuckToC(Lang):
     source_ext = '.bf'
-    interpreter = '/usr/bin/bf'
+    compiler = '/usr/bin/python2'
+    compile_opts = ['-S', '/usr/bin/esotope-bfc', '-v', '-fc']
+    compile_env = {'PYTHONPATH': '/usr/lib/python2.7/site-packages'}
 
+    def compile_opt_out(self, output):
+        # there is no way to specify an output file, use stderr
+        return []
+
+    def read_compiled(self, path, isolator):
+        return isolator.stdout.encode()
+
+class Brainfuck(PipelineLang):
+    source_ext = '.bf'
+    sub_langs = [BrainfuckToC, C]
 
 languages = {cls.__name__.lower(): cls for cls in Lang.__subclasses__()}

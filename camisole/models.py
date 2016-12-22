@@ -122,3 +122,29 @@ class Lang:
         if self.interpreter is not None:
             cmd += [self.interpreter] + self.interpret_opts
         return cmd + [self.filter_box_prefix(output)]
+
+
+class PipelineLang(Lang):
+    sub_langs = []
+
+    async def run_compilation(self, result):
+        source = self.opts.get('source', '')
+        for i, lang_cls in enumerate(self.sub_langs):
+            lang = lang_cls({**self.opts, 'source': source})
+            cretcode, info, binary = await lang.compile()
+            result['compile'] = info
+            if cretcode != 0:
+                return
+            if binary is None:
+                if result['compile']['stderr'].strip():
+                    result['compile']['stderr'] += '\n\n'
+                result['compile']['stderr'] += 'Cannot find result binary.\n'
+                return
+            # compile output is next stage input
+            source = binary
+            if i < len(self.sub_langs) - 1:
+                source = source.decode(errors='ignore')
+        return binary
+
+    async def compile(self):
+        raise NotImplementedError()
