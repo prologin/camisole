@@ -123,7 +123,7 @@ class VisualBasic(Lang):
         return ['/out:' + output]
 
 
-class Php(Lang):
+class PHP(Lang):
     source_ext = '.php'
     interpreter = '/usr/bin/php'
 
