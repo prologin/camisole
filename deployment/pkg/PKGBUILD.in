@@ -1,0 +1,23 @@
+_gitname="camisole"
+pkgname=camisole-git
+pkgver=0.1.r0.g6bc31a4
+pkgrel=1
+pkgdesc="An asyncio-based source compiler and test runner."
+arch=('any')
+url="https://bitbucket.org/prologin/${_gitname}"
+license=('GPL')
+depends=('python' 'python-aiohttp')
+makedepends=('git' 'python-setuptools')
+optdepends=()
+source=("${_gitname}::git+${url}.git")
+sha1sums=('SKIP')
+
+pkgver() {
+    cd "${srcdir}/${_gitname}"
+    git describe --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+package() {
+    cd "${srcdir}/${_gitname}"
+    python setup.py install --root="${pkgdir}" || return 1
+}

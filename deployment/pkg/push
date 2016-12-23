@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+[[ -z camisole-git ]] && git clone ssh://aur@aur.archlinux.org/camisole-git.git
+cd camisole-git
+
+git pull
+
+cp ../PKGBUILD ../.SRCINFO .
+
+git add PKGBUILD .SRCINFO
+git commit -e -m '# Use :cq in vim to abort committing'
+
+read -p "git push now? (y/n) " -n 1 -r
+echo
+[[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
+
+git push
