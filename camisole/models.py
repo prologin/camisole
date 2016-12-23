@@ -1,10 +1,13 @@
 import re
+import warnings
 from pathlib import Path
 
 import camisole.isolate
 
 
 class Lang:
+    _registry = {}
+
     source_ext = None
     compiler = None
     compile_opts = []
@@ -15,6 +18,16 @@ class Lang:
     version_opt = '--version'
     version_lines = None
     allowed_dirs = []
+
+    def __init_subclass__(cls, abstract=False, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if abstract:
+            return
+        name = cls.__name__.lower()
+        if name in cls._registry:
+            warnings.warn("Lang registry: overwriting existing language {}"
+                          .format(name))
+        cls._registry[name] = cls
 
     def __init__(self, opts):
         self.opts = opts

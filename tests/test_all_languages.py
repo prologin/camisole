@@ -6,9 +6,9 @@ import camisole.languages
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("language", map(pytest.mark.xfail,
-                                         camisole.languages.languages))
+                                         camisole.languages.all()))
 async def test(language):
-    lang_cls = camisole.languages.languages[language]
+    lang_cls = camisole.languages.by_name(language)
     dirpath = Path(__file__).parent.resolve() / '42'
     with (dirpath / ('ref' + lang_cls.source_ext)).open() as sourcefile:
         source = sourcefile.read()

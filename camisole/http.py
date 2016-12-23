@@ -32,7 +32,7 @@ async def run_handler(data):
 
     lang_name = data['lang'].lower()
     try:
-        lang = camisole.languages.languages[lang_name](data)
+        lang = camisole.languages.by_name(lang_name)(data)
     except KeyError:
         raise RuntimeError('Incorrect language {}'.format(lang_name))
 

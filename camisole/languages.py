@@ -1,7 +1,19 @@
 import re
 from pathlib import Path
 
-from camisole.models import Lang
+from camisole.models import Lang, PipelineLang
+
+
+def all():
+    # FIXME: replace with Lang._registry in 3.6
+    langs = {cls.__name__.lower(): cls for cls in Lang.__subclasses__()}
+    langs.pop('brainfucktoc')
+    langs['brainfuck'] = Brainfuck
+    return langs
+
+
+def by_name(name):
+    return all()[name]
 
 
 class C(Lang):
@@ -155,8 +167,7 @@ class BrainfuckToC(Lang):
     def read_compiled(self, path, isolator):
         return isolator.stdout.encode()
 
+
 class Brainfuck(PipelineLang):
     source_ext = '.bf'
     sub_langs = [BrainfuckToC, C]
-
-languages = {cls.__name__.lower(): cls for cls in Lang.__subclasses__()}
