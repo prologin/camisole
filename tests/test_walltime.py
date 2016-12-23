@@ -2,7 +2,7 @@ import pytest
 
 import camisole.languages
 
-tolerance = .25
+tolerance = .5
 
 
 def python_sleep(duration, limit=None):
