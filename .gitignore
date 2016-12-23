@@ -1,5 +1,10 @@
+/.cache/
 /.coverage
 /.idea/
 /htmlcov/
+/build/
+/dist/
 __pycache__/
+*.egg-info/
 *.pyc
+
