@@ -2,13 +2,11 @@ import json
 import aiohttp.web
 import asyncio
 
-from camisole.http import run_handler
+from camisole.http import make_application
 
 
 async def get_client(test_client, loop):
-    app = aiohttp.web.Application(loop=loop)
-    app.router.add_route('POST', '/run', run_handler)
-    return await test_client(app)
+    return await test_client(make_application(loop=loop))
 
 
 async def request(client, data):
