@@ -9,7 +9,7 @@ import camisole.languages
                                          camisole.languages.all()))
 async def test(language):
     lang_cls = camisole.languages.by_name(language)
-    dirpath = Path(__file__).parent.resolve() / '42'
+    dirpath = Path(__file__).parent.parent.resolve() / 'camisole' / 'ref-sources'
     with (dirpath / ('ref' + lang_cls.source_ext)).open() as sourcefile:
         source = sourcefile.read()
     l = lang_cls({'source': source, 'tests': [{}]})

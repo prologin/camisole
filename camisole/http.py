@@ -3,6 +3,7 @@ import functools
 import json
 
 import camisole.languages
+import camisole.ref
 
 
 def json_handler(wrapped):
@@ -39,9 +40,23 @@ async def run_handler(data):
     return await lang.run()
 
 
+@json_handler
+async def test_handler(data):
+    langs = camisole.languages.all().keys()
+    langs -= set(data.get('exclude', []))
+
+    # FIXME: use await comprehension in 3.6
+    results = {}
+    for name in langs:
+        success, result = await camisole.ref.test(name)
+        results[name] = {'success': success, 'result': result}
+    return {'results': results}
+
+
 def make_application(**kwargs):
     app = aiohttp.web.Application(**kwargs)
     app.router.add_route('POST', '/run', run_handler)
+    app.router.add_route('POST', '/test', test_handler)
     return app
 
 

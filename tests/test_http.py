@@ -13,6 +13,10 @@ async def request(client, data):
     return await (await client.post('/run', data=data)).json()
 
 
+async def request_test(client, data):
+    return await (await client.post('/test', data=data)).json()
+
+
 async def test_bad_json(test_client, loop):
     client = await get_client(test_client, loop)
     result = await request(client, b'bad-stuff')
@@ -44,3 +48,12 @@ async def test_simple(test_client, loop):
     assert result['success']
     assert result['tests'][0]['meta']['status'] == 'OK'
     assert result['tests'][0]['stdout'].strip() == '42'
+
+
+async def test_test(test_client, loop):
+    # monkey-patch event loop for camisole
+    asyncio.set_event_loop(loop)
+    client = await get_client(test_client, loop)
+    result = await request_test(client, json.dumps({}))
+    assert result['success']
+    assert result['results']['python']['success']
