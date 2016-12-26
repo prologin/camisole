@@ -8,6 +8,7 @@ def all():
     # FIXME: replace with Lang._registry in 3.6
     langs = {cls.__name__.lower(): cls for cls in Lang.__subclasses__()}
     langs.pop('brainfucktoc')
+    langs.pop('pipelinelang')
     langs['brainfuck'] = Brainfuck
     return langs
 
