@@ -2,14 +2,17 @@
 
 set -e
 
-[[ -z camisole-git ]] && git clone ssh://aur@aur.archlinux.org/camisole-git.git
+[[ ! -d camisole-git ]] && git clone ssh://aur@aur.archlinux.org/camisole-git.git
 cd camisole-git
 
 git pull
 
-cp ../PKGBUILD ../.SRCINFO .
+for f in PKGBUILD .SRCINFO camisole-git.install camisole.service sysusers.conf
+do
+	cp "../$f" .
+done
 
-git add PKGBUILD .SRCINFO
+git add .
 git commit -e -m '# Use :cq in vim to abort committing'
 
 read -p "git push now? (y/n) " -n 1 -r

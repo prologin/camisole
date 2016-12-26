@@ -2,15 +2,24 @@ from collections import defaultdict
 import subprocess
 import sys
 
-from camisole.languages import all, by_name, Brainfuck, FSharp
+from camisole.languages import all, by_name, Brainfuck, FSharp, Java
 
 FROM_AUR = {'esotope-bfc-git': {Brainfuck},
             'fsharp': {FSharp}}
+
+# java packages consist of symlinks to handle both Java 7 & 8, so we force
+# the version (8) here
+OVERWRITE = {Java: {'/usr/lib/jvm/java-8-openjdk/bin/java',
+                    '/usr/lib/jvm/java-8-openjdk/bin/javac'}}
 
 
 def list_paths():
     for lang in all():
         cls = by_name(lang)
+        if cls in OVERWRITE:
+            for path in OVERWRITE[cls]:
+                yield cls, path
+            continue
         if cls.compiler:
             yield cls, cls.compiler
         if cls.interpreter:
