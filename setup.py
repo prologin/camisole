@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='camisole',
-    version='0.2',
+    version='0.3',
     packages=['camisole'],
     url='https://bitbucket.com/prologin/camisole',
     license='GPL',
