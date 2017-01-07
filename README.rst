@@ -9,6 +9,8 @@ It uses isolate_ as a backend to safely compile and execute source codes using
 linux kernel features such as namespaces, cgroups, chroot and resources limits.
 You can learn more about isolate in this paper[#isolatepaper]_ .
 
+*camisole* requires Python 3.6 or newer.
+
 Features
 --------
 

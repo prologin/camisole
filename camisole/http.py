@@ -45,11 +45,9 @@ async def test_handler(data):
     langs = camisole.languages.all().keys()
     langs -= set(data.get('exclude', []))
 
-    # FIXME: use await comprehension in 3.6
-    results = {}
-    for name in langs:
-        success, result = await camisole.ref.test(name)
-        results[name] = {'success': success, 'result': result}
+    results = {name: {'success': success, 'result': result}
+               for name in langs
+               for success, result in [await camisole.ref.test(name)]}
     return {'results': results}
 
 

@@ -11,7 +11,7 @@ async def test_compile_no_compiler():
 
 @pytest.mark.asyncio
 async def test_compiler_does_not_create_binary_while_returning_zero():
-    class CunningLang(Python):
+    class CunningLang(Python, register=False):
         compiler = Python.interpreter
 
         def python_command(self):
@@ -22,7 +22,7 @@ async def test_compiler_does_not_create_binary_while_returning_zero():
                     self.interpret_opts +
                     ['-c', self.python_command()])
 
-    class VerboseCunningLang(CunningLang):
+    class VerboseCunningLang(CunningLang, register=False):
         def python_command(self):
             return (super().python_command() +
                     '; import sys; print("hi mom", file=sys.stderr)')

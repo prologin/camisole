@@ -19,9 +19,9 @@ class Lang:
     version_lines = None
     allowed_dirs = []
 
-    def __init_subclass__(cls, abstract=False, **kwargs):
+    def __init_subclass__(cls, register=True, **kwargs):
         super().__init_subclass__(**kwargs)
-        if abstract:
+        if not register:
             return
         name = cls.__name__.lower()
         if name in cls._registry:
@@ -137,7 +137,7 @@ class Lang:
         return cmd + [self.filter_box_prefix(output)]
 
 
-class PipelineLang(Lang):
+class PipelineLang(Lang, register=False):
     sub_langs = []
 
     async def run_compilation(self, result):

@@ -4,43 +4,32 @@ from pathlib import Path
 from camisole.models import Lang, PipelineLang
 
 
-# FIXME: in 3.6, remove the @register nonsense, use Lang._registry instead
-_registry = {}
-def register(cls):
-    _registry[cls.__name__.lower()] = cls
-    return cls
-
-
 def all():
-    return _registry
+    return Lang._registry
 
 
 def by_name(name):
     return all()[name]
 
 
-@register
 class C(Lang):
     source_ext = '.c'
     compiler = '/usr/bin/gcc'
     compile_opts = ['-std=c11', '-Wall', '-Wextra', '-O2']
 
 
-@register
 class CXX(Lang):
     source_ext = '.cc'
     compiler = '/usr/bin/g++'
     compile_opts = ['-std=c++11', '-Wall', '-Wextra', '-O2']
 
 
-@register
 class Haskell(Lang):
     source_ext = '.hs'
     compiler = '/usr/bin/ghc'
     compile_opts = ['-dynamic', '-O2']
 
 
-@register
 class OCaml(Lang):
     source_ext = '.ml'
     compiler = '/usr/bin/ocamlopt'
@@ -49,14 +38,12 @@ class OCaml(Lang):
     version_lines = 1
 
 
-@register
 class Ada(Lang):
     source_ext = '.adb'
     compiler = '/usr/bin/gnatmake'
     compile_opts = ['-f']
 
 
-@register
 class Pascal(Lang):
     source_ext = '.pas'
     compiler = '/usr/bin/fpc'
@@ -68,7 +55,6 @@ class Pascal(Lang):
         return ['-o' + output]
 
 
-@register
 class Java(Lang):
     source_ext = '.java'
     compiler = '/usr/bin/javac'
@@ -105,7 +91,6 @@ class Java(Lang):
         return self.java_class + '.class'
 
 
-@register
 class CSharp(Lang):
     source_ext = '.cs'
     compiler = '/usr/bin/mcs'
@@ -116,7 +101,6 @@ class CSharp(Lang):
         return ['-out:' + output]
 
 
-@register
 class FSharp(Lang):
     source_ext = '.fs'
     compiler = '/usr/bin/fsharpc'
@@ -125,7 +109,6 @@ class FSharp(Lang):
     interpreter = '/usr/bin/mono'
 
 
-@register
 class VisualBasic(Lang):
     source_ext = '.vb'
     compiler = '/usr/bin/vbnc'
@@ -136,44 +119,38 @@ class VisualBasic(Lang):
         return ['/out:' + output]
 
 
-@register
 class PHP(Lang):
     source_ext = '.php'
     interpreter = '/usr/bin/php'
 
 
-@register
 class Python(Lang):
     source_ext = '.py'
     interpreter = '/usr/bin/python3'
     interpret_opts = ['-S']
 
 
-@register
 class Perl(Lang):
     source_ext = '.pl'
     interpreter = '/usr/bin/perl'
 
 
-@register
 class Lua(Lang):
     source_ext = '.lua'
     interpreter = '/usr/bin/luajit'
 
 
-@register
 class Scheme(Lang):
     source_ext = '.scm'
     interpreter = '/usr/bin/gsi'
 
 
-@register
 class Javascript(Lang):
     source_ext = '.js'
     interpreter = '/usr/bin/node'
 
 
-class BrainfuckToC(Lang):
+class BrainfuckToC(Lang, register=False):
     source_ext = '.bf'
     compiler = '/usr/bin/python2'
     compile_opts = ['-S', '/usr/bin/esotope-bfc', '-v', '-fc']
@@ -187,7 +164,6 @@ class BrainfuckToC(Lang):
         return isolator.stdout.encode()
 
 
-@register
 class Brainfuck(PipelineLang):
     source_ext = '.bf'
     sub_langs = [BrainfuckToC, C]
