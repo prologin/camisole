@@ -19,15 +19,19 @@ class Lang:
     version_lines = None
     allowed_dirs = []
 
-    def __init_subclass__(cls, register=True, **kwargs):
+    def __init_subclass__(cls, register=True, name=None, **kwargs):
         super().__init_subclass__(**kwargs)
         if not register:
             return
-        name = cls.__name__.lower()
+        name = name or cls.__default_name__()
         if name in cls._registry:
-            warnings.warn("Lang registry: overwriting existing language {}"
-                          .format(name))
+            warnings.warn(f"Lang registry: class {cls} name '{name}' "
+                          f"overwrites registered class {Lang._registry[name]}")
         cls._registry[name] = cls
+
+    @classmethod
+    def __default_name__(cls):
+        return cls.__name__.lower()
 
     def __init__(self, opts):
         self.opts = opts
