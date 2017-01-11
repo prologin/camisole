@@ -17,6 +17,10 @@ async def request_test(client, data):
     return await (await client.post('/test', data=data)).json()
 
 
+async def request_system(client, data):
+    return await (await client.post('/system', data=data)).json()
+
+
 async def test_bad_json(test_client, loop):
     client = await get_client(test_client, loop)
     result = await request(client, b'bad-stuff')
@@ -57,3 +61,13 @@ async def test_test(test_client, loop):
     result = await request_test(client, json.dumps({}))
     assert result['success']
     assert result['results']['python']['success']
+
+
+async def test_system(test_client, loop):
+    import os
+    # monkey-patch event loop for camisole
+    asyncio.set_event_loop(loop)
+    client = await get_client(test_client, loop)
+    result = await request_system(client, json.dumps({}))
+    assert result['success']
+    assert result['system']['cpu_count'] == os.cpu_count()

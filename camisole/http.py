@@ -4,6 +4,7 @@ import json
 
 import camisole.languages
 import camisole.ref
+import camisole.system
 
 
 def json_handler(wrapped):
@@ -11,7 +12,8 @@ def json_handler(wrapped):
     async def wrapper(request):
         try:
             try:
-                data = await request.json()
+                data = await request.text()
+                data = json.loads(data) if data else {}
             except json.decoder.JSONDecodeError:
                 raise RuntimeError('Invalid JSON')
             result = await wrapped(data)
@@ -51,10 +53,16 @@ async def test_handler(data):
     return {'results': results}
 
 
+@json_handler
+async def system_handler(data):
+    return {'system': camisole.system.info()}
+
+
 def make_application(**kwargs):
     app = aiohttp.web.Application(**kwargs)
     app.router.add_route('POST', '/run', run_handler)
-    app.router.add_route('POST', '/test', test_handler)
+    app.router.add_route('*', '/test', test_handler)
+    app.router.add_route('*', '/system', system_handler)
     return app
 
 
