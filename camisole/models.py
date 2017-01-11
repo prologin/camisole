@@ -25,8 +25,9 @@ class Lang:
             return
         name = name or cls.__default_name__()
         if name in cls._registry:
-            warnings.warn(f"Lang registry: class {cls} name '{name}' "
-                          f"overwrites registered class {Lang._registry[name]}")
+            full_name = lambda c: c.__module__ + '.' + c.__qualname__
+            warnings.warn(f"Lang registry: name '{name}' for {full_name(cls)} "
+                          f"overwrites {full_name(Lang._registry[name])}")
         cls._registry[name] = cls
 
     @classmethod
