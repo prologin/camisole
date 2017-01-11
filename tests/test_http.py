@@ -71,3 +71,5 @@ async def test_system(test_client, loop):
     result = await request_system(client, json.dumps({}))
     assert result['success']
     assert result['system']['cpu_count'] == os.cpu_count()
+    assert isinstance(result['system']['cpu_mhz'], float)
+    assert isinstance(result['system']['memory'], int)

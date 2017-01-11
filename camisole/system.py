@@ -18,22 +18,36 @@
 
 import functools
 import os
-import platform
-import re
 import subprocess
 import sys
+
+
+def parse_size(str_size):  # noqa
+    if str_size is None:
+        return None
+    str_size = str_size.lower().rstrip('b')
+    for l, m in (('k', 1 << 10), ('m', 1 << 11), ('g', 1 << 12)):
+        if str_size.endswith(l):
+            return int(str_size.rstrip(l)) * m
+    return int(str_size)
+
+
+def parse_float(str_float):  # noqa
+    if str_float is None:
+        return None
+    return float(str_float)
 
 
 def lscpu():
     out = subprocess.check_output('lscpu')
     out = out.decode().strip().split('\n')
-    return dict(re.split(': *', s, maxsplit=1) for s in out)
+    return {k: v.strip() for line in out for k, v in (line.split(':', 1),)}
 
 
 def meminfo():
     with open('/proc/meminfo') as f:
         out = f.read().strip().split('\n')
-    return dict(re.split(': *', s, maxsplit=1) for s in out)
+    return {k: v.strip() for line in out for k, v in (line.split(':', 1),)}
 
 
 # This function only gives static system information so we can cache it
@@ -46,15 +60,15 @@ def info():
     return {
         'arch': uname.machine,
         'byte_order': sys.byteorder,
-        'cpu_cache_L1d': cpu.get('L1d cache'),
-        'cpu_cache_L1i': cpu.get('L1i cache'),
-        'cpu_cache_L2': cpu.get('L2 cache'),
-        'cpu_cache_L3': cpu.get('L3 cache'),
+        'cpu_cache_L1d': parse_size(cpu.get('L1d cache')),
+        'cpu_cache_L1i': parse_size(cpu.get('L1i cache')),
+        'cpu_cache_L2': parse_size(cpu.get('L2 cache')),
+        'cpu_cache_L3': parse_size(cpu.get('L3 cache')),
         'cpu_count': os.cpu_count(),
-        'cpu_mhz': cpu.get('CPU MHz'),
+        'cpu_mhz': parse_float(cpu.get('CPU MHz')),
         'cpu_name': cpu.get('Model name'),
         'kernel': uname.sysname,
         'kernel_release': uname.release,
         'kernel_version': uname.version,
-        'memory': mem.get('MemTotal')
+        'memory': parse_size(mem.get('MemTotal'))
     }
