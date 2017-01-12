@@ -18,6 +18,7 @@ class Lang:
     version_opt = '--version'
     version_lines = None
     allowed_dirs = []
+    extra_binaries = set()
 
     def __init_subclass__(cls, register=True, name=None, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -34,6 +35,14 @@ class Lang:
 
     def __init__(self, opts):
         self.opts = opts
+
+    @classmethod
+    def required_binaries(cls):
+        if cls.compiler:
+            yield cls.compiler
+        if cls.interpreter:
+            yield cls.interpreter
+        yield from cls.extra_binaries
 
     async def compile(self):
         if not self.compiler:
@@ -142,6 +151,12 @@ class Lang:
 
 class PipelineLang(Lang, register=False):
     sub_langs = []
+
+    @classmethod
+    def required_binaries(cls):
+        yield from super().required_binaries()
+        for sub in cls.sub_langs:
+            yield from sub.required_binaries()
 
     async def run_compilation(self, result):
         source = self.opts.get('source', '')
