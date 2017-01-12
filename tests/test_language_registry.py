@@ -9,13 +9,15 @@ def test_default_name():
         pass
 
     assert by_name('myfoo') is MyFoo
+    assert by_name('myfoo').name == MyFoo.__name__
 
 
 def test_user_name():
-    class MyFoo(Lang, name='chiche'):
+    class MyFoo(Lang, name='Chiche'):
         pass
 
     assert by_name('chiche') is MyFoo
+    assert by_name('chiche').name == 'Chiche'
 
 
 def test_overwrite_warning():
@@ -23,14 +25,17 @@ def test_overwrite_warning():
         pass
 
     assert by_name('foolang') is FooLang
+    assert by_name('foolang').name == 'FooLang'
 
     with pytest.warns(UserWarning) as record:
-        class BarLang(Lang, name='foolang'):
+        class BarLang(Lang, name='Foolang'):
             pass
         assert len(record) == 1
         message = str(record[0].message)
-        assert repr(FooLang) in message
+        assert "foolang" in message
+        assert FooLang.__name__ in message
         assert "overwrites" in message
-        assert repr(BarLang) in message
+        assert BarLang.__name__ in message
 
     assert by_name('foolang') is BarLang
+    assert by_name('foolang').name == 'Foolang'

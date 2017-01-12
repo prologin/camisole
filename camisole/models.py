@@ -21,18 +21,16 @@ class Lang:
 
     def __init_subclass__(cls, register=True, name=None, **kwargs):
         super().__init_subclass__(**kwargs)
+        cls.name = name or cls.__name__
         if not register:
             return
-        name = name or cls.__default_name__()
-        if name in cls._registry:
+        registry_name = cls.name.lower()
+        if registry_name in cls._registry:
             full_name = lambda c: c.__module__ + '.' + c.__qualname__
-            warnings.warn(f"Lang registry: name '{name}' for {full_name(cls)} "
-                          f"overwrites {full_name(Lang._registry[name])}")
-        cls._registry[name] = cls
-
-    @classmethod
-    def __default_name__(cls):
-        return cls.__name__.lower()
+            warnings.warn(f"Lang registry: name '{registry_name}' for "
+                          f"{full_name(cls)} overwrites "
+                          f"{full_name(Lang._registry[registry_name])}")
+        cls._registry[registry_name] = cls
 
     def __init__(self, opts):
         self.opts = opts

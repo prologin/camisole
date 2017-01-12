@@ -9,7 +9,7 @@ def all():
 
 
 def by_name(name):
-    return all()[name]
+    return all()[name.lower()]
 
 
 class C(Lang):
@@ -18,7 +18,7 @@ class C(Lang):
     compile_opts = ['-std=c11', '-Wall', '-Wextra', '-O2']
 
 
-class CXX(Lang):
+class CXX(Lang, name="C++"):
     source_ext = '.cc'
     compiler = '/usr/bin/g++'
     compile_opts = ['-std=c++11', '-Wall', '-Wextra', '-O2']
@@ -91,7 +91,7 @@ class Java(Lang):
         return self.java_class + '.class'
 
 
-class CSharp(Lang):
+class CSharp(Lang, name="C#"):
     source_ext = '.cs'
     compiler = '/usr/bin/mcs'
     compile_opts = ['-optimize+']
@@ -101,7 +101,7 @@ class CSharp(Lang):
         return ['-out:' + output]
 
 
-class FSharp(Lang):
+class FSharp(Lang, name="F#"):
     source_ext = '.fs'
     compiler = '/usr/bin/fsharpc'
     compile_opts = ['-O']
