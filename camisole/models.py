@@ -1,4 +1,25 @@
+# This file is part of Camisole.
+#
+# Copyright (c) 2016 Antoine Pietri <antoine.pietri@prologin.org>
+# Copyright (c) 2016 Alexandre Macabies <alexandre.macabies@prologin.org>
+# Copyright (c) 2016 Association Prologin <info@prologin.org>
+#
+# Camisole is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Prologin-SADM is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Prologin-SADM.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
 import re
+import tempfile
 import warnings
 from pathlib import Path
 
@@ -48,8 +69,14 @@ class Lang:
         if not self.compiler:
             return 0, None, None, None
 
+        # We give compilers a nice /tmp playground
+        root_tmp = tempfile.TemporaryDirectory(prefix='camisole-tmp-')
+        os.chmod(root_tmp.name, 0o777)
+        tmparg = ['/tmp=' + root_tmp.name + ':rw']
+
         isolator = camisole.isolate.get_isolator(
-            self.opts.get('compile', {}), allowed_dirs=self.allowed_dirs)
+            self.opts.get('compile', {}),
+            allowed_dirs=self.allowed_dirs + tmparg)
         async with isolator:
             wd = Path(isolator.path)
             source = wd / ('source' + self.source_ext)
@@ -59,6 +86,8 @@ class Lang:
             cmd = self.compile_command(str(source), str(compiled))
             await isolator.run(cmd, env=self.compile_env)
             binary = self.read_compiled(str(compiled), isolator)
+
+        root_tmp.cleanup()
 
         return (isolator.isolate_retcode, isolator.info, binary)
 
