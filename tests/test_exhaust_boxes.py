@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from camisole import isolate
-from camisole.languages import Python
+from camisole.languages.python import Python
 
 MAX_BOX_AMOUNT = 5
 

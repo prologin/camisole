@@ -7,7 +7,7 @@ def python_list(n, max_mem=None):
     args = {}
     if max_mem:
         args['execute'] = {'mem': max_mem}
-    return camisole.languages.Python({
+    return camisole.languages.python.Python({
         'tests': [{}],
         'source': 'print(list(range({}))[-1])'.format(n),
         **args

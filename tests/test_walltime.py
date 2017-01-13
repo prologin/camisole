@@ -9,7 +9,7 @@ def python_sleep(duration, limit=None):
     args = {}
     if limit:
         args['execute'] = {'wall-time': limit}
-    return camisole.languages.Python({
+    return camisole.languages.python.Python({
         'tests': [{}],
         'source': 'import time; time.sleep({:f})'.format(duration),
         **args

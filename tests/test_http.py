@@ -61,6 +61,7 @@ async def test_test(test_client, loop):
     result = await request_test(client, json.dumps({}))
     assert result['success']
     assert result['results']['python']['success']
+    assert result['results']['python']['result'] == 'exact'
 
 
 async def test_system(test_client, loop):

@@ -54,6 +54,7 @@ class Lang(metaclass=MetaLang):
     version_lines = None
     allowed_dirs = []
     extra_binaries = set()
+    reference_source = None
 
     def __init_subclass__(cls, register=True, name=None, **kwargs):
         super().__init_subclass__(**kwargs)

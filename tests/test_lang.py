@@ -1,6 +1,6 @@
 import pytest
 
-from camisole.languages import Python
+from camisole.languages.python import Python
 
 
 @pytest.mark.asyncio

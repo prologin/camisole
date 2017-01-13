@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 
+from camisole.utils import indent
+
+
 async def print_working_languages(verbosity):
     from camisole.languages import all
-    from camisole.ref import test
+    from camisole.ref import test, Result
     from pprint import pformat
     import sys
 
@@ -12,22 +15,20 @@ async def print_working_languages(verbosity):
         return '\n'.join((relevant['meta']['message'], relevant['stderr']))
 
     use_color = sys.stdout.isatty()
-    status = {True: 'OK', False: 'FAIL'}
-    colors = {True: 32, False: 31}  # green, red
-
     max_length = max(map(len, all())) + 2
     for lang_name in sorted(all()):
-        ok, result = await test(lang_name)
-        ok_msg = (f'\x1B[{colors[ok]}m{status[ok]}\033[0m' if use_color
-                  else status[ok])
+        result, raw = await test(lang_name)
+        status, color = result.value
+        ok_msg = (f'\x1B[{color}m{status}\033[0m' if use_color else status)
         print(f'{lang_name + " ":.<{max_length}} {ok_msg}', flush=True)
 
-        if not ok and verbosity > 0:
-            if verbosity == 1:
-                message = extract_fail_message(result).strip()
+        if result is not Result.exact and verbosity > 0:
+            if result is Result.whitespace:
+                print(indent(repr(raw['tests'][0]['stdout'])))
+            elif verbosity == 1:
+                print(indent(extract_fail_message(raw).strip()))
             else:
-                message = pformat(result)
-            print('\n'.join(f'    {line}' for line in message.splitlines()))
+                print(indent(pformat(raw)))
 
 
 def main():
@@ -71,6 +72,9 @@ def main():
     args = parser.parse_args()
 
     logging.basicConfig(level=args.logging.upper())
+
+    # import built-in languages
+    camisole.languages._import_builtins()
 
     # import extra languages
     if args.modules:

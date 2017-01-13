@@ -6,7 +6,7 @@ from pathlib import Path
 from docutils import nodes
 from docutils.parsers.rst.directives.tables import ListTable
 
-from camisole.languages import all
+import camisole.languages
 
 
 def build_list(binaries):
@@ -56,6 +56,9 @@ class CamisoleLanguageTable(ListTable):
                        if inst.available()]
 
     def run(self):
+        camisole.languages._import_builtins()
+        all_langs = camisole.languages.all().values()
+
         self.options['widths'] = 'auto'
         title, messages = self.make_title()
 
@@ -67,7 +70,7 @@ class CamisoleLanguageTable(ListTable):
             headers.append([nodes.paragraph(text=f"{f.name} packages")])
 
         table_body = []
-        for cls in sorted(all().values(), key=lambda e: e.name.lower()):
+        for cls in sorted(all_langs, key=lambda e: e.name.lower()):
             binaries = set(cls.required_binaries())
             if not binaries:
                 continue
