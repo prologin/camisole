@@ -26,7 +26,21 @@ from pathlib import Path
 import camisole.isolate
 
 
-class Lang:
+class MetaLang(type):
+    """Metaclass to customize Lang subclasses __repr__()"""
+
+    def __repr__(self):
+        return "<{realname}{name}>".format(
+            realname=self.__name__,
+            name=f' “{self.name}”' if self.__name__ != self.name else '')
+
+
+class Lang(metaclass=MetaLang):
+    """
+    Abstract language descriptor.
+
+    Subclass and define the relevant attributes and methods, if need be.
+    """
     _registry = {}
 
     source_ext = None
@@ -179,6 +193,13 @@ class Lang:
 
 
 class PipelineLang(Lang, register=False):
+    """
+    A meta-language that compiles multiple sub-languages, passing the
+    compilation result to the next sub-language, and eventually executing the
+    last result.
+
+    Subclass and define the ``sub_langs`` attribute.
+    """
     sub_langs = []
 
     @classmethod
