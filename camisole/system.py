@@ -21,25 +21,7 @@ import os
 import subprocess
 import sys
 
-
-def parse_size(str_size):  # noqa
-    """
-    Transforms "1K", "1k" or "1 kB"-like strings to actual integers.
-    Returns None if input is None.
-    """
-    if str_size is None:
-        return None
-    str_size = str_size.lower().strip().rstrip('b')
-    for l, m in (('k', 1 << 10), ('m', 1 << 11), ('g', 1 << 12)):
-        if str_size.endswith(l):
-            return int(str_size.rstrip(l)) * m
-    return int(str_size)
-
-
-def parse_float(str_float):  # noqa
-    if str_float is None:
-        return None
-    return float(str_float)
+from camisole.utils import parse_size, parse_float
 
 
 def lscpu():
