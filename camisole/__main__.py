@@ -33,25 +33,34 @@ async def print_working_languages(verbosity):
 def main():
     import argparse
     import asyncio
+    import camisole.loader
     import camisole.http
     import logging
+    import os
 
     parser = argparse.ArgumentParser(
-        description="asyncio-based source compiler and test runner",
-        add_help=False)
-    parser.add_argument('-h', '--host', default='0.0.0.0')
-    parser.add_argument('-p', '--port', type=int, default=8080)
+        description="asyncio-based source compiler and test runner")
     parser.add_argument(
         '-l',
         '--logging',
         default='error',
         choices=[l.lower() for l in logging._nameToLevel],
         help="logging level")
-    parser.add_argument('--help', action='help')
+    parser.add_argument(
+        '-m',
+        '--module',
+        dest='modules',
+        action='append',
+        help="extra modules to load (customize search path with CAMISOLEPATH)")
 
-    sub = parser.add_subparsers(dest='command')
-    sub.add_parser('serve')
-    parse_languages = sub.add_parser('languages')
+    cmd = parser.add_subparsers(dest='command')
+
+    parse_serve = cmd.add_parser('serve', add_help=False)
+    parse_serve.add_argument('-h', '--host', default='0.0.0.0')
+    parse_serve.add_argument('-p', '--port', type=int, default=8080)
+    parse_serve.add_argument('--help', action='help')
+
+    parse_languages = cmd.add_parser('languages')
     parse_languages.add_argument(
         '-v',
         dest='verbose',
@@ -62,13 +71,26 @@ def main():
     args = parser.parse_args()
 
     logging.basicConfig(level=args.logging.upper())
+
+    # import extra languages
+    if args.modules:
+        path = os.environ.get('CAMISOLEPATH', '')
+        camisole.loader.load_modules(args.modules, path)
+
     loop = asyncio.get_event_loop()
 
     if args.command == 'languages':
         verbosity = sum(args.verbose or [])
         loop.run_until_complete(print_working_languages(verbosity))
-    else:  # default is serve
+
+    elif args.command == 'serve':
+        from camisole.languages import all
+        logging.info("Registry has %d languages:\n%s", len(all()),
+                     '\n'.join(f'    {l!r}' for l in all().values()))
         camisole.http.run(host=args.host, port=args.port)
+
+    else:
+        parser.exit(message=parser.format_usage())
 
 
 if __name__ == '__main__':
