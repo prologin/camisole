@@ -30,7 +30,7 @@ async def print_working_languages(verbosity):
             print('\n'.join(f'    {line}' for line in message.splitlines()))
 
 
-if __name__ == '__main__':
+def main():
     import argparse
     import asyncio
     import camisole.http
@@ -69,3 +69,7 @@ if __name__ == '__main__':
         loop.run_until_complete(print_working_languages(verbosity))
     else:  # default is serve
         camisole.http.run(host=args.host, port=args.port)
+
+
+if __name__ == '__main__':
+    main()

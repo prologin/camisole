@@ -9,4 +9,7 @@ setup(
     author='serialk, zopieux',
     description='An asyncio-based source compiler and test runner.',
     install_requires=['aiohttp'],
+    entry_points={
+        'console_scripts': ['camisole = camisole.__main__:main'],
+    },
 )
