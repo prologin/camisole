@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='camisole',
     version='0.3',
-    packages=['camisole'],
+    packages=find_packages(),
     url='https://bitbucket.com/prologin/camisole',
     license='GPL',
     author='serialk, zopieux',
