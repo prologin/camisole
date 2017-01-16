@@ -66,7 +66,7 @@ def main():
         dest='verbose',
         action='append_const',
         const=1,
-        help="repeat to increase verbosity")
+        help="increase verbosity (up to two)")
 
     args = parser.parse_args()
 
