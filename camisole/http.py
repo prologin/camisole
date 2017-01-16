@@ -47,11 +47,9 @@ async def test_handler(data):
     langs = camisole.languages.all().keys()
     langs -= set(data.get('exclude', []))
 
-    results = {name: {'success': result is camisole.ref.Result.exact,
-                      'result': result.name,
-                      'raw': raw}
+    results = {name: {'success': success, 'raw': raw}
                for name in langs
-               for result, raw in [await camisole.ref.test(name)]}
+               for success, raw in [await camisole.ref.test(name)]}
     return {'results': results}
 
 

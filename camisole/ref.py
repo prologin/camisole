@@ -1,13 +1,4 @@
-import enum
-
 import camisole.languages
-
-
-class Result(enum.Enum):
-    exact = ('OK', 32)
-    whitespace = ('WHITESPACE', 33)
-    different = ('WRONG OUTPUT', 31)
-    error = ('ERROR', 31)
 
 
 async def test(lang_name):
@@ -18,9 +9,7 @@ async def test(lang_name):
     try:
         stdout = raw_result['tests'][0]['stdout']
         if stdout == expected:
-            return Result.exact, raw_result
-        elif stdout.strip() == expected.strip():
-            return Result.whitespace, raw_result
-        return Result.different, raw_result
+            return True, raw_result
+        return False, raw_result
     except (KeyError, IndexError, ValueError):
-        return Result.error, raw_result
+        return False, raw_result

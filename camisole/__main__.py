@@ -5,7 +5,7 @@ from camisole.utils import indent
 
 async def print_working_languages(verbosity):
     from camisole.languages import all
-    from camisole.ref import test, Result
+    from camisole.ref import test
     from pprint import pformat
     import sys
 
@@ -16,16 +16,15 @@ async def print_working_languages(verbosity):
 
     use_color = sys.stdout.isatty()
     max_length = max(map(len, all())) + 2
+
     for lang_name in sorted(all()):
-        result, raw = await test(lang_name)
-        status, color = result.value
+        success, raw = await test(lang_name)
+        status, color = ('OK', 32) if success else ('FAIL', 31)
         ok_msg = (f'\x1B[{color}m{status}\033[0m' if use_color else status)
         print(f'{lang_name + " ":.<{max_length}} {ok_msg}', flush=True)
 
-        if result is not Result.exact and verbosity > 0:
-            if result is Result.whitespace:
-                print(indent(repr(raw['tests'][0]['stdout'])))
-            elif verbosity == 1:
+        if not success and verbosity > 0:
+            if verbosity == 1:
                 print(indent(extract_fail_message(raw).strip()))
             else:
                 print(indent(pformat(raw)))
