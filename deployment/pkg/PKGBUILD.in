@@ -12,7 +12,8 @@ makedepends=('git' 'python-setuptools')
 optdepends=()
 source=("git+${url}.git"
         'camisole.service'
-        'sysusers.conf')
+        'sysusers.conf'
+        '_camisole')
 sha1sums=('SKIP')
 install=${pkgname}.install
 
@@ -26,4 +27,6 @@ package() {
     python setup.py install --root="${pkgdir}" || return 1
     install -Dm644 "${srcdir}/sysusers.conf" "${pkgdir}/usr/lib/sysusers.d/${_gitname}.conf"
     install -Dm644 "${srcdir}/camisole.service" "${pkgdir}/usr/lib/systemd/system/${_gitname}.service"
+    install -m0755 -d "$pkgdir"/usr/share/zsh/site-functions
+    install -m0644 "${srcdir}/_camisole" "$pkgdir"/usr/share/zsh/site-functions
 }

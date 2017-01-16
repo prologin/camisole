@@ -7,7 +7,7 @@ cd camisole-git
 
 git pull
 
-for f in PKGBUILD .SRCINFO camisole-git.install camisole.service sysusers.conf
+for f in PKGBUILD .SRCINFO camisole-git.install camisole.service sysusers.conf _camisole
 do
 	cp "../$f" .
 done

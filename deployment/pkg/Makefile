@@ -1,4 +1,4 @@
-OBJS := camisole-git.install camisole.service sysusers.conf build_optdepends.py
+OBJS := camisole-git.install camisole.service sysusers.conf _camisole build_optdepends.py
 
 all: pkg .SRCINFO
 

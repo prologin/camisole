@@ -2,15 +2,16 @@ from collections import defaultdict
 import subprocess
 import sys
 
-from camisole.languages import all, by_name, Brainfuck, FSharp, Java
+from camisole.languages import all, by_name, _import_builtins
+_import_builtins()
 
-FROM_AUR = {'esotope-bfc-git': {Brainfuck},
-            'fsharp': {FSharp}}
+FROM_AUR = {'esotope-bfc-git': {by_name('brainfuck')},
+            'fsharp': {by_name('f#')}}
 
 # java packages consist of symlinks to handle both Java 7 & 8, so we force
 # the version (8) here
-OVERWRITE = {Java: {'/usr/lib/jvm/java-8-openjdk/bin/java',
-                    '/usr/lib/jvm/java-8-openjdk/bin/javac'}}
+OVERWRITE = {by_name('java'): {'/usr/lib/jvm/java-8-openjdk/bin/java',
+                               '/usr/lib/jvm/java-8-openjdk/bin/javac'}}
 
 
 def list_paths():
@@ -24,6 +25,7 @@ def list_paths():
             yield cls, cls.compiler
         if cls.interpreter:
             yield cls, cls.interpreter
+        yield from cls.extra_binaries
 
 
 def get_package(binary):
