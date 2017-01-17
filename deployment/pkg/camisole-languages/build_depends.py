@@ -48,9 +48,10 @@ if __name__ == '__main__':
         packages[pkg].add(lang)
     packages.pop('python')  # already a strong dependency
     packages = sorted(packages.items())
-    lines = ["'{}: compile {} sources'".format(pkg, ', '.join(sorted(lang.__name__ for lang in langs)))
-             for pkg, langs in packages]
-    prefix = 'optdepends=('
+    lines = ["{:<20} # handle {} sources".format(
+                "'{}'{}".format(pkg, ')' if i == len(packages) - 1 else ''),
+                ', '.join(sorted(lang.__name__ for lang in langs)))
+             for i, (pkg, langs) in enumerate(packages)]
+    prefix = 'depends=('
     print('{}{}'.format(prefix, lines[0]))
-    print('\n'.join(' ' * len(prefix) + line for line in lines[1:]), end=')')
-    print()
+    print('\n'.join(' ' * len(prefix) + line for line in lines[1:]))

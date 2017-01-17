@@ -1,7 +1,6 @@
-/src/
-/pkg/
-/camisole/
+*/src/
+*/pkg/
+camisole-git/camisole/
 *.tar.*
 .SRCINFO
 PKGBUILD
-

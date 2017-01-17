@@ -1,0 +1,8 @@
+pkgname=camisole-languages
+pkgver=1
+pkgrel=1
+pkgdesc="Meta-package for the base languages of camisole"
+arch=('any')
+url="https://bitbucket.org/prologin/camisole"
+license=('GPL')
+depends=()

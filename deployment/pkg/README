@@ -1,0 +1,9 @@
+Requirements:
+
+  pacaur -S pkgfile pkgbuild-introspection
+  pkgfile --update
+
+Make packages and push:
+
+  make
+  ./push
