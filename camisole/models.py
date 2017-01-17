@@ -94,8 +94,8 @@ class Lang(metaclass=MetaLang):
             allowed_dirs=self.allowed_dirs + tmparg)
         async with isolator:
             wd = Path(isolator.path)
-            source = wd / ('source' + self.source_ext)
-            compiled = wd / 'compiled'
+            source = wd / self.source_filename()
+            compiled = wd / self.execute_filename()
             with source.open('w') as sourcefile:
                 sourcefile.write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
@@ -170,6 +170,9 @@ class Lang(metaclass=MetaLang):
                 return c.read()
         except (FileNotFoundError, PermissionError):
             pass
+
+    def source_filename(self):
+        return 'source' + self.source_ext
 
     def execute_filename(self):
         return 'compiled'
