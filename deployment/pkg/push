@@ -10,10 +10,13 @@ pushpkg() {
     shift
 
     pushd $pkgname
-    [[ ! -d $pkgname ]] && git clone ssh://aur@aur.archlinux.org/$pkgname.git
-    pushd $pkgname
-
-    git pull
+    if [[ ! -d $pkgname ]]; then
+        git clone ssh://aur@aur.archlinux.org/$pkgname.git
+        pushd $pkgname
+    else
+        pushd $pkgname
+        git pull --rebase
+    fi
 
     for f in $*; do
         cp "../$f" .
@@ -28,7 +31,7 @@ pushpkg() {
         echo
         [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
 
-        git push
+        git push origin master
     fi
 
     popd
