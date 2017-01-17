@@ -9,6 +9,7 @@ license=('GPL')
 conflicts=('camisole')
 provides=('camisole')
 depends=('python' 'python-aiohttp' 'isolate-git')
+optdepends=('camisole-languages: Metapackage for all the built-in languages')
 makedepends=('git' 'python-setuptools')
 source=("git+${url}.git"
         'camisole.service'
