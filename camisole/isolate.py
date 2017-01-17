@@ -168,9 +168,9 @@ class Isolator:
                 self.stdout = f.read()
             with (self.path / self.stderr_file).open(errors='ignore') as f:
                 self.stderr = f.read()
-        except PermissionError:
+        except (IOError, PermissionError):
             # Something went wrong, isolate was killed before changing the
-            # permissions, empty stdout/stderr
+            # permissions or unreadable stdout/stderr
             self.stdout = ''
             self.stderr = ''
 
