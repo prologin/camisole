@@ -1,6 +1,7 @@
 import aiohttp.web
 import functools
 import json
+import traceback
 
 import camisole.languages
 import camisole.ref
@@ -17,8 +18,8 @@ def json_handler(wrapped):
             except json.decoder.JSONDecodeError:
                 raise RuntimeError('Invalid JSON')
             result = await wrapped(data)
-        except Exception as e:
-            result = {'success': False, 'error': str(e)}
+        except Exception:
+            result = {'success': False, 'error': traceback.format_exc()}
         else:
             result = {'success': True, **result}
         result = json.dumps(result)
