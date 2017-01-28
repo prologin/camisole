@@ -41,19 +41,26 @@ public class JavaReference {
         return self.java_class + self.compiled_ext
 
     def execute_command(self, output):
-        # foo/Bar.class is run with $ java -cp foo Bar
-        cmd = [self.interpreter,
-                '-cp', str(Path(self.filter_box_prefix(output)).parent),
-                self.java_class]
+
+        cmd = [self.interpreter]
 
         # FIXME: we need to specify a heap size that's way lower than the total
         # amount of memory allowed in the cgroup, so that Java is able to
         # allocate the heap, the stack and the runtime in this address space.
-        # This is a temporary heuristic to guess an appropriate heap size.
         try:
-            heap_constraint = (opts['execute']['mem'] - 20000) * 2 // 3
-            cmd.append(f'-Xmx{heap_constraint}k')
+            # heap_constraint = max(32, (self.opts['execute']['mem'] - 400000) // 1024)
+            heap_constraint = 128
+            cmd += [f'-XX:MaxHeapSize={heap_constraint}M',
+                    f'-XX:MaxMetaspaceSize=16M',
+                    f'-XX:CompressedClassSpaceSize=4M',
+                    f'-XX:ReservedCodeCacheSize=4M',
+                    '-XX:+UseConcMarkSweepGC']
+
         except KeyError:
             pass
+
+        # foo/Bar.class is run with $ java -cp foo Bar
+        cmd += ['-cp', str(Path(self.filter_box_prefix(output)).parent),
+                self.java_class]
 
         return cmd
