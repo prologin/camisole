@@ -22,6 +22,22 @@ public class JavaReference {
 }
 '''
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Don't even try to cgroup the java process:
+        # http://stackoverflow.com/questions/19910468
+        # https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/1241926
+        # https://bugs.openjdk.java.net/browse/JDK-8071445
+        # http://bugs.java.com/view_bug.do?bug_id=8043516
+
+        # Instead, pass the memory limit as the maximum heap size of the
+        # runtime.
+        try:
+            self.heapsize = self.opts['execute'].pop('mem')
+        except KeyError:
+            self.heapsize = None
+
     def compile_opt_out(self, output):
         # javac has no output directive, file name is class name
         return []
@@ -41,26 +57,13 @@ public class JavaReference {
         return self.java_class + self.compiled_ext
 
     def execute_command(self, output):
-
         cmd = [self.interpreter]
 
-        # FIXME: we need to specify a heap size that's way lower than the total
-        # amount of memory allowed in the cgroup, so that Java is able to
-        # allocate the heap, the stack and the runtime in this address space.
-        try:
-            # heap_constraint = max(32, (self.opts['execute']['mem'] - 400000) // 1024)
-            heap_constraint = 128
-            cmd += [f'-XX:MaxHeapSize={heap_constraint}M',
-                    f'-XX:MaxMetaspaceSize=16M',
-                    f'-XX:CompressedClassSpaceSize=4M',
-                    f'-XX:ReservedCodeCacheSize=4M',
-                    '-XX:+UseConcMarkSweepGC']
-
-        except KeyError:
-            pass
+        # Use the memory limit as a maximum heap size
+        if self.heapsize is not None:
+            cmd.append(f'-Xmx{self.heapsize}k')
 
         # foo/Bar.class is run with $ java -cp foo Bar
         cmd += ['-cp', str(Path(self.filter_box_prefix(output)).parent),
                 self.java_class]
-
         return cmd
