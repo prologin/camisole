@@ -3,29 +3,49 @@ Usage
 
 .. highlight:: console
 
-TODO
+|project| exposes a few commands for inspection and self-testing, in addition
+to the main ``serve`` command.
 
 .. _usage-languages:
 
 ``camisole languages``
 ----------------------
 
-List supported languages and check if they are working::
+List supported languages::
 
     $ camisole languages
+    Name         | Display name  | Module                          | Class name
+    ada          | Ada           | camisole.languages.ada          | Ada
+    brainfuck    | Brainfuck     | camisole.languages.brainfuck    | Brainfuck
+    c            | C             | camisole.languages.c            | C
+
+
+You can remove the header by piping the result into ``tail``::
+
+    $ camisole language | tail -n+2
+    ada          | Ada           | camisole.languages.ada          | Ada
+
+.. _usage-test:
+
+``camisole test``
+-----------------
+
+List supported languages and check if they are working::
+
+    $ camisole test
     ada ......... FAIL
     brainfuck ... OK
     c ........... OK
 
 You can show slightly more verbose failures::
 
-    $ camisole languages -v
+    $ camisole test -v
     ada ......... FAIL
         execve("/usr/bin/gnatmake"): No such file or directory
 
 Or much more verbose failures::
 
-    $ camisole languages -vv
+    $ camisole test -vv
     ada ......... FAIL
     {'compile': {'exitcode': 2,
                  'meta': {'cg-mem': 0,

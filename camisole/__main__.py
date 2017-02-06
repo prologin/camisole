@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
-from camisole.utils import indent
+from camisole.utils import indent, tabulate
 
 
-async def print_working_languages(verbosity):
-    from camisole.languages import all
+async def print_working_languages(languages, verbosity):
     from camisole.ref import test
     from pprint import pformat
     import sys
@@ -15,9 +14,9 @@ async def print_working_languages(verbosity):
         return '\n'.join((relevant['meta']['message'], relevant['stderr']))
 
     use_color = sys.stdout.isatty()
-    max_length = max(map(len, all())) + 2
+    max_length = max(map(len, languages)) + 2
 
-    for lang_name in sorted(all()):
+    for lang_name in languages:
         success, raw = await test(lang_name)
         status, color = ('OK', 32) if success else ('FAIL', 31)
         ok_msg = (f'\x1B[{color}m{status}\033[0m' if use_color else status)
@@ -61,13 +60,18 @@ def main():
     parse_serve.add_argument('--help', action='help')
 
     parse_languages = cmd.add_parser('languages')
-    parse_languages.add_argument(
+
+    parse_test = cmd.add_parser('test')
+    parse_test.add_argument(
         '-v',
         dest='verbose',
         action='append_const',
         const=1,
         help="increase verbosity (up to two)")
-
+    parse_test.add_argument(
+        'languages',
+        nargs=argparse.REMAINDER,
+        help="languages to test")
     args = parser.parse_args()
 
     logging.basicConfig(level=args.logging.upper())
@@ -83,8 +87,17 @@ def main():
     loop = asyncio.get_event_loop()
 
     if args.command == 'languages':
+        from camisole.languages import all
+        rows = [(lang, cls.name, cls.__module__, cls.__name__)
+                for lang, cls in sorted(all().items())]
+        print("\n".join(tabulate(rows,
+            headers=("Name", "Display name", "Module", "Class name"))))
+
+    elif args.command == 'test':
+        from camisole.languages import all
+        languages = args.languages or all().keys()
         verbosity = sum(args.verbose or [])
-        loop.run_until_complete(print_working_languages(verbosity))
+        loop.run_until_complete(print_working_languages(languages, verbosity))
 
     elif args.command == 'serve':
         from camisole.languages import all

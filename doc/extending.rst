@@ -47,7 +47,7 @@ With that in mind, create a new Python script that defines a subclass of
 * ``reference_source`` is the source, written in the target language, of a
   program that shall output the string ``42\n`` (including the newline).
   This *reference program* will be used to test for working languages, eg. when
-  calling :ref:`usage-languages`, so it is important to get it right.
+  calling :ref:`usage-test`, so it is important to get it right.
 
 By simply creating this class and making it known to |project|, you'll be able
 to submit jobs written in LOLCODE. By default, the name of the newly defined
@@ -63,7 +63,7 @@ If you like, you can overwrite the language name::
 .. highlight:: console
 
 To check if |project| recognizes your new language, add the path to
-``lolcode.py`` to the |project| path and run :ref:`usage-languages`::
+``lolcode.py`` to the |project| path and run :ref:`usage-test`::
 
     $ export CAMISOLEPATH=~/mylangs  # so camisole can find lolcode.py
     $ camisole -m lolcode languages
