@@ -113,10 +113,7 @@ class Lang(metaclass=MetaLang):
             self.opts.get('execute', {}), allowed_dirs=self.allowed_dirs)
         async with isolator:
             wd = isolator.path
-            compiled = Path(wd) / self.execute_filename()
-            with compiled.open('wb') as c:
-                c.write(binary)
-            compiled.chmod(0o700)
+            compiled = self.write_binary(Path(wd), binary)
             await isolator.run(self.execute_command(str(compiled)),
                                env=self.interpret_env,
                                data=input_data)
@@ -170,6 +167,13 @@ class Lang(metaclass=MetaLang):
                 return c.read()
         except (FileNotFoundError, PermissionError):
             pass
+
+    def write_binary(self, path, binary):
+        compiled = path / self.execute_filename()
+        with compiled.open('wb') as c:
+            c.write(binary)
+        compiled.chmod(0o700)
+        return compiled
 
     def source_filename(self):
         return 'source' + self.source_ext
