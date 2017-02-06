@@ -1,5 +1,7 @@
 import textwrap
 
+import math
+
 
 def uniquify(seq):
     seen = set()
@@ -28,3 +30,18 @@ def parse_float(str_float):
     if str_float is None:
         return None
     return float(str_float)
+
+
+def tabulate(rows, headers=None, fmt="", margin=1):
+    ncols = len(rows[0])
+    lengths = [-math.inf] * ncols
+    # don't side-effect modify rows
+    rows = ([headers] or []) + rows
+    for row in rows:
+        lengths = [max(l, len(col)) for l, col in zip(lengths, row)]
+    lengths = [l + margin for l in lengths]
+    if not fmt:
+        fmt = "".join("{:<{s%d}}%s" % (i, " | " if i < ncols  - 1 else "")
+                      for i in range(ncols))
+    for row in rows:
+        yield fmt.format(*row, **{f's{i}': l for i, l in enumerate(lengths)})
