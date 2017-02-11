@@ -63,7 +63,7 @@ class Lang(metaclass=MetaLang):
             return
         registry_name = cls.name.lower()
         if registry_name in cls._registry:
-            full_name = lambda c: c.__module__ + '.' + c.__qualname__
+            full_name = lambda c: f"{c.__module__}.{c.__qualname__}"
             warnings.warn(f"Lang registry: name '{registry_name}' for "
                           f"{full_name(cls)} overwrites "
                           f"{full_name(Lang._registry[registry_name])}")
@@ -87,7 +87,7 @@ class Lang(metaclass=MetaLang):
         # We give compilers a nice /tmp playground
         root_tmp = tempfile.TemporaryDirectory(prefix='camisole-tmp-')
         os.chmod(root_tmp.name, 0o777)
-        tmparg = ['/tmp=' + root_tmp.name + ':rw']
+        tmparg = [f'/tmp={root_tmp.name}:rw']
 
         isolator = camisole.isolate.get_isolator(
             self.opts.get('compile', {}),
