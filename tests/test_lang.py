@@ -5,8 +5,8 @@ from camisole.languages.python import Python
 
 @pytest.mark.asyncio
 async def test_compile_no_compiler():
-    result = await Python({'source': 'print(42)'}).compile()
-    assert result == (0, None, None, None)
+    with pytest.raises(RuntimeError):
+        await Python({'source': 'print(42)'}).compile()
 
 
 @pytest.mark.asyncio

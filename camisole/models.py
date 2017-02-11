@@ -82,7 +82,7 @@ class Lang(metaclass=MetaLang):
 
     async def compile(self):
         if not self.compiler:
-            return 0, None, None, None
+            raise RuntimeError("no compiler")
 
         # We give compilers a nice /tmp playground
         root_tmp = tempfile.TemporaryDirectory(prefix='camisole-tmp-')
