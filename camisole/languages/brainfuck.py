@@ -14,7 +14,7 @@ class BrainfuckToC(Lang, register=False):
         # there is no way to specify an output file, use stderr
         return []
 
-    async def read_compiled(self, path, isolator):
+    def read_compiled(self, path, isolator):
         return isolator.stdout.encode()
 
 

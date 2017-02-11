@@ -100,7 +100,7 @@ class Lang(metaclass=MetaLang):
                 sourcefile.write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
             await isolator.run(cmd, env=self.compile_env)
-            binary = await self.read_compiled(str(compiled), isolator)
+            binary = self.read_compiled(str(compiled), isolator)
 
         root_tmp.cleanup()
 
@@ -161,7 +161,7 @@ class Lang(metaclass=MetaLang):
     def compile_opt_out(self, output):
         return ['-o', output]
 
-    async def read_compiled(self, path, isolator):
+    def read_compiled(self, path, isolator):
         try:
             with Path(path).open('rb') as c:
                 return c.read()
