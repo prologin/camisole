@@ -1,4 +1,8 @@
+import sys
 from setuptools import setup, find_packages
+
+if sys.version_info < (3, 6):
+    sys.exit("Camisole requires Python 3.6 or later.")
 
 setup(
     name='camisole',
