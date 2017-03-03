@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Prologin-SADM.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 import os
 import re
 import tempfile
@@ -61,6 +62,14 @@ class Lang(metaclass=MetaLang):
         cls.name = name or cls.__name__
         if not register:
             return
+
+        for ptype in ('compiler', 'interpreter'):
+            ppath = getattr(cls, ptype)
+            if ppath is not None and not os.access(ppath, os.X_OK):
+                logging.info(f'{cls.name}: cannot access {ptype} `{ppath}`, '
+                             'language not loaded')
+                return
+
         registry_name = cls.name.lower()
         if registry_name in cls._registry:
             full_name = lambda c: f"{c.__module__}.{c.__qualname__}"
