@@ -63,10 +63,9 @@ class Lang(metaclass=MetaLang):
         if not register:
             return
 
-        for ptype in ('compiler', 'interpreter'):
-            ppath = getattr(cls, ptype)
-            if ppath is not None and not os.access(ppath, os.X_OK):
-                logging.info(f'{cls.name}: cannot access {ptype} `{ppath}`, '
+        for binary in cls.required_binaries():
+            if binary is not None and not os.access(binary, os.X_OK):
+                logging.info(f'{cls.name}: cannot access `{binary}`, '
                              'language not loaded')
                 return
 
