@@ -5,8 +5,7 @@ import sys
 from camisole.languages import all, by_name, _import_builtins
 _import_builtins()
 
-FROM_AUR = {'esotope-bfc-git': {by_name('brainfuck')},
-            'fsharp': {by_name('f#')}}
+FROM_AUR = {'esotope-bfc-git': {by_name('brainfuck')},}
 
 # java packages consist of symlinks to handle both Java 7 & 8, so we force
 # the version (8) here
