@@ -18,6 +18,22 @@ def _import_builtins():
 
 
 __all__ = [
-    'ada', 'brainfuck', 'c', 'csharp', 'cxx', 'fsharp', 'haskell', 'java',
-    'javascript', 'lua', 'ocaml', 'pascal', 'perl', 'php', 'python', 'scheme',
-    'visualbasic']
+    'ada',
+    'brainfuck',
+    'c',
+    'csharp',
+    'cxx',
+    'fsharp',
+    'haskell',
+    'java',
+    'javascript',
+    'lua',
+    'ocaml',
+    'pascal',
+    'perl',
+    'php',
+    'python',
+    'ruby',
+    'scheme',
+    'visualbasic',
+]
