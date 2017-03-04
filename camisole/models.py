@@ -97,7 +97,7 @@ class Lang(metaclass=MetaLang):
         os.chmod(root_tmp.name, 0o777)
         tmparg = [f'/tmp={root_tmp.name}:rw']
 
-        isolator = camisole.isolate.get_isolator(
+        isolator = camisole.isolate.Isolator(
             self.opts.get('compile', {}),
             allowed_dirs=self.allowed_dirs + tmparg)
         async with isolator:
@@ -117,7 +117,7 @@ class Lang(metaclass=MetaLang):
     async def execute(self, binary, input_data=None):
         if input_data is not None:
             input_data = input_data.encode()
-        isolator = camisole.isolate.get_isolator(
+        isolator = camisole.isolate.Isolator(
             self.opts.get('execute', {}), allowed_dirs=self.allowed_dirs)
         async with isolator:
             wd = isolator.path

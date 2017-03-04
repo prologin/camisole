@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+import asyncio
+
 from camisole.utils import indent, tabulate
 
 
@@ -16,8 +18,11 @@ async def print_working_languages(languages, verbosity):
     use_color = sys.stdout.isatty()
     max_length = max(map(len, languages)) + 2
 
-    for lang_name in languages:
-        success, raw = await test(lang_name)
+    res = [asyncio.Task(test(lang_name)) for lang_name in languages]
+    await asyncio.wait(res)
+
+    for i, lang_name in enumerate(languages):
+        success, raw = res[i].result()
         status, color = ('OK', 32) if success else ('FAIL', 31)
         ok_msg = (f'\x1B[{color}m{status}\033[0m' if use_color else status)
         print(f'{lang_name + " ":.<{max_length}} {ok_msg}', flush=True)

@@ -34,38 +34,21 @@ async def communicate(cmdline, data=None, **kwargs):
     return retcode, stdout, stderr
 
 
-class IsolatorFactory:
-    def __init__(self, max_box_id=99):
-        self.max_box_id = max_box_id
-        self.available_box_id = set(range(self.max_box_id + 1))
-
-    def __call__(self, *args, **kwargs):
-        try:
-            curr_id = self.available_box_id.pop()
-        except KeyError:
-            raise RuntimeError("No isolate box ID available.")
-        else:
-            return Isolator(curr_id, *args, restore_id_cb=self.restore_id,
-                            **kwargs)
-
-    def restore_id(self, box_id):
-        if box_id not in range(self.max_box_id + 1):
-            raise RuntimeError("Trying to restore box id {} outside of id "
-                               "range.".format(box_id))  # noqa
-        self.available_box_id.add(box_id)
-
-
 OPTIONS = ['mem', 'time', 'wall-time', 'fsize', 'processes', 'quota']
+
+# TODO(seirl): find a way to get those from the config?
+NUM_BOXES = 1000
+PATH_BOXES = pathlib.Path('/var/lib/isolate')
+
+BOX_ID_LOCK = asyncio.Lock()
 
 
 class Isolator:
-    def __init__(self, box_id, opts, allowed_dirs=None, restore_id_cb=None):
-        self.box_id = box_id
+    def __init__(self, opts, allowed_dirs=None):
         self.opts = opts
         self.allowed_dirs = allowed_dirs if allowed_dirs is not None else []
-        self.box_path = None
-        self.restore_id_cb = restore_id_cb
-        self.cmd_base = ['isolate', '--box-id', str(box_id), '--cg']
+        self.path = None
+        self.cmd_base = None
 
         # Directory containing all the info of the program
         self.stdout_file = '._stdout'
@@ -83,11 +66,20 @@ class Isolator:
         self.isolate_stderr = None
 
     async def __aenter__(self):
-        cmd_init = self.cmd_base + ['--init']
-        retcode, stdout, _ = await communicate(cmd_init)
-        self.path = pathlib.Path(stdout.strip().decode()) / 'box'
-        self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-meta-')
-        self.meta_file.__enter__()
+        with (await BOX_ID_LOCK):
+            busy = {int(p.name) for p in PATH_BOXES.iterdir()}
+            avail = set(range(NUM_BOXES)) - busy
+            try:
+                self.box_id = avail.pop()
+            except KeyError:
+                raise RuntimeError("No isolate box ID available.")
+            self.cmd_base = ['isolate', '--box-id', str(self.box_id), '--cg']
+
+            cmd_init = self.cmd_base + ['--init']
+            retcode, stdout, _ = await communicate(cmd_init)
+            self.path = pathlib.Path(stdout.strip().decode()) / 'box'
+            self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-meta-')
+            self.meta_file.__enter__()
 
     async def __aexit__(self, exc, value, tb):
         meta_defaults = {
@@ -130,8 +122,6 @@ class Isolator:
         await communicate(cmd_cleanup)
 
         self.meta_file.__exit__(exc, value, tb)
-        if self.restore_id_cb is not None:
-            self.restore_id_cb(self.box_id)
 
     async def run(self, cmdline, data=None, env=None, **kwargs):
         cmd_run = self.cmd_base[:]
@@ -173,6 +163,3 @@ class Isolator:
             # permissions or unreadable stdout/stderr
             self.stdout = ''
             self.stderr = ''
-
-
-get_isolator = IsolatorFactory()
