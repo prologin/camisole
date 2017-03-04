@@ -26,6 +26,7 @@ import warnings
 from pathlib import Path
 
 import camisole.isolate
+import camisole.utils
 
 
 class MetaLang(type):
@@ -86,10 +87,10 @@ class Lang(metaclass=MetaLang):
     @classmethod
     def resolve_binaries(cls):
         if cls.compiler:
-            cls.compiler = shutil.which(cls.compiler)
+            cls.compiler = camisole.utils.which(cls.compiler)
         if cls.interpreter:
-            cls.interpreter = shutil.which(cls.interpreter)
-        cls.extra_binaries = {k: shutil.which(v)
+            cls.interpreter = camisole.utils.which(cls.interpreter)
+        cls.extra_binaries = {k: camisole.utils.which(v)
                               for k, v in cls.extra_binaries.items()}
 
     @classmethod

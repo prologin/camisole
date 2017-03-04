@@ -1,6 +1,6 @@
-import textwrap
-
 import math
+import shutil
+import textwrap
 
 
 def uniquify(seq):
@@ -45,3 +45,7 @@ def tabulate(rows, headers=None, fmt="", margin=1):
                       for i in range(ncols))
     for row in rows:
         yield fmt.format(*row, **{f's{i}': l for i, l in enumerate(lengths)})
+
+
+def which(binary):
+    return shutil.which(binary) or binary
