@@ -114,11 +114,15 @@ class Lang(metaclass=MetaLang):
 
         return (isolator.isolate_retcode, isolator.info, binary)
 
-    async def execute(self, binary, input_data=None):
+    async def execute(self, binary, input_data=None, opts=None):
         if input_data is not None:
             input_data = input_data.encode()
-        isolator = camisole.isolate.Isolator(
-            self.opts.get('execute', {}), allowed_dirs=self.allowed_dirs)
+        if opts is None:
+            opts = {}
+        opts = {**self.opts.get('execute', {}), **opts}
+
+        isolator = camisole.isolate.Isolator(opts,
+                                             allowed_dirs=self.allowed_dirs)
         async with isolator:
             wd = isolator.path
             compiled = self.write_binary(Path(wd), binary)
@@ -147,7 +151,7 @@ class Lang(metaclass=MetaLang):
         if tests:
             result['tests'] = [{}] * len(tests)
         for i, test in enumerate(self.opts.get('tests', [])):
-            retcode, info = await self.execute(binary, test.get('stdin'))
+            retcode, info = await self.execute(binary, test.get('stdin'), test)
             result['tests'][i] = {
                 'name': test.get('name', 'test{:03d}'.format(i)),
                 **info
