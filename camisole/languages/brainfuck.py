@@ -3,9 +3,9 @@ from camisole.models import Lang, PipelineLang
 
 
 class BrainfuckToC(Lang, register=False):
-    _estope = '/usr/bin/esotope-bfc'
+    _estope = 'esotope-bfc'
     source_ext = '.bf'
-    compiler = '/usr/bin/python2'
+    compiler = 'python2'
     compile_opts = ['-S', _estope, '-v', '-fc']
     compile_env = {'PYTHONPATH': '/usr/lib/python2.7/site-packages'}
     extra_binaries = {_estope}

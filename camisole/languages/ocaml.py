@@ -3,7 +3,7 @@ from camisole.models import Lang
 
 class OCaml(Lang):
     source_ext = '.ml'
-    compiler = '/usr/bin/ocamlopt'
+    compiler = 'ocamlopt'
     compile_opts = ['-w', 'A']
     version_opt = '-v'
     version_lines = 1

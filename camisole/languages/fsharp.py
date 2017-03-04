@@ -3,10 +3,10 @@ from camisole.models import Lang
 
 class FSharp(Lang, name="F#"):
     source_ext = '.fs'
-    compiler = '/usr/bin/fsharpc'
+    compiler = 'fsharpc'
     compile_opts = ['-O']
     version_lines = 4
-    interpreter = '/usr/bin/mono'
+    interpreter = 'mono'
     reference_source = r'''
 #light
 open System

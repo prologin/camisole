@@ -3,7 +3,7 @@ from camisole.models import Lang
 
 class Pascal(Lang):
     source_ext = '.pas'
-    compiler = '/usr/bin/fpc'
+    compiler = 'fpc'
     compile_opts = ['-XD', '-Fainitc']
     version_opt = '-h'
     version_lines = 1

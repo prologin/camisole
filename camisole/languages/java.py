@@ -12,9 +12,9 @@ PSVMAIN_DESCRIPTOR = 'descriptor: ([Ljava/lang/String;)V'
 class Java(Lang):
     source_ext = '.java'
     compiled_ext = '.class'
-    compiler = '/usr/bin/javac'
-    disassembler = '/usr/bin/javap'
-    interpreter = '/usr/bin/java'
+    compiler = 'javac'
+    disassembler = 'javap'
+    interpreter = 'java'
     # /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jvm.cfg links to
     # /etc/java-8-openjdk/amd64/jvm.cfg
     allowed_dirs = ['/etc/java-8-openjdk']

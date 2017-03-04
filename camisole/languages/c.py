@@ -3,7 +3,7 @@ from camisole.models import Lang
 
 class C(Lang):
     source_ext = '.c'
-    compiler = '/usr/bin/gcc'
+    compiler = 'gcc'
     compile_opts = ['-std=c11', '-Wall', '-Wextra', '-O2']
     reference_source = r'''
 #include <stdio.h>

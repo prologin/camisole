@@ -3,9 +3,9 @@ from camisole.models import Lang
 
 class CSharp(Lang, name="C#"):
     source_ext = '.cs'
-    compiler = '/usr/bin/mcs'
+    compiler = 'mcs'
     compile_opts = ['-optimize+']
-    interpreter = '/usr/bin/mono'
+    interpreter = 'mono'
     reference_source = r'''
 using System;
 class Program

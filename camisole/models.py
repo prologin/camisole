@@ -20,6 +20,7 @@
 import logging
 import os
 import re
+import shutil
 import tempfile
 import warnings
 from pathlib import Path
@@ -63,6 +64,7 @@ class Lang(metaclass=MetaLang):
         if not register:
             return
 
+        cls.resolve_binaries()
         for binary in cls.required_binaries():
             if binary is not None and not os.access(binary, os.X_OK):
                 logging.info(f'{cls.name}: cannot access `{binary}`, '
@@ -79,6 +81,14 @@ class Lang(metaclass=MetaLang):
 
     def __init__(self, opts):
         self.opts = opts
+
+    @classmethod
+    def resolve_binaries(cls):
+        if cls.compiler:
+            cls.compiler = shutil.which(cls.compiler)
+        if cls.interpreter:
+            cls.interpreter = shutil.which(cls.interpreter)
+        cls.extra_binaries = list(map(shutil.which, cls.extra_binaries))
 
     @classmethod
     def required_binaries(cls):

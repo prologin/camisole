@@ -3,7 +3,7 @@ from camisole.models import Lang
 
 class Ada(Lang):
     source_ext = '.adb'
-    compiler = '/usr/bin/gnatmake'
+    compiler = 'gnatmake'
     compile_opts = ['-f']
     reference_source = r'''
 with Ada.Text_IO; use Ada.Text_IO;
