@@ -76,7 +76,10 @@ class Isolator:
             self.cmd_base = ['isolate', '--box-id', str(self.box_id), '--cg']
 
             cmd_init = self.cmd_base + ['--init']
-            retcode, stdout, _ = await communicate(cmd_init)
+            retcode, stdout, stderr = await communicate(cmd_init)
+            if retcode != 0:
+                raise RuntimeError("{} returned code {}: “{}”".format(
+                    cmd_init, retcode, stderr))
             self.path = pathlib.Path(stdout.strip().decode()) / 'box'
             self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-meta-')
             self.meta_file.__enter__()
@@ -119,7 +122,10 @@ class Isolator:
         }
 
         cmd_cleanup = self.cmd_base + ['--cleanup']
-        await communicate(cmd_cleanup)
+        retcode, stdout, stderr = await communicate(cmd_cleanup)
+        if retcode != 0:
+            raise RuntimeError("{} returned code {}: “{}”".format(
+                cmd_init, retcode, stderr))
 
         self.meta_file.__exit__(exc, value, tb)
 
