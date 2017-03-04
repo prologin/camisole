@@ -55,16 +55,17 @@ class Lang(metaclass=MetaLang):
     version_opt = '--version'
     version_lines = None
     allowed_dirs = []
-    extra_binaries = set()
+    extra_binaries = {}
     reference_source = None
 
     def __init_subclass__(cls, register=True, name=None, **kwargs):
         super().__init_subclass__(**kwargs)
         cls.name = name or cls.__name__
+        cls.resolve_binaries()
+
         if not register:
             return
 
-        cls.resolve_binaries()
         for binary in cls.required_binaries():
             if binary is not None and not os.access(binary, os.X_OK):
                 logging.info(f'{cls.name}: cannot access `{binary}`, '
@@ -88,7 +89,8 @@ class Lang(metaclass=MetaLang):
             cls.compiler = shutil.which(cls.compiler)
         if cls.interpreter:
             cls.interpreter = shutil.which(cls.interpreter)
-        cls.extra_binaries = list(map(shutil.which, cls.extra_binaries))
+        cls.extra_binaries = {k: shutil.which(v)
+                              for k, v in cls.extra_binaries.items()}
 
     @classmethod
     def required_binaries(cls):
@@ -96,7 +98,7 @@ class Lang(metaclass=MetaLang):
             yield cls.compiler
         if cls.interpreter:
             yield cls.interpreter
-        yield from cls.extra_binaries
+        yield from cls.extra_binaries.values()
 
     async def compile(self):
         if not self.compiler:

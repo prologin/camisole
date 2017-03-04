@@ -13,14 +13,13 @@ class Java(Lang):
     source_ext = '.java'
     compiled_ext = '.class'
     compiler = 'javac'
-    disassembler = 'javap'
     interpreter = 'java'
     # /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jvm.cfg links to
     # /etc/java-8-openjdk/amd64/jvm.cfg
     allowed_dirs = ['/etc/java-8-openjdk']
     # ensure we can parse the javac(1) stderr
     compile_env = {'LANG': 'C'}
-    extra_binaries = {disassembler}
+    extra_binaries = {'disassembler': 'javap'}
     reference_source = r'''
 class SomeClass {
     static int fortytwo() {
@@ -99,7 +98,7 @@ class SomeClass {
             # run javap(1) with type signatures
             try:
                 stdout = subprocess.check_output(
-                    [self.disassembler, '-s', str(file)],
+                    [self.extra_binaries['disassembler'], '-s', str(file)],
                     stderr=subprocess.DEVNULL, env=self.compile_env)
             except subprocess.SubprocessError:
                 continue
