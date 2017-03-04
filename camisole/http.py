@@ -1,10 +1,12 @@
 import aiohttp.web
 import functools
 import json
+import jsonschema
 import traceback
 
 import camisole.languages
 import camisole.ref
+import camisole.schema
 import camisole.system
 
 
@@ -30,9 +32,10 @@ def json_handler(wrapped):
 
 @json_handler
 async def run_handler(data):
-    for field in ('lang', 'source'):
-        if field not in data:
-            raise RuntimeError('Field {} not present in JSON'.format(field))
+    try:
+        camisole.schema.validate(data)
+    except jsonschema.exceptions.ValidationError as e:
+        return {'success': False, 'error': str(e)}
 
     lang_name = data['lang'].lower()
     try:

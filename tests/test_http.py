@@ -28,13 +28,6 @@ async def test_bad_json(test_client, loop):
     assert 'invalid json' in result['error'].lower()
 
 
-async def test_bad_format(test_client, loop):
-    client = await get_client(test_client, loop)
-    result = await request(client, json.dumps({}))
-    assert not result['success']
-    assert 'not present in json' in result['error'].lower()
-
-
 async def test_unknown_language(test_client, loop):
     client = await get_client(test_client, loop)
     result = await request(client, json.dumps({'lang': 'foobar', 'source': ''}))
