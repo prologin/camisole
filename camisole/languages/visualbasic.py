@@ -3,9 +3,9 @@ from camisole.models import Lang
 
 class VisualBasic(Lang):
     source_ext = '.vb'
-    compiler = '/usr/bin/vbnc'
+    compiler = 'vbnc'
     compile_opts = ['/optimize+']
-    interpreter = '/usr/bin/mono'
+    interpreter = 'mono'
     reference_source = r'''
 Imports System
 Public Module modmain
