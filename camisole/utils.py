@@ -1,5 +1,5 @@
 import math
-import shutil
+import os
 import textwrap
 
 
@@ -48,4 +48,19 @@ def tabulate(rows, headers=None, fmt="", margin=1):
 
 
 def which(binary):
-    return shutil.which(binary) or binary
+    search_prefixes = ['/usr', '/lib', '/bin']
+    path = [*os.environ.get('PATH').split(os.pathsep),
+            '/usr/bin',
+            '/usr/local/bin'
+            '/bin',
+    ]
+    if os.path.dirname(binary) and os.access(binary, os.X_OK):
+        return binary
+    for part in path:
+        # Ignore matches that are not inside standard directories
+        if not any(part.startswith(prefix) for prefix in search_prefixes):
+            continue
+        p = os.path.join(part, binary)
+        if os.access(p, os.X_OK):
+            return p
+    return binary
