@@ -125,7 +125,7 @@ class Isolator:
         retcode, stdout, stderr = await communicate(cmd_cleanup)
         if retcode != 0:
             raise RuntimeError("{} returned code {}: “{}”".format(
-                cmd_init, retcode, stderr))
+                cmd_cleanup, retcode, stderr))
 
         self.meta_file.__exit__(exc, value, tb)
 
