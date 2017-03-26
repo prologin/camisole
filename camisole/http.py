@@ -13,25 +13,36 @@ import camisole.system
 def json_handler(wrapped):
     @functools.wraps(wrapped)
     async def wrapper(request):
+        # XXX: hack no longer needed in recent aiohttp versions
+        if not hasattr(request, 'query'):
+            import urllib.parse
+            request.query = urllib.parse.parse_qs(request.query_string,
+                                                  keep_blank_values=True)
+            request.query = {k: v[-1] for k, v in request.query.items()}
+
         try:
             try:
                 data = await request.text()
                 data = json.loads(data) if data else {}
             except json.decoder.JSONDecodeError:
                 raise RuntimeError('Invalid JSON')
-            result = await wrapped(data)
+            result = await wrapped(request, data)
         except Exception:
             result = {'success': False, 'error': traceback.format_exc()}
         else:
             result = {'success': True, **result}
-        result = json.dumps(result)
+
+        pretty = ('pretty' in request.query
+                  and request.query['pretty'].lower() in ('', 'true', '1'))
+        indent = 4 if pretty else None
+        result = json.dumps(result, sort_keys=True, indent=indent)
         return aiohttp.web.Response(body=result.encode(),
                                     content_type='application/json')
     return wrapper
 
 
 @json_handler
-async def run_handler(data):
+async def run_handler(request, data):
     try:
         camisole.schema.validate(data)
     except jsonschema.exceptions.ValidationError as e:
@@ -47,7 +58,7 @@ async def run_handler(data):
 
 
 @json_handler
-async def test_handler(data):
+async def test_handler(request, data):
     langs = camisole.languages.all().keys()
     langs -= set(data.get('exclude', []))
 
@@ -58,16 +69,16 @@ async def test_handler(data):
 
 
 @json_handler
-async def system_handler(data):
+async def system_handler(request, data):
     return {'system': camisole.system.info()}
 
 
 @json_handler
-async def languages_handler(data):
+async def languages_handler(request, data):
     return {'languages': {lang: {'name': cls.name, 'programs': cls.programs()}
             for lang, cls in camisole.languages.all().items()}}
 
-async def default_handler(data):
+async def default_handler(request, data):
     return aiohttp.web.Response(
         text="Welcome to Camisole. Use the /run endpoint to run some code!\n")
 
