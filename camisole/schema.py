@@ -21,7 +21,10 @@ SCHEMA = {
         },
         'execute': {
             'type': 'object',
-            'properties': ISOLATE_OPTS_PROPERTIES,
+            'properties': {
+                'stdin': {'type': 'string'},
+                **ISOLATE_OPTS_PROPERTIES,
+            }
         },
         'tests': {
             'type': 'array',
