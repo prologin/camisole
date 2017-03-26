@@ -26,6 +26,15 @@ async def request_languages(client):
     return await (await client.post('/languages')).json()
 
 
+async def test_bad_schema(test_client, loop):
+    client = await get_client(test_client, loop)
+    result = await request(client, json.dumps({'foo': 'bar'}))
+    assert not result['success']
+    message = result['error'].lower()
+    assert 'failed validating' in message
+    assert 'in schema' in message
+
+
 async def test_bad_json(test_client, loop):
     client = await get_client(test_client, loop)
     result = await request(client, b'bad-stuff')
