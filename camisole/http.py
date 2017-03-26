@@ -62,11 +62,18 @@ async def system_handler(data):
     return {'system': camisole.system.info()}
 
 
+@json_handler
+async def languages_handler(data):
+    return {'languages': {lang: {'name': cls.name, 'programs': cls.programs()}
+            for lang, cls in camisole.languages.all().items()}}
+
+
 def make_application(**kwargs):
     app = aiohttp.web.Application(**kwargs)
     app.router.add_route('POST', '/run', run_handler)
     app.router.add_route('*', '/test', test_handler)
     app.router.add_route('*', '/system', system_handler)
+    app.router.add_route('*', '/languages', languages_handler)
     return app
 
 
