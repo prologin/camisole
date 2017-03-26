@@ -35,8 +35,9 @@ def parse_float(str_float):
 def tabulate(rows, headers=None, fmt="", margin=1):
     ncols = len(rows[0])
     lengths = [-math.inf] * ncols
-    # don't side-effect modify rows
-    rows = ([headers] or []) + rows
+    if headers:
+        # don't side-effect modify rows
+        rows = [headers] + rows
     for row in rows:
         lengths = [max(l, len(col)) for l, col in zip(lengths, row)]
     lengths = [l + margin for l in lengths]
