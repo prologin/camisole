@@ -1,4 +1,4 @@
-from camisole.utils import uniquify, indent, parse_size, parse_float
+from camisole.utils import uniquify, indent, parse_size, parse_float, tabulate
 
 
 def test_uniquify():
@@ -29,3 +29,22 @@ def test_parse_size():
 def test_parse_float():
     assert parse_float('0.1') == 0.1
     assert parse_float(None) is None
+
+
+def test_tabulate():
+    rows = [['foo', 'a'], ['barbar', 'baz'], ]
+    assert '\n'.join(tabulate(rows, margin=0)) == (
+        'foo    | a  \n'
+        'barbar | baz'
+    )
+
+    assert '\n'.join(tabulate(rows, margin=1)) == (
+        'foo     | a   \n'
+        'barbar  | baz '
+    )
+
+    assert '\n'.join(tabulate(rows, headers=['FOO', 'BARBAZZZ'], margin=0)) == (
+        'FOO    | BARBAZZZ\n'
+        'foo    | a       \n'
+        'barbar | baz     '
+    )
