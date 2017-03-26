@@ -73,7 +73,7 @@ EOF
 
 cat <<-EOF > "${TARGET_DIR}${CONFIG_USER_SCRIPT}"
     mkdir -p /tmp/pacaur_install
-    cd /tmp/pacaur_install
+    pushd /tmp/pacaur_install
 
     export PATH="/usr/bin/core_perl:$PATH"
 
@@ -87,6 +87,7 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_USER_SCRIPT}"
         makepkg PKGBUILD --install --needed --noconfirm
     fi
 
+    popd
     rm -rf /tmp/pacaur_install
 
     pacaur -S camisole-git camisole-languages --noconfirm --noedit
@@ -97,12 +98,12 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_USER_SCRIPT}"
 
     /usr/bin/yes | sudo /usr/bin/pacman -Scc
     sudo /usr/bin/pacman-optimize
-    sudo pacman -Rsn \$(pacman -Qdtq)
+    sudo pacman --noconfirm -Rsn \$(pacman -Qdtq)
 
     # Write zeros to improve virtual disk compaction.
-    zerofile=\$(/usr/bin/mktemp /zerofile.XXXXX)
-    /usr/bin/dd if=/dev/zero of="\$zerofile" bs=1M
-    /usr/bin/rm -f "\$zerofile"
+    zerofile=\$(sudo /usr/bin/mktemp /zerofile.XXXXX)
+    sudo /usr/bin/dd if=/dev/zero of="\$zerofile" bs=1M
+    sudo /usr/bin/rm -f "\$zerofile"
 EOF
 
 echo '==> Entering chroot and configuring system'
