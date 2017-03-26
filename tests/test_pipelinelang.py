@@ -1,15 +1,16 @@
 import pytest
 
 import camisole.languages
-from camisole.models import PipelineLang, Lang
+import camisole.languages.c
+from camisole.models import PipelineLang, Lang, Program
 
 
 class Copy(Lang, register=False):
     source_ext = '.a'
-    compiler = '/usr/bin/cp'
+    compiler = Program('cp')
 
     def compile_command(self, source, output):
-        return [self.compiler,
+        return [self.compiler.cmd,
                 self.filter_box_prefix(source),
                 self.filter_box_prefix(output)]
 

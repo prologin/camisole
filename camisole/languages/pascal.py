@@ -1,12 +1,10 @@
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 
 class Pascal(Lang):
     source_ext = '.pas'
-    compiler = 'fpc'
-    compile_opts = ['-XD', '-Fainitc']
-    version_opt = '-h'
-    version_lines = 1
+    compiler = Program('fpc', opts=['-XD', '-Fainitc'],
+                       version_opt='-h', version_lines=1)
     reference_source = r'''
 program main;
 begin

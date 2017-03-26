@@ -1,8 +1,7 @@
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 
 class Haskell(Lang):
     source_ext = '.hs'
-    compiler = 'ghc'
-    compile_opts = ['-dynamic', '-O2']
+    compiler = Program('ghc', opts=['-dynamic', '-O2'])
     reference_source = r'module Main where main = putStrLn "42"'

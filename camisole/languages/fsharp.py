@@ -1,12 +1,10 @@
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 
 class FSharp(Lang, name="F#"):
     source_ext = '.fs'
-    compiler = 'fsharpc'
-    compile_opts = ['-O']
-    version_lines = 4
-    interpreter = 'mono'
+    compiler = Program('fsharpc', opts=['-O'], version_lines=4)
+    interpreter = Program('mono')
     reference_source = r'''
 #light
 open System

@@ -1,7 +1,7 @@
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 
 class Javascript(Lang):
     source_ext = '.js'
-    interpreter = 'node'
+    interpreter = Program('node')
     reference_source = r"process.stdout.write('42\n');"

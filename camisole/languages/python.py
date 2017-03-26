@@ -1,8 +1,7 @@
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 
 class Python(Lang):
     source_ext = '.py'
-    interpreter = 'python3'
-    interpret_opts = ['-S']
+    interpreter = Program('python3', opts=['-S'])
     reference_source = r'print("42")'

@@ -1,11 +1,10 @@
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 
 class CSharp(Lang, name="C#"):
     source_ext = '.cs'
-    compiler = 'mcs'
-    compile_opts = ['-optimize+']
-    interpreter = 'mono'
+    compiler = Program('mcs', opts=['-optimize+'])
+    interpreter = Program('mono')
     reference_source = r'''
 using System;
 class Program

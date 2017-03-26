@@ -18,8 +18,8 @@ async def test_compiler_does_not_create_binary_while_returning_zero():
             return 'print("hello", file=open("will.not.be.found", "w"))'
 
         def compile_command(self, source, output):
-            return ([self.compiler] +
-                    self.interpret_opts +
+            return ([self.compiler.cmd] +
+                    self.compiler.opts +
                     ['-c', self.python_command()])
 
     class VerboseCunningLang(CunningLang, register=False):

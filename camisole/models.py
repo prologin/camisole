@@ -20,13 +20,35 @@
 import logging
 import os
 import re
-import shutil
+import subprocess
 import tempfile
 import warnings
 from pathlib import Path
 
 import camisole.isolate
 import camisole.utils
+
+
+class Program:
+    def __init__(self, cmd, *, opts=None, env=None,
+                 version_opt='--version', version_lines=1,
+                 version_regex='\d+(\.\d+)+'):
+        self.cmd = camisole.utils.which(cmd)
+        self.opts = opts or []
+        self.env = env or {}
+        self.version_opt = version_opt
+        self.version_lines = version_lines
+        self.version_regex = version_regex
+
+    def _version(self):
+        return subprocess.run([self.cmd, self.version_opt]).stdout
+
+    def short_version(self):
+        res = re.search(self.version_regex, self._version())
+        return res[0] if res else None
+
+    def long_version(self):
+        return '\n'.join(self._version().split('\n')[:self.version_lines])
 
 
 class MetaLang(type):
@@ -48,13 +70,7 @@ class Lang(metaclass=MetaLang):
 
     source_ext = None
     compiler = None
-    compile_opts = []
-    compile_env = {}
     interpreter = None
-    interpret_opts = []
-    interpret_env = {}
-    version_opt = '--version'
-    version_lines = None
     allowed_dirs = []
     extra_binaries = {}
     reference_source = None
@@ -62,14 +78,13 @@ class Lang(metaclass=MetaLang):
     def __init_subclass__(cls, register=True, name=None, **kwargs):
         super().__init_subclass__(**kwargs)
         cls.name = name or cls.__name__
-        cls.resolve_binaries()
 
         if not register:
             return
 
         for binary in cls.required_binaries():
-            if binary is not None and not os.access(binary, os.X_OK):
-                logging.info(f'{cls.name}: cannot access `{binary}`, '
+            if binary is not None and not os.access(binary.cmd, os.X_OK):
+                logging.info(f'{cls.name}: cannot access `{binary.cmd}`, '
                              'language not loaded')
                 return
 
@@ -83,15 +98,6 @@ class Lang(metaclass=MetaLang):
 
     def __init__(self, opts):
         self.opts = opts
-
-    @classmethod
-    def resolve_binaries(cls):
-        if cls.compiler:
-            cls.compiler = camisole.utils.which(cls.compiler)
-        if cls.interpreter:
-            cls.interpreter = camisole.utils.which(cls.interpreter)
-        cls.extra_binaries = {k: camisole.utils.which(v)
-                              for k, v in cls.extra_binaries.items()}
 
     @classmethod
     def required_binaries(cls):
@@ -120,7 +126,7 @@ class Lang(metaclass=MetaLang):
             with source.open('w') as sourcefile:
                 sourcefile.write(self.opts.get('source', ''))
             cmd = self.compile_command(str(source), str(compiled))
-            await isolator.run(cmd, env=self.compile_env)
+            await isolator.run(cmd, env=self.compiler.env)
             binary = self.read_compiled(str(compiled), isolator)
 
         root_tmp.cleanup()
@@ -139,9 +145,9 @@ class Lang(metaclass=MetaLang):
         async with isolator:
             wd = isolator.path
             compiled = self.write_binary(Path(wd), binary)
+            env = self.interpreter.env if self.interpreter else None
             await isolator.run(self.execute_command(str(compiled)),
-                               env=self.interpret_env,
-                               data=input_data)
+                               env=env, data=input_data)
         return (isolator.isolate_retcode, isolator.info)
 
     async def run_compilation(self, result):
@@ -213,15 +219,15 @@ class Lang(metaclass=MetaLang):
     def compile_command(self, source, output):
         if self.compiler is None:
             return None
-        return [self.compiler,
-                *self.compile_opts,
+        return [self.compiler.cmd,
+                *self.compiler.opts,
                 *self.compile_opt_out(self.filter_box_prefix(output)),
                 self.filter_box_prefix(source)]
 
     def execute_command(self, output):
         cmd = []
         if self.interpreter is not None:
-            cmd += [self.interpreter] + self.interpret_opts
+            cmd += [self.interpreter.cmd] + self.interpreter.opts
         return cmd + [self.filter_box_prefix(output)]
 
 

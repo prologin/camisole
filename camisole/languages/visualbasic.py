@@ -1,11 +1,10 @@
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 
 class VisualBasic(Lang):
     source_ext = '.vb'
-    compiler = 'vbnc'
-    compile_opts = ['/optimize+']
-    interpreter = 'mono'
+    compiler = Program('vbnc', opts=['/optimize+'])
+    interpreter = Program('mono')
     reference_source = r'''
 Imports System
 Public Module modmain

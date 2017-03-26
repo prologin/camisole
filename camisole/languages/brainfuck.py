@@ -1,14 +1,14 @@
 from camisole.languages.c import C
-from camisole.models import Lang, PipelineLang
+from camisole.models import Lang, PipelineLang, Program
 from camisole.utils import which
 
 
 class BrainfuckToC(Lang, register=False):
     source_ext = '.bf'
-    compiler = 'python2'
-    extra_binaries = {'esotope': which('esotope-bfc')}
-    compile_env = {'PYTHONPATH': '/usr/lib/python2.7/site-packages'}
-    compile_opts = ['-S', extra_binaries['esotope'], '-v', '-fc']
+    extra_binaries = {'esotope': Program('esotope-bfc')}
+    compiler = Program('python2',
+                       env={'PYTHONPATH': '/usr/lib/python2.7/site-packages'},
+                       opts=['-S', extra_binaries['esotope'].cmd, '-v', '-fc'])
 
     def compile_opt_out(self, output):
         # there is no way to specify an output file, use stderr

@@ -1,7 +1,7 @@
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 
 class Lua(Lang):
     source_ext = '.lua'
-    interpreter = 'luajit'
+    interpreter = Program('luajit')
     reference_source = r'print("42")'

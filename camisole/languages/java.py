@@ -2,7 +2,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from camisole.models import Lang
+from camisole.models import Lang, Program
 
 RE_WRONG_FILENAME_ERROR = re.compile(r'error:\s+class\s+(.+?)\s+is\s+public,')
 PSVMAIN_SIGNATURE = 'public static void main('
@@ -12,14 +12,13 @@ PSVMAIN_DESCRIPTOR = 'descriptor: ([Ljava/lang/String;)V'
 class Java(Lang):
     source_ext = '.java'
     compiled_ext = '.class'
-    compiler = 'javac'
-    interpreter = 'java'
+    compiler = Program('javac', env={'LANG': 'C'})
+    interpreter = Program('java')
     # /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jvm.cfg links to
     # /etc/java-8-openjdk/amd64/jvm.cfg
     allowed_dirs = ['/etc/java-8-openjdk']
     # ensure we can parse the javac(1) stderr
-    compile_env = {'LANG': 'C'}
-    extra_binaries = {'disassembler': 'javap'}
+    extra_binaries = {'disassembler': Program('javap')}
     reference_source = r'''
 class SomeClass {
     static int fortytwo() {
@@ -82,7 +81,7 @@ class SomeClass {
         return self.class_name + self.compiled_ext
 
     def execute_command(self, output):
-        cmd = [self.interpreter]
+        cmd = [self.interpreter.cmd]
 
         # Use the memory limit as a maximum heap size
         if self.heapsize is not None:
@@ -98,8 +97,8 @@ class SomeClass {
             # run javap(1) with type signatures
             try:
                 stdout = subprocess.check_output(
-                    [self.extra_binaries['disassembler'], '-s', str(file)],
-                    stderr=subprocess.DEVNULL, env=self.compile_env)
+                    [self.extra_binaries['disassembler'].cmd, '-s', str(file)],
+                    stderr=subprocess.DEVNULL, env=self.compiler.env)
             except subprocess.SubprocessError:
                 continue
             # iterate on lines to find p s v main() signature and then
