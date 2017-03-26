@@ -29,9 +29,9 @@ class PackageFinder:
 
     def for_binary(self, binary):
         try:
+            cmd = self.cmd + [binary]
             return {line.split(b':', 1)[0].decode() for line
-                    in
-                    subprocess.check_output(self.cmd + [binary]).splitlines()}
+                    in subprocess.check_output(cmd).splitlines()}
         except subprocess.CalledProcessError:
             return set()
 
@@ -71,7 +71,7 @@ class CamisoleLanguageTable(ListTable):
 
         table_body = []
         for cls in sorted(all_langs, key=lambda e: e.name.lower()):
-            binaries = set(cls.required_binaries())
+            binaries = set(b.cmd_name for b in cls.required_binaries())
             if not binaries:
                 continue
             body = [[nodes.paragraph(text=cls.name)],
