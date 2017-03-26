@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2017 Antoine Pietri <antoine.pietri@prologin.org>
+# Copyright (c) 2015 Aaron Bull Schaefer <aaron@elasticdog.com>
+
+##### Constants
+
+# country codes supported by https://www.archlinux.org/mirrorlist/
+readonly VALID_COUNTRIES=(AT AU BD BE BG BR BY CA CH CL CN CO CZ DE DK EC ES FR GB GR HR HU ID IE IL IN IR IS IT JP KR KZ LT LU LV MK NC NL NO NZ PH PL PT RO RS RU SE SG SK TR TW UA US VN ZA)
+
+# use the correct binary if running from arch linux
+if [[ -f /etc/arch-release ]]; then
+	readonly PACKER_BIN='packer-io'
+else
+	readonly PACKER_BIN='packer'
+fi
+
+validate_country() {
+	local haystack="VALID_COUNTRIES[@]"
+	local needle=$1
+	local found=1
+	for element in "${!haystack}"; do
+		if [[ $element == "$needle" ]]; then
+			found=0
+			break
+		fi
+	done
+	return $found
+}
+
+usage() {
+	cat <<-EOF >&2
+	usage: wrapacker [-c COUNTRY] [-t TIMEOUT] [-d] [-h]
+	EOF
+}
+
+help() {
+	cat <<-EOF
+
+	NAME
+	     wrapacker -- wrap packer to build arch with custom mirror settings
+
+	SYNOPSIS
+	     wrapacker [options...]
+
+	DESCRIPTION
+
+	     wrapacker will automatically ensure the latest ISO download URL and
+	     will optionally use a mirror from the provided country in order to
+	     build an Arch Linux box using Packer.
+
+	OPTIONS
+	     -c, --country=COUNTRY
+	            the country code to download from;
+	            defaults to the kernel.org US mirror
+
+	     -h, --help
+	            view this help message
+
+	     -e, --headless
+	            do not run the build in the GUI
+
+	AUTHOR
+	     Aaron Bull Schaefer <aaron@elasticdog.com>
+
+	EOF
+}
+
+
+country=''
+headless=false
+
+# parse command line options
+while [[ $1 != '' ]]; do
+	case $1 in
+		-c | --country)
+			country=$(echo "$2" | tr '[:lower:]' '[:upper:]')
+			shift
+			;;
+		-h | --help | -\?)
+			help
+			exit 0
+			;;
+		-e| --headless)
+			headless=true
+			;;
+	esac
+	shift
+done
+
+if [[ $country ]]; then
+	if validate_country "$country"; then
+		MIRRORLIST="https://www.archlinux.org/mirrorlist/?country=${country}&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"
+		MIRROR=$(curl -s "$MIRRORLIST" | awk '/#Server/{ print $3; exit }' | sed 's|/$repo.*||')
+	else
+		echo "error: invalid country $country"
+		usage
+		exit 1
+	fi
+else
+	MIRROR='https://mirrors.kernel.org/archlinux'
+	country='US'
+fi
+
+ISO_CHECKSUM_URL="${MIRROR}/iso/latest/sha1sums.txt"
+ISO_NAME=$(curl -s "$ISO_CHECKSUM_URL" | awk '/dual.iso/{ print $2 }')
+ISO_URL="${MIRROR}/iso/latest/${ISO_NAME}"
+
+$PACKER_BIN build \
+    -var "iso_url=$ISO_URL" \
+    -var "iso_checksum_url=$ISO_CHECKSUM_URL" \
+    -var "country=$country" \
+    -var "headless=$headless" \
+    template.json
+
+exit $?

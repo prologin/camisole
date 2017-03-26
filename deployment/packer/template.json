@@ -1,0 +1,43 @@
+{
+    "variables": {
+        "iso_url": "https://mirrors.kernel.org/archlinux/iso/2017.03.01/archlinux-2017.03.01-dual.iso",
+        "iso_checksum_url": "https://mirrors.kernel.org/archlinux/iso/2017.03.01/sha1sums.txt",
+        "iso_checksum_type": "sha1",
+        "country": "US",
+        "headless": "true"
+    },
+    "builders": [
+        {
+            "type": "virtualbox-iso",
+            "iso_url": "{{ user `iso_url` }}",
+            "iso_checksum_url": "{{ user `iso_checksum_url` }}",
+            "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+            "guest_os_type": "ArchLinux_64",
+            "guest_additions_mode": "disable",
+            "http_directory": ".",
+            "boot_wait": "5s",
+            "boot_command": [
+                "<enter><wait10><wait10><wait10>",
+                "curl http://{{ .HTTPIP }}:{{ .HTTPPort }}/enable-ssh.sh | bash<enter><wait5>"
+            ],
+            "disk_size": 20480,
+            "hard_drive_interface": "sata",
+            "ssh_username": "camisole",
+            "ssh_password": "camisole",
+            "ssh_timeout": "20m",
+            "shutdown_command": "sudo systemctl poweroff",
+            "vboxmanage": [
+                [ "modifyvm", "{{.Name}}", "--natpf1", "camisole,tcp,,42920,,8080" ]
+            ],
+            "headless" : "{{ user `headless`}}",
+            "format": "ova"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "{{ .Vars }} COUNTRY={{ user `country` }} sudo -E -S bash '{{ .Path }}'",
+            "script": "install.sh"
+        }
+    ]
+}
