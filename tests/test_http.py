@@ -1,4 +1,5 @@
 import json
+
 import aiohttp.web
 import asyncio
 
@@ -19,6 +20,10 @@ async def request_test(client, data):
 
 async def request_system(client, data):
     return await (await client.post('/system', data=data)).json()
+
+
+async def request_languages(client):
+    return await (await client.post('/languages')).json()
 
 
 async def test_bad_json(test_client, loop):
@@ -66,3 +71,16 @@ async def test_system(test_client, loop):
     assert result['system']['cpu_count'] == os.cpu_count()
     assert isinstance(result['system']['cpu_mhz'], float)
     assert isinstance(result['system']['memory'], int)
+
+
+async def test_languages(test_client, loop):
+    # monkey-patch event loop for camisole
+    asyncio.set_event_loop(loop)
+    client = await get_client(test_client, loop)
+    result = await request_languages(client)
+    assert 'programs' in result['languages']['brainfuck']
+    programs = result['languages']['brainfuck']['programs']
+    assert 'esotope-bfc' in programs
+    assert 'gcc' in programs
+    assert programs['python2']['version'].startswith('2.7')
+    assert '-Wall' in programs['gcc']['opts']
