@@ -153,6 +153,7 @@ class Lang(metaclass=MetaLang):
         if opts is None:
             opts = {}
         opts = {**self.opts.get('execute', {}), **opts}
+        input_data = None
         if 'stdin' in opts and opts['stdin']:
             input_data = opts['stdin'].encode()
 
