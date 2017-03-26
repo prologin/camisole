@@ -3,7 +3,7 @@ from camisole.models import Lang, Program
 
 class VisualBasic(Lang):
     source_ext = '.vb'
-    compiler = Program('vbnc', opts=['/optimize+'])
+    compiler = Program('vbnc', opts=['/optimize+'], version_opt='/help')
     interpreter = Program('mono')
     reference_source = r'''
 Imports System

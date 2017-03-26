@@ -5,7 +5,7 @@ from camisole.utils import which
 
 class BrainfuckToC(Lang, register=False):
     source_ext = '.bf'
-    extra_binaries = {'esotope': Program('esotope-bfc')}
+    extra_binaries = {'esotope': Program('esotope-bfc', version_opt=None)}
     compiler = Program('python2',
                        env={'PYTHONPATH': '/usr/lib/python2.7/site-packages'},
                        opts=['-S', extra_binaries['esotope'].cmd, '-v', '-fc'])

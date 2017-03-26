@@ -12,13 +12,13 @@ PSVMAIN_DESCRIPTOR = 'descriptor: ([Ljava/lang/String;)V'
 class Java(Lang):
     source_ext = '.java'
     compiled_ext = '.class'
-    compiler = Program('javac', env={'LANG': 'C'})
-    interpreter = Program('java')
+    compiler = Program('javac', env={'LANG': 'C'}, version_opt='-version')
+    interpreter = Program('java', version_opt='-version')
     # /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jvm.cfg links to
     # /etc/java-8-openjdk/amd64/jvm.cfg
     allowed_dirs = ['/etc/java-8-openjdk']
     # ensure we can parse the javac(1) stderr
-    extra_binaries = {'disassembler': Program('javap')}
+    extra_binaries = {'disassembler': Program('javap', version_opt='-version')}
     reference_source = r'''
 class SomeClass {
     static int fortytwo() {

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Prologin-SADM.  If not, see <http://www.gnu.org/licenses/>.
 
+import functools
 import logging
 import os
 import re
@@ -34,20 +35,30 @@ class Program:
                  version_opt='--version', version_lines=1,
                  version_regex='\d+(\.\d+)+'):
         self.cmd = camisole.utils.which(cmd)
+        self.cmd_name = cmd
         self.opts = opts or []
         self.env = env or {}
         self.version_opt = version_opt
         self.version_lines = version_lines
-        self.version_regex = version_regex
+        self.version_regex = re.compile(version_regex)
 
+    @functools.lru_cache()
     def _version(self):
-        return subprocess.run([self.cmd, self.version_opt]).stdout
+        if self.version_opt is None:
+            return None
+        proc = subprocess.run([self.cmd, self.version_opt],
+                              stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        return proc.stdout.decode().strip()
 
-    def short_version(self):
-        res = re.search(self.version_regex, self._version())
+    def version(self):
+        if self.version_opt is None:
+            return None
+        res = self.version_regex.search(self._version())
         return res[0] if res else None
 
     def long_version(self):
+        if self.version_opt is None:
+            return None
         return '\n'.join(self._version().split('\n')[:self.version_lines])
 
 
@@ -106,6 +117,11 @@ class Lang(metaclass=MetaLang):
         if cls.interpreter:
             yield cls.interpreter
         yield from cls.extra_binaries.values()
+
+    @classmethod
+    def programs(cls):
+        return {p.cmd_name: {'version': p.version(), 'opts': p.opts}
+                for p in cls.required_binaries()}
 
     async def compile(self):
         if not self.compiler:
