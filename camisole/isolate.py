@@ -91,7 +91,7 @@ class Isolator:
             'csw-voluntary': 0,
             'exitcode': 0,
             'exitsig': None,
-            'killed': 0,
+            'killed': False,
             'max-rss': 0,
             'message': None,
             'status': 'OK',
