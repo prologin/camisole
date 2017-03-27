@@ -78,7 +78,7 @@ async def languages_handler(request, data):
     return {'languages': {lang: {'name': cls.name, 'programs': cls.programs()}
             for lang, cls in camisole.languages.all().items()}}
 
-async def default_handler(request, data):
+async def default_handler(request):
     return aiohttp.web.Response(
         text="Welcome to Camisole. Use the /run endpoint to run some code!\n")
 
