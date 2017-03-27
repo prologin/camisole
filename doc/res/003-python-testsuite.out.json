@@ -1,0 +1,81 @@
+{
+    "success": true,
+    "tests": [
+        {
+            "exitcode": 0,
+            "meta": {
+                "cg-mem": 2284,
+                "csw-forced": 7,
+                "csw-voluntary": 2,
+                "exitcode": 0,
+                "exitsig": null,
+                "killed": false,
+                "max-rss": 6948,
+                "message": null,
+                "status": "OK",
+                "time": 0.013,
+                "time-wall": 0.036
+            },
+            "name": "test_h2g2",
+            "stderr": "",
+            "stdout": "84\n"
+        },
+        {
+            "exitcode": 0,
+            "meta": {
+                "cg-mem": 2280,
+                "csw-forced": 6,
+                "csw-voluntary": 3,
+                "exitcode": 0,
+                "exitsig": null,
+                "killed": false,
+                "max-rss": 6828,
+                "message": null,
+                "status": "OK",
+                "time": 0.013,
+                "time-wall": 0.032
+            },
+            "name": "test_notfound",
+            "stderr": "",
+            "stdout": "808\n"
+        },
+        {
+            "exitcode": 0,
+            "meta": {
+                "cg-mem": 2280,
+                "csw-forced": 8,
+                "csw-voluntary": 2,
+                "exitcode": 0,
+                "exitsig": null,
+                "killed": false,
+                "max-rss": 6828,
+                "message": null,
+                "status": "OK",
+                "time": 0.009,
+                "time-wall": 0.032
+            },
+            "name": "test_leet",
+            "stderr": "",
+            "stdout": "2674\n"
+        },
+        {
+            "exitcode": 0,
+            "meta": {
+                "cg-mem": 2280,
+                "csw-forced": 8,
+                "csw-voluntary": 2,
+                "exitcode": 0,
+                "exitsig": null,
+                "killed": false,
+                "max-rss": 6724,
+                "message": null,
+                "status": "OK",
+                "time": 0.009,
+                "time-wall": 0.028
+            },
+            "name": "test_666",
+            "stderr": "",
+            "stdout": "55944\n"
+        }
+    ]
+}

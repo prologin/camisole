@@ -1,0 +1,13 @@
+{
+    "lang": "ocaml",
+    "source": "print_string \"Hello, world!\\\\n\"",
+    "compile": {
+        "wall-time": 10
+    },
+    "execute": {
+        "time": 2,
+        "wall-time": 5,
+        "processes": 1,
+        "mem": 100000
+    }
+}

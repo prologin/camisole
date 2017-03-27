@@ -1,17 +1,28 @@
 camisole's documentation
 ========================
 
-|project| is an asyncio_-based source compiler and test runner. The main
-purpose of this tool is to build programs from user-provided source and then
-execute them against a user-provided test suite.
+|project| is a source compiler and test runner. You give some untrusted
+source code and a test suite, and |project| compiles the code and runs it
+against the test suite.
 
 It uses isolate_ as a backend to safely compile and execute source codes using
 linux kernel features such as namespaces, cgroups, chroot and resources limits.
-You can learn more about isolate in this paper [#isolatepaper]_.
 
-Communication with the |project| engine relies on a simple HTTP/JSON API.
+|project| is aimed at:
 
-|project| requires Python 3.6 or newer.
+- Computer science teachers who want to grade their students or provide them
+  with an online tool to check their own code.
+- Programming contests who want to grade the submissions of the contestants.
+- Programming websites who want to have an interactive demo where people can
+  run arbitrary code.
+- Online compiler/interpreter websites.
+
+|project| handles all major languages, and can be easily extended to support
+more. The current supported languages are:
+
+.. camisole-language-list::
+
+Communication with the |project| engine relies on a simple HTTP/JSON REST API.
 
 Contents
 --------
@@ -24,24 +35,45 @@ Contents
    usage
    extending
 
-Quick demo
+Quickstart
 ----------
 
 .. highlight:: shell
 
-The |project| HTTP server is run by calling::
+Once the |project| server is running, you can query it with an HTTP client like
+``curl``::
 
-    $ python -m camisole serve
-    ======== Running on http://0.0.0.0:8080 ========
+    $ curl camisole/run -d '{"lang": "python", "source": "print(42)"}'
 
-Then, jobs are submitted with an HTTP request::
+Result:
 
-    $ curl -s localhost:8080/run \
-           -d '{"lang": "python", "source": "print(42)", "tests": [{}]}'
+.. literalinclude:: res/001-python-42.out.json
+   :language: json
 
-Example result:
+You can easily limit, on a global or per-test basis, the maximum execution time
+(user and wall), the available memory, the number of processes…
 
-.. literalinclude:: res/example-result.json
+Those options are available both for the compilation and the tests.
+
+Input:
+
+.. literalinclude:: res/002-ocaml-simple.in.json
+   :language: json
+
+Output:
+
+.. literalinclude:: res/002-ocaml-simple.out.json
+   :language: json
+
+You can give a full testsuite with different inputs and constraints, and you
+will get a separate result for each test:
+
+.. literalinclude:: res/003-python-testsuite.in.json
+   :language: json
+
+Output:
+
+.. literalinclude:: res/003-python-testsuite.out.json
    :language: json
 
 

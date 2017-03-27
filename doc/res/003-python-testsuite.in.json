@@ -1,0 +1,8 @@
+{
+    "lang": "python",
+    "source": "print(int(input()) * 2)",
+    "tests": [{"name": "test_h2g2", "stdin": "42", "mem": 200000},
+              {"name": "test_notfound", "stdin": "404"},
+              {"name": "test_leet", "stdin": "1337"},
+              {"name": "test_666", "stdin": "27972", "time": 1}]
+}

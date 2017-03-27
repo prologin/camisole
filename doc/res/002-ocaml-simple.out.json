@@ -1,0 +1,42 @@
+{
+    "compile": {
+        "exitcode": 0,
+        "meta": {
+            "cg-mem": 13752,
+            "csw-forced": 17,
+            "csw-voluntary": 11,
+            "exitcode": 0,
+            "exitsig": null,
+            "killed": false,
+            "max-rss": 13360,
+            "message": null,
+            "status": "OK",
+            "time": 0.033,
+            "time-wall": 0.069
+        },
+        "stderr": "",
+        "stdout": ""
+    },
+    "success": true,
+    "tests": [
+        {
+            "exitcode": 0,
+            "meta": {
+                "cg-mem": 2424,
+                "csw-forced": 4,
+                "csw-voluntary": 3,
+                "exitcode": 0,
+                "exitsig": null,
+                "killed": false,
+                "max-rss": 3572,
+                "message": null,
+                "status": "OK",
+                "time": 0.0,
+                "time-wall": 0.012
+            },
+            "name": "test000",
+            "stderr": "",
+            "stdout": "Hello, world!\\n"
+        }
+    ]
+}

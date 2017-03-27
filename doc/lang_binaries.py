@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 
 from docutils import nodes
+from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.tables import ListTable
 
 import camisole.languages
@@ -90,6 +91,16 @@ class CamisoleLanguageTable(ListTable):
         return [table_node] + messages
 
 
+class CamisoleLanguageList(Directive):
+    has_content = False
+
+    def run(self):
+        camisole.languages._import_builtins()
+        langs = [l.name for l in camisole.languages.all().values()]
+        return [nodes.paragraph(text=(", ".join(langs) + "."))]
+
+
 def setup(app):
     app.add_directive('camisole-language-table', CamisoleLanguageTable)
+    app.add_directive('camisole-language-list', CamisoleLanguageList)
     return {'version': '0.1'}

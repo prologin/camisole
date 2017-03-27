@@ -1,0 +1,24 @@
+{
+    "success": true,
+    "tests": [
+        {
+            "exitcode": 0,
+            "meta": {
+                "cg-mem": 2408,
+                "csw-forced": 9,
+                "csw-voluntary": 2,
+                "exitcode": 0,
+                "exitsig": null,
+                "killed": false,
+                "max-rss": 6628,
+                "message": null,
+                "status": "OK",
+                "time": 0.009,
+                "time-wall": 0.028
+            },
+            "name": "test000",
+            "stderr": "",
+            "stdout": "42\n"
+        }
+    ]
+}
