@@ -1,8 +1,18 @@
 Installation
 ============
 
+VM image
+--------
+
+TODO
+
+Manual install
+--------------
+
+TODO
+
 Core dependencies
------------------
+*****************
 
 The |project| core depends on:
 
@@ -10,13 +20,8 @@ The |project| core depends on:
 * aiohttp_ (HTTP server)
 * isolate_ (isolation backend)
 
-Installing camisole
--------------------
-
-TODO
-
 Per-language dependencies
--------------------------
+*************************
 
 In order to actually compile and execution code in languages other than Python,
 it is necessary to install each language compiler and/or runtime.

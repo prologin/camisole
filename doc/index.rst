@@ -1,20 +1,21 @@
 camisole's documentation
 ========================
 
-|project| is a source compiler and test runner. You give some untrusted
-source code and a test suite, and |project| compiles the code and runs it
-against the test suite.
+|project| is a **secure online judge** for code compilation and execution. You
+give some untrusted source code and a test suite, and |project| compiles the
+code and runs it against the test suite.
 
 It uses isolate_ as a backend to safely compile and execute source codes using
 linux kernel features such as namespaces, cgroups, chroot and resources limits.
 
 |project| is aimed at:
 
-- Computer science teachers who want to grade their students or provide them
-  with an online tool to check their own code.
-- Programming contests who want to grade the submissions of the contestants.
+- Computer science teachers who want to **grade their students** or provide
+  them with an online tool to check their own code.
+- Programming contests who want to grade the submissions of the contestants
+  with an **online judge**.
 - Programming websites who want to have an interactive demo where people can
-  run arbitrary code.
+  **run arbitrary code**.
 - Online compiler/interpreter websites.
 
 |project| handles all major languages, and can be easily extended to support
@@ -31,9 +32,11 @@ Contents
    :maxdepth: 2
 
    installation
-   configuration
+   commands
    usage
+   faq
    extending
+   dev
 
 Quickstart
 ----------
