@@ -1,0 +1,50 @@
+{% extends "!layout.html" %}
+
+{%- block footer %}
+{{ super() }}
+<script type="text/javascript">
+var count = 0;
+
+$('div.highlight-json > .highlight > pre').each(function () {
+    var open = false;
+    var meta = false;
+    var result = $();
+    $(this).contents().each(function () {
+        var $this = $(this);
+        if (!open && $this.text() == '"meta"') {
+            meta = true;
+        }
+        else if (meta && $this.text() == '{') {
+            result = $();
+            open = true;
+        }
+        else if (open && $this.text() == '},') {
+            var div = $('<span id="meta' + count + '"></span>');
+            var res = result.wrapAll(div);
+            res.parent().before('&nbsp;<a id="hidemeta' + count + '" href="javascript:void(0)" style="font-size: 0.7em; font-weight: bold;">[expand]</a>&nbsp;');
+
+            var callback = (function(count) { return function () {
+                $this = $(this)
+                var t = $this.text();
+                if (t.indexOf('expand') >= 0)
+                    t = t.replace('expand', 'collapse');
+                else
+                    t = t.replace('collapse', 'expand');
+                console.log(t)
+                $this.text(t);
+                $("#meta" + count).toggle();
+            }})(count);
+
+            $("a#hidemeta" + count).click(callback);
+            $("#meta" + count).hide();
+
+            open = false;
+            meta = false;
+            count += 1;
+        } else if (open) {
+            result = result.add($this)
+        }
+    });
+});
+</script>
+{% endblock %}

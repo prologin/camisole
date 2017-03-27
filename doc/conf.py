@@ -56,8 +56,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'camisole'
-copyright = '2017, seirl, zopieux'
-author = 'seirl, zopieux'
+copyright = '2017, Antoine Pietri, Alexandre Macabies'
+author = 'Antoine Pietri, Alexandre Macabies'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -139,7 +139,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'camisole.tex', 'camisole Documentation',
-     'seirl, zopieux', 'manual'),
+     author, 'manual'),
 ]
 
 
@@ -163,6 +163,3 @@ texinfo_documents = [
      author, 'camisole', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-
