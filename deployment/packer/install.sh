@@ -56,6 +56,7 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
     echo '${FQDN}' > /etc/hostname
     /usr/bin/sed -i 's/#${LANGUAGE}/${LANGUAGE}/' /etc/locale.gen
     /usr/bin/locale-gen
+    echo "LANG=${LANGUAGE}" > /etc/locale.conf
     /usr/bin/mkinitcpio -p linux
     /usr/bin/usermod --password ${PASSWORD} root
     # https://wiki.archlinux.org/index.php/Network_Configuration#Device_names
