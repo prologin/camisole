@@ -1,7 +1,8 @@
 Extending camisole
 ==================
 
-TODO
+Camisole is built to be modular: adding support for a new language can be as
+simple as three lines of code.
 
 Add a custom or new language
 ----------------------------
@@ -33,17 +34,16 @@ With that in mind, create a new Python script that defines a subclass of
    :caption: ~/mylangs/lolcode.py
    :name: lolcode.py
 
-   from camisole.models import Lang
+   from camisole.models import Lang, Program
 
    class Lolcode(Lang):
        source_ext = '.lol'
-       interpreter = '/usr/bin/lci'
+       interpreter = Program('/usr/bin/lci')
        reference_source = r'HAI 1.2, VISIBLE "42", KTHXBYE'
 
 * ``source_ext`` is the extension used by the language source files;
   if that's not relevant, just use an empty string
-* ``interpreter`` is the absolute path to the interpreter binary, without
-  any command line arguments
+* ``interpreter`` is a Program representing the interpreter binary
 * ``reference_source`` is the source, written in the target language, of a
   program that shall output the string ``42\n`` (including the newline).
   This *reference program* will be used to test for working languages, eg. when

@@ -34,8 +34,8 @@ Contents
    installation
    commands
    usage
-   faq
    extending
+   faq
    dev
 
 Quickstart
