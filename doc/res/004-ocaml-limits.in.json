@@ -1,0 +1,18 @@
+{
+    "lang": "ocaml",
+    "source": "print_string \"Hello, world!\\\\n\"",
+    "compile": {
+        "wall-time": 10,
+        "fsize": 4096,
+        "mem": 100000
+    },
+    "execute": {
+        "time": 2,
+        "wall-time": 5,
+        "processes": 1,
+        "quota": "50,3",
+        "fsize": 256,
+        "stack": 9000,
+        "mem": 100000
+    }
+}
