@@ -74,7 +74,9 @@ If you want to install and run it manually::
 
     git clone https://github.com/prologin/camisole
     cd camisole
-    python3 setup.py build install
+    python3 setup.py build
+    sudo python3 setup.py install
+
     python3 -m camisole serve
 
 Be aware that you need to have the rights to run ``isolate``. In Archlinux,

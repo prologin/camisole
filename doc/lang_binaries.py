@@ -58,7 +58,7 @@ class CamisoleLanguageTable(ListTable):
     # them anyway
     #package_finders = [inst for inst in (DebianFinder(), ArchFinder())
     #                   if inst.available()]
-    packages_finders = []
+    package_finders = []
 
     def run(self):
         camisole.languages._import_builtins()

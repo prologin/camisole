@@ -1,0 +1,18 @@
+{
+    "success": true,
+    "system": {
+        "arch": "x86_64",
+        "byte_order": "little",
+        "cpu_cache_L1d": 32768,
+        "cpu_cache_L1i": 32768,
+        "cpu_cache_L2": 262144,
+        "cpu_cache_L3": 6291456,
+        "cpu_count": 1,
+        "cpu_mhz": 2494.214,
+        "cpu_name": "Intel(R) Core(TM) i7-4710HQ CPU @ 2.50GHz",
+        "kernel": "Linux",
+        "kernel_release": "4.10.9-1-ARCH",
+        "kernel_version": "#1 SMP PREEMPT Sat Apr 8 12:39:59 CEST 2017",
+        "memory": 2102362112
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "languages": {
+        "c": {
+            "name": "C",
+            "programs": {
+                "gcc": {
+                    "opts": [
+                        "-std=c11",
+                        "-Wall",
+                        "-Wextra",
+                        "-O2",
+                        "-lm"
+                    ],
+                    "version": "6.3.1"
+                }
+            }
+        }
+    },
+    "success": true
+}

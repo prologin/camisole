@@ -166,7 +166,9 @@ There is a way to retrieve some information about the languages enabled in
 camisole: the endpoint ``/languages`` give you information about the versions
 of the compilers, interpreters and runtimes and their options.
 
-TODO
+.. literalinclude:: res/languages.json
+   :language: json
+
 
 System information
 ------------------
@@ -174,4 +176,5 @@ System information
 You can also get information about the system where camisole is running by
 doing a request to the ``/system`` endpoint.
 
-TODO
+.. literalinclude:: res/system.json
+   :language: json
