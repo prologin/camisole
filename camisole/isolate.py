@@ -34,7 +34,15 @@ async def communicate(cmdline, data=None, **kwargs):
     return retcode, stdout, stderr
 
 
-OPTIONS = ['mem', 'time', 'wall-time', 'fsize', 'processes', 'quota']
+OPTIONS = [
+    'fsize',
+    'mem',
+    'processes',
+    'quota',
+    'stack'
+    'time',
+    'wall-time',
+]
 
 # TODO(seirl): find a way to get those from the config?
 NUM_BOXES = 1000
