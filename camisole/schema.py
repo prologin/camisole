@@ -11,6 +11,11 @@ ISOLATE_OPTS_PROPERTIES = {
     'wall-time': {'type': 'number'},
 }
 
+EXECUTE_PROPERTIES = {
+    'stdin': {'type': 'string'},
+    **ISOLATE_OPTS_PROPERTIES,
+}
+
 SCHEMA = {
     'type': 'object',
     'properties': {
@@ -22,10 +27,7 @@ SCHEMA = {
         },
         'execute': {
             'type': 'object',
-            'properties': {
-                'stdin': {'type': 'string'},
-                **ISOLATE_OPTS_PROPERTIES,
-            }
+            'properties': EXECUTE_PROPERTIES,
         },
         'tests': {
             'type': 'array',
@@ -33,8 +35,7 @@ SCHEMA = {
                 'type': 'object',
                 'properties': {
                     'name': {'type': 'string'},
-                    'stdin': {'type': 'string'},
-                    **ISOLATE_OPTS_PROPERTIES,
+                    **EXECUTE_PROPERTIES,
                 },
             },
         },
