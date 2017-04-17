@@ -8,7 +8,7 @@ setup(
     name='camisole',
     version='0.4',
     packages=find_packages(),
-    url='https://bitbucket.com/prologin/camisole',
+    url='https://github.com/prologin/camisole',
     license='GPL',
     author='serialk, zopieux',
     description='An asyncio-based source compiler and test runner.',
