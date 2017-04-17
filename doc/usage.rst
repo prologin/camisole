@@ -1,11 +1,11 @@
 Usage
 =====
 
-Camisole exposes a HTTP/JSON REST API. Once the HTTP server of camisole is
+|project| exposes a HTTP/JSON REST API. Once the HTTP server of camisole is
 running, you can query it with any HTTP client using a POST request.
 
 The body of your request should contain a JSON describing the request you want
-to execute. Camisole will return the response as a JSON, always including a
+to execute. |project| will return the response as a JSON, always including a
 flag `"success"` that indicates whether the request was successful or not.
 
 Simple request
@@ -75,7 +75,7 @@ send a list of tests to camisole, and the compiled program will get executed
 once per test.
 
 To send a test suite, add a ``tests`` field in your input that contains a list
-of tests. A text is a (possibly empty) object that can have the following
+of tests. A test is a (possibly empty) object that can have the following
 attributes:
 
 - ``name``: the name of the test (defaults to an autoincremetal ``testXXX``)
@@ -83,7 +83,7 @@ attributes:
 - Any additional test-specific resource limit. These resource limits, when
   specified, will override the global ones specified in the ``execute`` bloc.
 - ``fatal``: a boolean indicating whether the test is fatal or not. If the test
-  is fatal and its execution fails, the other tests won't be executed.
+  is fatal and its execution fails, the remaining tests won't be executed.
 
 Note that you can also add the boolean ``all_fatal`` in your main request if
 you want the tests to always be fatal.
@@ -98,7 +98,7 @@ Output:
 .. literalinclude:: res/003-python-testsuite.out.json
    :language: json
 
-If you don't specify a test suite, Camisole will only execute a single test
+If you don't specify a test suite, |project| will only execute a single test
 named ``test000`` with an empty input.
 
 
@@ -126,8 +126,8 @@ A *report* is an object containing three fields:
   program, but it is advised to use it as if it was the case.
   The difference is that if the program returns 0 but is killed or violates
   a resource limitation policy, or if ``isolate`` crashes, the exitcode flag
-  will report an error even if the program in itself didn't return 0.
-- ``meta``: the meta object of the report.
+  will report an error even if the program in itself executed fine.
+- ``meta``: the execution metadata.
 
 Execution metadata
 ------------------
