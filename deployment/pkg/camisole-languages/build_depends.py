@@ -20,11 +20,8 @@ def list_paths():
             for path in OVERWRITE[cls]:
                 yield cls, path
             continue
-        if cls.compiler:
-            yield cls, cls.compiler
-        if cls.interpreter:
-            yield cls, cls.interpreter
-        yield from cls.extra_binaries
+        for p in cls.required_binaries():
+            yield cls, p.cmd
 
 
 def get_package(binary):
