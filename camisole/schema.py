@@ -21,7 +21,7 @@ SCHEMA = {
     'properties': {
         'lang': {'type': 'string'},
         'source': {'type': 'string'},
-        'all_fatal': {'type': 'bool'},
+        'all_fatal': {'type': 'boolean'},
         'compile': {
             'type': 'object',
             'properties': ISOLATE_OPTS_PROPERTIES,
@@ -36,7 +36,7 @@ SCHEMA = {
                 'type': 'object',
                 'properties': {
                     'name': {'type': 'string'},
-                    'fatal': {'type': 'bool'},
+                    'fatal': {'type': 'boolean'},
                     **EXECUTE_PROPERTIES,
                 },
             },

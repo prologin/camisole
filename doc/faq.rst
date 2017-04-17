@@ -1,5 +1,5 @@
-Frequently Asked Question
-=========================
+Frequently Asked Questions
+==========================
 
 Can I run this in Docker/LXC/… or even directly on my server?
 -------------------------------------------------------------
