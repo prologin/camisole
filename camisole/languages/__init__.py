@@ -34,6 +34,7 @@ __all__ = [
     'php',
     'python',
     'ruby',
+    'rust',
     'scheme',
     'visualbasic',
 ]
