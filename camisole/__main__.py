@@ -13,7 +13,8 @@ async def print_working_languages(languages, verbosity):
     def extract_fail_message(result):
         relevant = (result['compile'] if 'compile' in result
                     else result['tests'][0])
-        return '\n'.join((relevant['meta']['message'], relevant['stderr']))
+        messages = [relevant['meta']['message'], relevant['stderr']]
+        return '\n'.join(msg for msg in messages if msg)
 
     use_color = sys.stdout.isatty()
     max_length = max(map(len, languages)) + 2
