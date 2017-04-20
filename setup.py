@@ -11,6 +11,7 @@ setup(
     url='https://github.com/prologin/camisole',
     license='GPL',
     author='Antoine Pietri, Alexandre Macabies',
+    author_email='info@prologin.org',
     description='An asyncio-based source compiler and test runner.',
     install_requires=['aiohttp'],
     setup_requires=['pytest-runner'],
