@@ -25,6 +25,9 @@ more. The current supported languages are:
 
 Communication with the |project| engine relies on a simple HTTP/JSON REST API.
 
+You can contribute to the project development on GitHub_ by reporting issues,
+making suggestions or opening pull requests.
+
 Contents
 --------
 
@@ -89,5 +92,6 @@ Indices and tables
 
 .. _asyncio: https://docs.python.org/3/library/asyncio.html
 .. _isolate: https://github.com/ioi/isolate
+.. _GitHub: https://github.com/prologin/camisole
 
 .. [#isolatepaper] `MAREŠ, Martin et BLACKHAM, Bernard. A new contest sandbox. Olympiads in Informatics, 2012, vol. 6, p.  100 <http://mj.ucw.cz/papers/isolate.pdf>`_.
