@@ -85,12 +85,13 @@ class Isolator:
 
             cmd_init = self.cmd_base + ['--init']
             retcode, stdout, stderr = await communicate(cmd_init)
-            if retcode != 0:
-                raise RuntimeError("{} returned code {}: “{}”".format(
-                    cmd_init, retcode, stderr))
-            self.path = pathlib.Path(stdout.strip().decode()) / 'box'
-            self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-meta-')
-            self.meta_file.__enter__()
+        if retcode != 0:
+            raise RuntimeError("{} returned code {}: “{}”".format(
+                cmd_init, retcode, stderr))
+        self.path = pathlib.Path(stdout.strip().decode()) / 'box'
+        self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-meta-')
+        self.meta_file.__enter__()
+        return self
 
     async def __aexit__(self, exc, value, tb):
         meta_defaults = {
@@ -137,7 +138,8 @@ class Isolator:
 
         self.meta_file.__exit__(exc, value, tb)
 
-    async def run(self, cmdline, data=None, env=None, **kwargs):
+    async def run(self, cmdline, data=None, env=None,
+                  merge_outputs=False, **kwargs):
         cmd_run = self.cmd_base[:]
         cmd_run += list(itertools.chain(
             *[('-d', d) for d in self.allowed_dirs]))
@@ -159,21 +161,26 @@ class Isolator:
         cmd_run += [
             '--meta={}'.format(self.meta_file.name),
             '--stdout={}'.format(self.stdout_file),
-            '--stderr={}'.format(self.stderr_file),
-            '--run', '--'
         ]
+
+        if not merge_outputs:
+            cmd_run.append('--stderr={}'.format(self.stderr_file))
+
+        cmd_run += ['--run', '--']
         cmd_run += cmdline
 
         self.isolate_retcode, self.isolate_stdout, self.isolate_stderr = (
             await communicate(cmd_run, data=data, **kwargs))
 
+        self.stdout = ''
+        self.stderr = ''
         try:
             with (self.path / self.stdout_file).open(errors='ignore') as f:
                 self.stdout = f.read()
-            with (self.path / self.stderr_file).open(errors='ignore') as f:
-                self.stderr = f.read()
+            if not merge_outputs:
+                with (self.path / self.stderr_file).open(errors='ignore') as f:
+                    self.stderr = f.read()
         except (IOError, PermissionError):
             # Something went wrong, isolate was killed before changing the
             # permissions or unreadable stdout/stderr
-            self.stdout = ''
-            self.stderr = ''
+            pass
