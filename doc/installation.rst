@@ -13,11 +13,15 @@ VM image
 The best and easiest way to install Camisole is to download a Virtualbox
 export here:
 
-**TODO: Coming soon!**
+`Download camisole-latest.ova
+<https://camisole.prologin.org/ova/camisole-latest.ova>`_
 
-You can then import it in Virtualbox, click on the "Run" button, and you should
-then have your Camisole instance running on port 42920. Test your installation
-by visiting this URL::
+`Archive of releases
+<https://camisole.prologin.org/ova>`_
+
+You can then import it in Virtualbox, (File / Import Appliance), click on the
+"Start" or "Headless Start" button, and you should then have your Camisole
+instance running on port 42920. Test your installation by visiting this URL::
 
     curl http://localhost:42920/
 
