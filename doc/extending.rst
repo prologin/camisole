@@ -66,5 +66,5 @@ To check if |project| recognizes your new language, add the path to
 ``lolcode.py`` to the |project| path and run :ref:`commands-test`::
 
     $ export CAMISOLEPATH=~/mylangs  # so camisole can find lolcode.py
-    $ camisole -m lolcode languages
+    $ camisole -m lolcode test
     lolcode ..... OK
