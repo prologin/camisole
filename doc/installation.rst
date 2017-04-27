@@ -13,7 +13,7 @@ VM image
 The best and easiest way to install Camisole is to download a Virtualbox
 export here:
 
-`Download camisole-latest.ova
+`Download camisole-latest.ova (~1 GB)
 <https://camisole.prologin.org/ova/camisole-latest.ova>`_
 
 `Archive of releases
