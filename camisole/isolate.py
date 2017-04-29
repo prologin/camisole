@@ -152,7 +152,7 @@ class Isolator:
             elif opt == 'processes':
                 cmd_run.append('-p')
 
-        for e in ['PATH', 'LD_LIBRARY_PATH']:
+        for e in ['PATH', 'LD_LIBRARY_PATH', 'LANG']:
             cmd_run += ['--env', e]
 
         for key, value in (env or {}).items():
