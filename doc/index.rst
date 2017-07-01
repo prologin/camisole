@@ -23,7 +23,7 @@ more. The current supported languages are:
 
 .. camisole-language-list::
 
-Communication with the |project| engine relies on a simple HTTP/JSON REST API.
+Communication with the |project| engine relies on a simple HTTP + JSON API.
 
 You can contribute to the project development on GitHub_ by reporting issues,
 making suggestions or opening pull requests.
