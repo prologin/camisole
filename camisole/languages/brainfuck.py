@@ -1,6 +1,5 @@
 from camisole.languages.c import C
 from camisole.models import Lang, PipelineLang, Program
-from camisole.utils import which
 
 
 class BrainfuckToC(Lang, register=False):
