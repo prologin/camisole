@@ -81,7 +81,7 @@ class Isolator:
             retcode, stdout, stderr = await communicate(cmd_init)
             if retcode == 2 and b"already exists" in stderr:
                 continue
-            if retcode != 0:
+            if retcode != 0:  # noqa
                 raise RuntimeError("{} returned code {}: “{}”".format(
                     cmd_init, retcode, stderr))
             break
@@ -131,7 +131,7 @@ class Isolator:
 
         cmd_cleanup = self.cmd_base + ['--cleanup']
         retcode, stdout, stderr = await communicate(cmd_cleanup)
-        if retcode != 0:
+        if retcode != 0:  # noqa
             raise RuntimeError("{} returned code {}: “{}”".format(
                 cmd_cleanup, retcode, stderr))
 
@@ -179,7 +179,7 @@ class Isolator:
             if not merge_outputs:
                 with (self.path / self.stderr_file).open(errors='ignore') as f:
                     self.stderr = f.read()
-        except (IOError, PermissionError):
+        except (IOError, PermissionError):  # noqa
             # Something went wrong, isolate was killed before changing the
             # permissions or unreadable stdout/stderr
             pass

@@ -2,7 +2,7 @@ import sys
 from setuptools import setup, find_packages
 
 if sys.version_info < (3, 6):
-    sys.exit("Camisole requires Python 3.6 or later.")
+    sys.exit("camisole requires Python 3.6 or later.")
 
 setup(
     name='camisole',
@@ -13,7 +13,7 @@ setup(
     author='Antoine Pietri, Alexandre Macabies',
     author_email='info@prologin.org',
     description='An asyncio-based source compiler and test runner.',
-    install_requires=['aiohttp'],
+    install_requires=['aiohttp', 'jsonschema'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'pytest-cov', 'pytest-asyncio'],
     test_suite='pytest',
