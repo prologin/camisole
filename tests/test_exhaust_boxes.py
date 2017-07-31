@@ -1,5 +1,4 @@
 import asyncio
-
 import pytest
 
 from camisole import isolate
@@ -15,18 +14,22 @@ def build_runners(amount):
 
 
 @pytest.mark.asyncio
-async def test_just_enough_boxes():
-    futures = list(build_runners(MAX_BOX_AMOUNT))
-    await asyncio.wait(futures)
+@pytest.mark.parametrize('n', range(1, MAX_BOX_AMOUNT + 1))
+async def test_just_enough_boxes(n):
+    futures = list(build_runners(n))
+    done, pending = await asyncio.wait(futures)
+    assert not pending
+    for coro in done:
+        assert coro.result()['tests'][0]['stdout'] == '42\n'
 
 
 @pytest.mark.asyncio
-@pytest.mark.xfail # This causes some trouble with the Lock, needs investigation
-async def test_too_many_boxes():
-    futures = list(build_runners(MAX_BOX_AMOUNT * 2))
+@pytest.mark.parametrize('n', range(MAX_BOX_AMOUNT + 1, MAX_BOX_AMOUNT * 2))
+async def test_too_many_boxes(n):
+    futures = list(build_runners(n))
     done, pending = await asyncio.wait(futures)
     # it is important to retrieve all the exceptions so asyncio is happy
     exceptions = [task.exception() for task in done]
     assert any(isinstance(e, RuntimeError)
-               and "No isolate box ID available." in str(e)
+               and "No isolate box ID available" in str(e)
                for e in exceptions)

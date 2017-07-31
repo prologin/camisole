@@ -1,7 +1,7 @@
-import camisole.schema
-
 import jsonschema
 import pytest
+
+import camisole.schema
 
 
 def test_correct_simple():

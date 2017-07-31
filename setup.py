@@ -15,7 +15,7 @@ setup(
     description='An asyncio-based source compiler and test runner.',
     install_requires=['aiohttp'],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'pytest-cov'],
+    tests_require=['pytest', 'pytest-cov', 'pytest-asyncio'],
     test_suite='pytest',
     entry_points={
         'console_scripts': ['camisole = camisole.__main__:main'],

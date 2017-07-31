@@ -1,7 +1,6 @@
 import pytest
 
-import camisole.languages
-import camisole.languages.c
+from camisole.languages.c import C
 from camisole.models import PipelineLang, Lang, Program
 
 
@@ -23,7 +22,7 @@ class BadCopy(Copy, register=False):
 @pytest.mark.asyncio
 async def test_pipeline_success():
     class Pipeline(PipelineLang, register=False):
-        sub_langs = [Copy, Copy, camisole.languages.c.C]
+        sub_langs = [Copy, Copy, C]
 
     p = Pipeline({'source': '#include <stdio.h>\nint main(void) { printf("42\\n"); return 0; }', 'tests': [{}]})
     result = await p.run()
@@ -33,7 +32,7 @@ async def test_pipeline_success():
 @pytest.mark.asyncio
 async def test_pipeline_failure_return_nonzero():
     class Pipeline(PipelineLang, register=False):
-        sub_langs = [camisole.languages.c.C, camisole.languages.c.C]
+        sub_langs = [C, C]
 
     p = Pipeline({'source': '#include <stdio.h>\nint main(void) { printf("42\\n"); return 0; }', 'tests': [{}]})
     result = await p.run()
@@ -44,7 +43,7 @@ async def test_pipeline_failure_return_nonzero():
 @pytest.mark.asyncio
 async def test_pipeline_failure_does_not_create_binary_while_returning_zero():
     class Pipeline(PipelineLang, register=False):
-        sub_langs = [BadCopy, camisole.languages.c.C]
+        sub_langs = [BadCopy, C]
 
     p = Pipeline({'source': '#include <stdio.h>\nint main(void) { printf("42\\n"); return 0; }', 'tests': [{}]})
     result = await p.run()

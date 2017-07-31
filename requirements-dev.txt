@@ -1,5 +1,4 @@
 -r requirements.txt
 pytest
-pytest-aiohttp
 pytest-asyncio
 pytest-cov

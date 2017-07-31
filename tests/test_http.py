@@ -1,92 +1,81 @@
-import json
+import os
+import pytest
 
-import aiohttp.web
-import asyncio
-
-from camisole.http import make_application
-
-
-async def get_client(test_client, loop):
-    return await test_client(make_application(loop=loop))
+import camisole.languages
+camisole.languages._import_builtins()
 
 
-async def request(client, data):
-    return await (await client.post('/run', data=data)).json()
+@pytest.mark.asyncio
+async def test_default(http_request):
+    assert "Welcome to Camisole" in (await http_request('/'))
 
 
-async def request_test(client, data):
-    return await (await client.post('/test', data=data)).json()
-
-
-async def request_system(client, data):
-    return await (await client.post('/system', data=data)).json()
-
-
-async def request_languages(client):
-    return await (await client.post('/languages')).json()
-
-
-async def test_bad_schema(test_client, loop):
-    client = await get_client(test_client, loop)
-    result = await request(client, json.dumps({'foo': 'bar'}))
+@pytest.mark.asyncio
+async def test_run_bad_schema(http_request):
+    result = await http_request('/run', {'foo': 'bar'})
     assert not result['success']
     message = result['error'].lower()
     assert 'failed validating' in message
     assert 'in schema' in message
 
 
-async def test_bad_json(test_client, loop):
-    client = await get_client(test_client, loop)
-    result = await request(client, b'bad-stuff')
+@pytest.mark.asyncio
+async def test_fuck_you(http_client):
+    result = await (await http_client.post('/run', data=b'bad-stuff')).json()
     assert not result['success']
     assert 'invalid json' in result['error'].lower()
 
 
-async def test_unknown_language(test_client, loop):
-    client = await get_client(test_client, loop)
-    result = await request(client, json.dumps({'lang': 'foobar', 'source': ''}))
+@pytest.mark.asyncio
+async def test_run_unknown_language(http_request):
+    result = await http_request('/run', {'lang': 'foobar', 'source': ''})
     assert not result['success']
     assert 'incorrect language' in result['error'].lower()
 
 
-async def test_simple(test_client, loop):
-    # monkey-patch event loop for camisole
-    asyncio.set_event_loop(loop)
-    client = await get_client(test_client, loop)
-    result = await request(client, json.dumps({'lang': 'python',
-                                               'source': 'print(42)',
-                                               'tests': [{}]}))
+@pytest.mark.asyncio
+async def test_run_simple(http_request):
+    result = await http_request(
+        '/run', {'lang': 'python', 'source': 'print(42)', 'tests': [{}]})
     assert result['success']
     assert result['tests'][0]['meta']['status'] == 'OK'
     assert result['tests'][0]['stdout'].strip() == '42'
 
 
-async def test_test(test_client, loop):
-    # monkey-patch event loop for camisole
-    asyncio.set_event_loop(loop)
-    client = await get_client(test_client, loop)
-    result = await request_test(client, json.dumps({}))
+@pytest.mark.asyncio
+async def test_run_large_payload(http_request, http_client_large_size):
+    test = {'stdin': 'A' * 1024 * 1024 * 1}
+    data = {'lang': 'python', 'source': 'print(input())', 'tests': [test]}
+
+    # not OK with default limit
+    res = await http_request('/run', data)
+    assert not res['success']
+    assert 'HTTPRequestEntityTooLarge' in res['error']
+
+    # OK with large limit
+    res = await http_request('/run', data, client=http_client_large_size)
+    assert res['success']
+
+
+@pytest.mark.asyncio
+async def test_test(http_request):
+    result = await http_request('/test', {})
     assert result['success']
     assert result['results']['python']['success']
 
 
-async def test_system(test_client, loop):
-    import os
-    # monkey-patch event loop for camisole
-    asyncio.set_event_loop(loop)
-    client = await get_client(test_client, loop)
-    result = await request_system(client, json.dumps({}))
+@pytest.mark.asyncio
+async def test_system(http_request):
+    result = await http_request('/system', {})
     assert result['success']
     assert result['system']['cpu_count'] == os.cpu_count()
     assert isinstance(result['system']['cpu_mhz'], float)
     assert isinstance(result['system']['memory'], int)
 
 
-async def test_languages(test_client, loop):
-    # monkey-patch event loop for camisole
-    asyncio.set_event_loop(loop)
-    client = await get_client(test_client, loop)
-    result = await request_languages(client)
+@pytest.mark.asyncio
+async def test_languages(http_request):
+    result = await http_request('/languages', {})
     assert 'programs' in result['languages']['brainfuck']
     programs = result['languages']['brainfuck']['programs']
     assert 'esotope-bfc' in programs

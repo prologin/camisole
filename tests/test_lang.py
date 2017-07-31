@@ -74,6 +74,18 @@ async def test_input_data():
         assert test['stdout'] == stdin
 
 
+@pytest.mark.asyncio
+async def test_bad_ref():
+    from camisole.languages.python import Python
+    from camisole.ref import test
+
+    class BadLang(Python):
+        reference_source = 'print(43)'
+
+    ok, result = await test('badlang')
+    assert not ok
+
+
 def test_compile_command_with_no_compiler():
     assert (Python({'source': 'print(42)'})
             .compile_command('print(42)', 'test.bin')) is None
