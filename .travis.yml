@@ -1,0 +1,33 @@
+language: python
+sudo: required
+
+python:
+  - '3.6'
+  - '3.6-dev'
+  - '3.7-dev'
+  - 'nightly'
+  - 'pypy'
+
+matrix:
+  allow_failures:
+  - python: nightly
+  - python: pypy
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y
+      gcc
+      g++
+      luajit
+      gambc
+      openjdk-8-jdk-headless
+      ocaml-nox
+      nodejs
+      perl
+      php5-cli
+      ruby
+      rustc
+
+script:
+  - python setup.py test
+  - python setup.py bdist_wheel
