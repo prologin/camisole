@@ -48,8 +48,6 @@ OPTIONS = [
 NUM_BOXES = 1000
 PATH_BOXES = pathlib.Path('/var/lib/isolate')
 
-BOX_ID_LOCK = asyncio.Lock()
-
 
 class Isolator:
     def __init__(self, opts, allowed_dirs=None):
@@ -74,20 +72,21 @@ class Isolator:
         self.isolate_stderr = None
 
     async def __aenter__(self):
-        with (await BOX_ID_LOCK):
-            busy = {int(p.name) for p in PATH_BOXES.iterdir()}
-            avail = set(range(NUM_BOXES)) - busy
-            try:
-                self.box_id = avail.pop()
-            except KeyError:
-                raise RuntimeError("No isolate box ID available.")
+        busy = {int(p.name) for p in PATH_BOXES.iterdir()}
+        avail = set(range(NUM_BOXES)) - busy
+        while avail:
+            self.box_id = avail.pop()
             self.cmd_base = ['isolate', '--box-id', str(self.box_id), '--cg']
-
             cmd_init = self.cmd_base + ['--init']
             retcode, stdout, stderr = await communicate(cmd_init)
-        if retcode != 0:
-            raise RuntimeError("{} returned code {}: “{}”".format(
-                cmd_init, retcode, stderr))
+            if retcode == 2 and b"already exists" in stderr:
+                continue
+            if retcode != 0:
+                raise RuntimeError("{} returned code {}: “{}”".format(
+                    cmd_init, retcode, stderr))
+            break
+        else:
+            raise RuntimeError("No isolate box ID available.")
         self.path = pathlib.Path(stdout.strip().decode()) / 'box'
         self.meta_file = tempfile.NamedTemporaryFile(prefix='camisole-meta-')
         self.meta_file.__enter__()
