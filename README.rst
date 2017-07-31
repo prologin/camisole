@@ -1,6 +1,9 @@
 camisole
 ========
 
+.. image:: https://travis-ci.org/prologin/camisole.svg?branch=master
+   :target: https://travis-ci.org/prologin/camisole
+
 *camisole* is a **secure online judge** for code compilation and execution. You
 give some untrusted source code and a test suite, and *camisole* compiles the
 code and runs it against the test suite.
