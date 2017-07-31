@@ -13,13 +13,6 @@ import camisole.system
 def json_handler(wrapped):
     @functools.wraps(wrapped)
     async def wrapper(request):
-        # XXX: hack no longer needed in recent aiohttp versions
-        if not hasattr(request, 'query'):
-            import urllib.parse
-            request.query = urllib.parse.parse_qs(request.query_string,
-                                                  keep_blank_values=True)
-            request.query = {k: v[-1] for k, v in request.query.items()}
-
         try:
             try:
                 data = await request.text()
