@@ -17,7 +17,10 @@ matrix:
 
 install:
   - bash .travis/install.sh
+  - pip install -U -r requirements-dev.txt
 
 script:
-  - bash .travis/test.sh
+  - bash .travis/run.sh 'python setup.py test'
+  - bash .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
+  - bash .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
   - python setup.py bdist_wheel && ls dist/

@@ -3,8 +3,9 @@ set -ex
 
 # packages
 sudo apt-get -qq update
-sudo apt-get install -y \
+sudo apt-get install -qqy \
    build-essential \
+   libcap-dev \
    luajit \
    gambc \
    openjdk-8-jdk-headless \
