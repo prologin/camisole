@@ -10,37 +10,14 @@ python:
 
 matrix:
   allow_failures:
-  - python: nightly
-  - python: pypy
+    - python: '3.6-dev'
+    - python: '3.7-dev'
+    - python: 'nightly'
+    - python: 'pypy'
 
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y
-      build-essential
-      luajit
-      gambc
-      openjdk-8-jdk-headless
-      ocaml-nox
-      nodejs
-      perl
-      php5-cli
-      ruby
-      rustc
-  # isolate build + install
-  - git clone --depth=1 https://github.com/ioi/isolate.git
-    && cd isolate
-    &&      make PREFIX="/usr" VARPREFIX="/var" CONFIGDIR="/etc" isolate
-    && sudo make PREFIX="/usr" VARPREFIX="/var" CONFIGDIR="/etc" install
-    && sudo sed -i "s|/var/local/lib/isolate|/var/lib/isolate|" /etc/isolate
-    && sudo groupadd isolate
-    && sudo usermod -a -G isolate $USER
-    && sudo chown -v root:isolate /usr/bin/isolate
-    && sudo chmod -v u+s /usr/bin/isolate
+install:
+  - bash .travis/install.sh
 
 script:
-  # sudo -E so that isolate group is available
-  # check it works
-  - [[ $(sudo -E su $USER -c 'groups') == *isolate* ]]
-  # actual test
-  - sudo -E su $USER -c 'python setup.py test'
-  - python setup.py bdist_wheel
+  - bash .travis/test.sh
+  - python setup.py bdist_wheel && ls dist/
