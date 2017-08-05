@@ -19,6 +19,9 @@ install:
   - bash .travis/install.sh
   - pip install -U -r requirements-dev.txt
 
+env:
+  - TEST_DEBIAN_MODE=1
+
 script:
   - .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
   - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
