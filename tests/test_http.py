@@ -20,7 +20,7 @@ async def test_run_bad_schema(http_request):
 
 
 @pytest.mark.asyncio
-async def test_fuck_you(http_client):
+async def test_bad_json(http_client):
     result = await (await http_client.post('/run', data=b'bad-stuff')).json()
     assert not result['success']
     assert 'invalid json' in result['error'].lower()
@@ -76,9 +76,13 @@ async def test_system(http_request):
 @pytest.mark.asyncio
 async def test_languages(http_request):
     result = await http_request('/languages', {})
-    assert 'programs' in result['languages']['brainfuck']
-    programs = result['languages']['brainfuck']['programs']
-    assert 'esotope-bfc' in programs
-    assert 'gcc' in programs
-    assert programs['python2']['version'].startswith('2.7')
+    assert 'java' in result['languages']
+    assert 'programs' in result['languages']['java']
+    programs = result['languages']['java']['programs']
+    assert 'java' in programs
+    assert 'javac' in programs
+
+    assert 'c' in result['languages']
+    assert 'programs' in result['languages']['c']
+    programs = result['languages']['c']['programs']
     assert '-Wall' in programs['gcc']['opts']

@@ -12,7 +12,7 @@ def python_sleep(duration, global_limit=None, local_limit=None):
     if local_limit:
         args['tests'][0]['wall-time'] = local_limit
     return camisole.languages.python.Python({
-        'source': 'import time; time.sleep({:f})'.format(duration),
+        'source': f'import time; time.sleep({duration:f})',
         **args
     })
 
