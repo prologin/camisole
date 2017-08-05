@@ -8,15 +8,6 @@ from aiohttp.web import Application
 from camisole.http import make_application
 
 
-def pytest_configure(config):
-    import os
-    from camisole.languages.java import Java
-    from camisole.languages.php import  PHP
-    if os.environ.get('TEST_DEBIAN_MODE'):
-        Java.allowed_dirs += ['/etc/alternatives']
-        PHP.allowed_dirs += ['/etc/alternatives']
-
-
 @pytest.yield_fixture
 def aio_client(event_loop):
     """

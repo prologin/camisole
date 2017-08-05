@@ -134,7 +134,7 @@ class Lang(metaclass=MetaLang):
 
         isolator = camisole.isolate.Isolator(
             self.opts.get('compile', {}),
-            allowed_dirs=self.allowed_dirs + tmparg)
+            allowed_dirs=self.get_allowed_dirs() + tmparg)
         async with isolator:
             wd = Path(isolator.path)
             source = wd / self.source_filename()
@@ -157,8 +157,8 @@ class Lang(metaclass=MetaLang):
         if 'stdin' in opts and opts['stdin']:
             input_data = opts['stdin'].encode()
 
-        isolator = camisole.isolate.Isolator(opts,
-                                             allowed_dirs=self.allowed_dirs)
+        isolator = camisole.isolate.Isolator(
+            opts, allowed_dirs=self.get_allowed_dirs())
         async with isolator:
             wd = isolator.path
             compiled = self.write_binary(Path(wd), binary)
@@ -205,6 +205,14 @@ class Lang(metaclass=MetaLang):
             return result
         await self.run_tests(binary, result)
         return result
+
+    def get_allowed_dirs(self):
+        allowed_dirs = []
+        allowed_dirs += self.allowed_dirs
+        from_environ = os.environ.get('CAMISOLE_ALLOWED_DIRS', '').strip()
+        if from_environ:
+            allowed_dirs += from_environ.split(':')
+        return list(camisole.utils.uniquify(allowed_dirs))
 
     def compile_opt_out(self, output):
         return ['-o', output]

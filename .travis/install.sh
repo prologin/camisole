@@ -1,10 +1,15 @@
 #!/bin/bash
 set -ex
 
+# ppa for g++ with C++14
+sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1397BC53640DB551
+sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+
 # packages
 sudo apt-get -qq update
-sudo apt-get install -qqy \
+sudo apt-get install -qq -y \
    build-essential \
+   g++-6 \
    libcap-dev \
    luajit \
    gambc \
@@ -13,8 +18,21 @@ sudo apt-get install -qqy \
    nodejs \
    perl \
    php5-cli \
-   ruby \
-   rustc
+   ruby
+
+# update-alternatives nonsense to force gcc-6
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 30
+sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 30
+sudo update-alternatives --set gcc /usr/bin/gcc-6
+sudo update-alternatives --set g++ /usr/bin/g++-6
+sudo update-alternatives --set c++ /usr/bin/g++
+sudo update-alternatives --set cc /usr/bin/gcc
+
+# checks
+gcc --version | head -1
+g++ --version | head -1
 
 # build isolate
 pushd /tmp
