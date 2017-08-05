@@ -16,6 +16,7 @@ async def print_working_languages(languages, verbosity):
         messages = [relevant['meta']['message'], relevant['stderr']]
         return '\n'.join(msg for msg in messages if msg)
 
+    error_count = 0
     use_color = sys.stdout.isatty()
     max_length = max(map(len, languages)) + 2
 
@@ -28,11 +29,15 @@ async def print_working_languages(languages, verbosity):
         ok_msg = (f'\x1B[{color}m{status}\033[0m' if use_color else status)
         print(f'{lang_name + " ":.<{max_length}} {ok_msg}', flush=True)
 
+        if not success:
+            error_count += 1
         if not success and verbosity > 0:
             if verbosity == 1:
                 print(indent(extract_fail_message(raw).strip()))
             else:
                 print(indent(pformat(raw)))
+
+    return error_count
 
 
 def main():
@@ -98,12 +103,14 @@ def main():
                 for lang, cls in sorted(all().items())]
         print("\n".join(tabulate(rows,
             headers=("Name", "Display name", "Module", "Class name"))))
+        exit(0)
 
     elif args.command == 'test':
         from camisole.languages import all
         languages = args.languages or all().keys()
         verbosity = sum(args.verbose or [])
-        loop.run_until_complete(print_working_languages(languages, verbosity))
+        check = print_working_languages(languages, verbosity)
+        exit(loop.run_until_complete(check))
 
     elif args.command == 'serve':
         from camisole.languages import all
