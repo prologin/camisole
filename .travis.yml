@@ -20,7 +20,7 @@ install:
   - pip install -U -r requirements-dev.txt
 
 script:
-  - bash .travis/run.sh 'python setup.py test'
-  - bash .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
-  - bash .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
+  - .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
+  - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
+  - .travis/run.sh 'python setup.py test -vv --showlocals'
   - python setup.py bdist_wheel && ls dist/
