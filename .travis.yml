@@ -22,5 +22,5 @@ install:
 script:
   - .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
   - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
-  - .travis/run.sh 'python setup.py test -vv --showlocals'
+  - .travis/run.sh 'python setup.py test'
   - python setup.py bdist_wheel && ls dist/
