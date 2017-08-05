@@ -23,10 +23,10 @@ env:
   # Debian has this "alternatives" system that symlinks many common binaries to
   # /etc/alternative/<stuff>, so we need to allow isolate to traverse these.
   # (namely: Java, PHP, Rust (for cc) and maybe others in the future)
-  - CAMISOLE_ALLOWED_DIRS=/etc/alternatives
+  # /var/lib/ghc is a symlink target from ghc (Haskell)
+  - CAMISOLE_ALLOWED_DIRS=/etc/alternatives:/var/lib/ghc
 
 script:
   - .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
   - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
   - .travis/run.sh 'python setup.py test'
-  - python setup.py bdist_wheel && ls dist/

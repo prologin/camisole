@@ -8,17 +8,21 @@ sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
 # packages
 sudo apt-get -qq update
 sudo apt-get install -qq -y \
-   build-essential \
-   g++-6 \
    libcap-dev \
-   luajit \
+   build-essential g++-6 \
+   fp-compiler \
    gambc \
-   openjdk-8-jdk-headless \
-   ocaml-nox \
+   ghc-dynamic \
+   gnat-6 \
+   luajit \
+   mono-runtime mono-mcs mono-vbnc \
    nodejs \
+   ocaml-nox \
+   openjdk-8-jdk-headless \
    perl \
    php5-cli \
    ruby
+# rust is broken
 
 # update-alternatives nonsense to force gcc-6
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
@@ -29,6 +33,9 @@ sudo update-alternatives --set gcc /usr/bin/gcc-6
 sudo update-alternatives --set g++ /usr/bin/g++-6
 sudo update-alternatives --set c++ /usr/bin/g++
 sudo update-alternatives --set cc /usr/bin/gcc
+# update-alternatives for node -> nodejs
+sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+
 
 # checks
 gcc --version | head -1
