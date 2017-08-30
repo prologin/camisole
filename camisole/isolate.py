@@ -35,6 +35,8 @@ async def communicate(cmdline, data=None, **kwargs):
 
 
 OPTIONS = [
+    'cg-mem',
+    'extra-time',
     'fsize',
     'mem',
     'processes',
