@@ -1,12 +1,14 @@
 Usage
 =====
 
-|project| exposes a HTTP/JSON REST API. Once the HTTP server of camisole is
-running, you can query it with any HTTP client using a POST request.
+|project| exposes an HTTP API with JSON or MessagePack_ serialization. Once the
+HTTP server of camisole is running, you can query it with any HTTP client using
+a POST request.
 
-The body of your request should contain a JSON describing the request you want
-to execute. |project| will return the response as a JSON, always including a
-flag `"success"` that indicates whether the request was successful or not.
+The body of your request should contain an object describing the request you
+want to execute. |project| will return the response as JSON (or MessagePack,
+see :ref:`binary_payloads`), always including a `"success"` boolean that
+indicates whether the request was successful or not.
 
 Simple request
 --------------
@@ -21,7 +23,6 @@ Example with an intepreted language:
 
 .. literalinclude:: res/001-python-42.in.json
    :language: json
-
 
 Result:
 
@@ -46,14 +47,17 @@ for the compilation and the execution, respectively.
 There are a lot of ways you can limit the resources of both the compilation and
 the execution of your program:
 
-- ``time``: limit the user time of the process (seconds)
-- ``wall-time``: limit the wall time of the process (seconds)
-- ``mem``: limit the available memory of the process (kilobytes)
-- ``stack``: limit the stack size of the program (kilobytes)
-- ``processes``: limit the number of processes and/or threads
+- ``cg-mem``: limit the available memory of each process (kilobytes)
+- ``extra-time``: grace period before killing a program after it exceeded a
+  time limit (seconds)
 - ``fsize``: limit the size of files created by the program (kilobytes)
+- ``mem``: limit the address space of each process (kilobytes)
+- ``processes``: limit the number of processes and/or threads
 - ``quota``: limit the disk quota to a number of blocks and inodes (separate
-  both numbers by a comma)
+  both numbers by a comma, eg. ``10,30``)
+- ``stack``: limit the stack size of each process (kilobytes)
+- ``time``: limit the user time of the program (seconds)
+- ``wall-time``: limit the wall time of the program (seconds)
 
 This example demonstrates the use of resource limitations for both the
 compilation and execution:
@@ -64,7 +68,6 @@ compilation and execution:
 To get more information about the different options, visit the `documentation
 of isolate <https://github.com/ioi/isolate/blob/master/isolate.1.txt>`_, the
 isolation backend, where they are described in detail.
-
 
 Sending a test suite
 --------------------
@@ -100,7 +103,6 @@ Output:
 
 If you don't specify a test suite, |project| will only execute a single test
 named ``test000`` with an empty input.
-
 
 Response format
 ---------------
@@ -163,18 +165,51 @@ Versions and options
 --------------------
 
 There is a way to retrieve some information about the languages enabled in
-camisole: the endpoint ``/languages`` give you information about the versions
+|project|: the endpoint ``/languages`` give you information about the versions
 of the compilers, interpreters and runtimes and their options.
 
 .. literalinclude:: res/languages.json
    :language: json
 
-
 System information
 ------------------
 
-You can also get information about the system where camisole is running by
+You can also get information about the system where |project| is running by
 doing a request to the ``/system`` endpoint.
 
 .. literalinclude:: res/system.json
    :language: json
+
+.. _binary_payloads:
+
+Binary payloads
+---------------
+
+|project| was primarily designed for text (UTF-8 encodable) inputs and outputs,
+for both the program source and inputs/outputs. It works fine in most
+situations, but in case your program outputs binary data or you source is binary
+(eg. a Piet_ program), you can not use the JSON serializer to communicate with
+the |project| server as JSON can only encode and decode Unicode.
+
+|project| automatically fallbacks to MessagePack_ serialization if the response
+cannot be JSON-encoded. You must be prepared to use the proper deserialization
+method depending on the ``Content-Type`` header sent by the server.
+
+You can also encode your requests in MessagePack, if needed. Just send the
+correct ``Content-Type: application/msgpack`` header.
+
+.. note::
+
+   The server will only send content-types that the client accepts,
+   depending on the ``Accept`` header you send.
+
+   Send ``Accept: */*`` to allow the server to send either JSON or MessagePack
+   if JSON isn't suitable.
+
+   Send ``Accept: application/messagepack`` to enforce MessagePack responses.
+
+   Send ``Accept: application/json`` to enforce JSON responses. Responses
+   containing binary data will fail with a ``Not Acceptable`` HTTP error.
+
+.. _Piet: https://en.wikipedia.org/wiki/Piet_(programming_language)
+.. _MessagePack: https://en.wikipedia.org/wiki/MessagePack

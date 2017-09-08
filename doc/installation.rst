@@ -1,51 +1,62 @@
+.. _installation:
+
 Installation
 ============
 
-Camisole should always be run in a virtual machine. In theory, the sandboxed
+.. highlight:: console
+
+|project| should always be run in a virtual machine. In theory, the sandboxed
 programs have no way to interact with the machine. In practice, some
 configuration errors on your side, or even some kernel bugs might be exploited.
-To limit the attack surface of your instance, you shouldn't run it on a
-production machine.
+Refer to :ref:`why-vm` for more explanations.
 
 VM image
 --------
 
-The best and easiest way to install Camisole is to download a Virtualbox
-export here:
+The easiest way to install |project| is to download the Virtualbox image:
 
-`Download camisole-latest.ova (~1 GB)
-<https://camisole.prologin.org/ova/camisole-latest.ova>`_
-
-`Archive of releases
-<https://camisole.prologin.org/ova>`_
+* `Download camisole-latest.ova
+  <https://camisole.prologin.org/ova/camisole-latest.ova>`_  (~1 GB)
+* `Old releases <https://camisole.prologin.org/ova>`_
 
 You can then import it in Virtualbox, (File / Import Appliance), click on the
 "Start" or "Headless Start" button, and you should then have your Camisole
 instance running on port 42920. Test your installation by visiting this URL::
 
-    curl http://localhost:42920/
+   $ curl http://localhost:42920/
 
+Archlinux packages
+------------------
+
+Using you preferred AUR helper (eg. pacaur), install ``camisole-git``. You can
+also install the ``camisole-languages`` meta-package_ to install the
+dependencies for all the built-in languages supported by |project|::
+
+   $ pacaur -S camisole-git camisole-languages
+
+.. _meta-package: https://aur.archlinux.org/packages/camisole-languages/
 
 Manual install
 --------------
 
-Camisole has mainly been tested on Archlinux, but it should work on other
+|project| has mainly been tested on Archlinux, but it should work on other
 platforms. That said, it requires some cutting edge versions that you might
 have some trouble installing in other distributions.
 
-Core dependencies
-*****************
+The |project| core program depends on:
 
-The |project| core depends on:
-
-* Python_ ≥3.6
-* aiohttp_ (HTTP server)
-* jsonschema_ (validate the JSON inputs)
+* a modern Linux kernel
 * isolate_ (isolation backend)
+* Python_ ≥3.6
+* Python aiohttp_ (HTTP server)
+* Python MessagePack_ (alternative to JSON)
+* Python PyYAML_ (configuration)
+* Python `JSON Schema`_ (user input validation)
 
-On Archlinux, install those with::
+On Archlinux, install those with your favorite AUR helper, eg. pacaur::
 
-    pacaur -S python-aiohttp python-jsonschema isolate-git
+   $ pacaur -S isolate-git python-aiohttp python-msgpack python-yaml \
+               python-jsonschema
 
 Per-language dependencies
 *************************
@@ -58,36 +69,25 @@ with the binaries needed to compile/run programs written in said language.
 
 .. camisole-language-table::
 
-The Arch User Repository already have a meta-package depending on all the
-languages supported by the upstream::
-
-    pacaur -S camisole-languages
-
 Build and install
 *****************
 
-After installing all the required dependancies, you can build and install
-Camisole.
+After installing all the required dependencies, you can build and install
+|project|::
 
-For Archlinux, you can install the ``camisole-git`` package in the Arch User
-Repository::
+   $ git clone https://github.com/prologin/camisole
+   $ cd camisole
+   $ python3 setup.py build
+   $ sudo python3 setup.py install
 
-    pacaur -S camisole-git
-
-If you want to install and run it manually::
-
-    git clone https://github.com/prologin/camisole
-    cd camisole
-    python3 setup.py build
-    sudo python3 setup.py install
-
-    python3 -m camisole serve
+   $ python3 -m camisole serve
 
 Be aware that you need to have the rights to run ``isolate``. In Archlinux,
 you will need to add your user to the ``isolate`` group.
 
-
 .. _Python: https://python.org
 .. _aiohttp: https://aiohttp.readthedocs.io
-.. _jsonschema: http://json-schema.org
+.. _JSON Schema: http://json-schema.org
 .. _isolate: https://github.com/ioi/isolate
+.. _MessagePack: https://pypi.python.org/pypi/msgpack-python
+.. _PyYAML: http://pyyaml.org/

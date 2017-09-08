@@ -61,7 +61,7 @@ class CamisoleLanguageTable(ListTable):
     package_finders = []
 
     def run(self):
-        camisole.languages._import_builtins()
+        camisole.languages.load_builtins()
         all_langs = camisole.languages.all().values()
 
         self.options['widths'] = 'auto'
@@ -88,8 +88,7 @@ class CamisoleLanguageTable(ListTable):
 
         table = [headers] + table_body
         self.check_table_dimensions(table, 1, 0)
-        widths, col_widths = self.get_column_widths(len(headers))
-        table_node = self.build_table_from_list(table, widths, col_widths, 1, 0)
+        table_node = self.build_table_from_list(table, 'auto', 1, 0)
         if title:
             table_node.insert(0, title)
         return [table_node] + messages
@@ -99,8 +98,8 @@ class CamisoleLanguageList(Directive):
     has_content = False
 
     def run(self):
-        camisole.languages._import_builtins()
-        langs = [l.name for l in camisole.languages.all().values()]
+        camisole.languages.load_builtins()
+        langs = sorted(l.name for l in camisole.languages.all().values())
         return [nodes.paragraph(text=(", ".join(langs) + "."))]
 
 

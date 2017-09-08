@@ -31,14 +31,14 @@ With that in mind, create a new Python script that defines a subclass of
 ``camisole.models.Lang``:
 
 .. code-block:: python
-   :caption: ~/mylangs/lolcode.py
+   :caption: ~/lolcode.py
    :name: lolcode.py
 
    from camisole.models import Lang, Program
 
    class Lolcode(Lang):
        source_ext = '.lol'
-       interpreter = Program('/usr/bin/lci')
+       interpreter = Program('lci')
        reference_source = r'HAI 1.2, VISIBLE "42", KTHXBYE'
 
 * ``source_ext`` is the extension used by the language source files;
@@ -63,8 +63,8 @@ If you like, you can overwrite the language name::
 .. highlight:: console
 
 To check if |project| recognizes your new language, add the path to
-``lolcode.py`` to the |project| path and run :ref:`commands-test`::
+``lolcode.py`` to ``CAMISOLE_LANGS`` and run :ref:`commands-test`::
 
-    $ export CAMISOLEPATH=~/mylangs  # so camisole can find lolcode.py
-    $ camisole -m lolcode test
+    $ export CAMISOLE_LANGS=~/lolcode.py
+    $ camisole test
     lolcode ..... OK
