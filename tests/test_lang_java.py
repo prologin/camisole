@@ -31,7 +31,7 @@ class Foo {
         }
     }
 }''')
-    assert result['tests'][0]['stdout'] == 'inner\n'
+    assert result['tests'][0]['stdout'] == b'inner\n'
 
 
 @pytest.mark.asyncio
@@ -43,7 +43,7 @@ class Bar {
 }
 class Baz { }
 ''')
-    assert result['tests'][0]['stdout'] == 'bar\n'
+    assert result['tests'][0]['stdout'] == b'bar\n'
 
 
 @pytest.mark.asyncio
@@ -70,4 +70,4 @@ class OtherPrivate {
         System.out.println("otherprivate");
     }
 }''')
-    assert result['tests'][0]['stdout'] == 'public\n'
+    assert result['tests'][0]['stdout'] == b'public\n'

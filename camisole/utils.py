@@ -72,3 +72,59 @@ def which(binary):
         if os.access(p, os.X_OK):
             return p
     return binary
+
+
+class AcceptHeader:
+    class AcceptableType:
+        RE_MIME_TYPE = re.compile(
+            r'^(\*|[a-zA-Z0-9._-]+)(/(\*|[a-zA-Z0-9._-]+))?$')
+        RE_Q = re.compile(r'(?:^|;)\s*q=([0-9.-]+)(?:$|;)')
+
+        def __init__(self, raw_mime_type):
+            bits = raw_mime_type.split(';', 1)
+            mime_type = bits[0]
+            if not self.RE_MIME_TYPE.match(mime_type):
+                raise ValueError('"%s" is not a valid mime type' % mime_type)
+            tail = ''
+            if len(bits) > 1:
+                tail = bits[1]
+            self.mime_type = mime_type
+            self.weight = self.get_weight(tail)
+            self.pattern = self.get_pattern(mime_type)
+
+        @classmethod
+        def get_weight(cls, tail):
+            match = cls.RE_Q.search(tail)
+            try:
+                return Decimal(match.group(1))
+            except (AttributeError, ValueError):
+                return Decimal(1)
+
+        @staticmethod
+        def get_pattern(mime_type):
+            pat = mime_type.replace('*', '[a-zA-Z0-9_.$#!%^*-]+')
+            return re.compile(f'^{pat}$')
+
+        def matches(self, mime_type):
+            return self.pattern.match(mime_type)
+
+    @classmethod
+    def parse_header(cls, header):
+        mime_types = []
+        for raw_mime_type in header.split(','):
+            try:
+                mime_types.append(cls.AcceptableType(raw_mime_type.strip()))
+            except ValueError:
+                pass
+        return sorted(mime_types, key=lambda x: x.weight, reverse=True)
+
+    @classmethod
+    def get_best_accepted_types(cls, header, available):
+        available = list(available)
+        for acceptable_type in cls.parse_header(header):
+            for available_type in available[:]:
+                if acceptable_type.matches(available_type):
+                    yield available_type
+                    available.remove(available_type)
+                    if not available:
+                        return

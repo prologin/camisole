@@ -20,7 +20,7 @@ async def test_just_enough_boxes(n):
     done, pending = await asyncio.wait(futures)
     assert not pending
     for coro in done:
-        assert coro.result()['tests'][0]['stdout'] == '42\n'
+        assert coro.result()['tests'][0]['stdout'] == b'42\n'
 
 
 @pytest.mark.asyncio

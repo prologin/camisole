@@ -13,7 +13,11 @@ setup(
     author='Antoine Pietri, Alexandre Macabies',
     author_email='info@prologin.org',
     description='An asyncio-based source compiler and test runner.',
-    install_requires=['aiohttp', 'jsonschema'],
+    install_requires=[
+        'aiohttp',
+        'jsonschema',
+        'msgpack-python',
+    ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'pytest-cov', 'pytest-asyncio'],
     test_suite='pytest',

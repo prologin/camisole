@@ -26,7 +26,7 @@ async def test_pipeline_success():
 
     p = Pipeline({'source': '#include <stdio.h>\nint main(void) { printf("42\\n"); return 0; }', 'tests': [{}]})
     result = await p.run()
-    assert result['tests'][0]['stdout'] == '42\n'
+    assert result['tests'][0]['stdout'] == b'42\n'
 
 
 @pytest.mark.asyncio
@@ -47,4 +47,4 @@ async def test_pipeline_failure_does_not_create_binary_while_returning_zero():
 
     p = Pipeline({'source': '#include <stdio.h>\nint main(void) { printf("42\\n"); return 0; }', 'tests': [{}]})
     result = await p.run()
-    assert 'cannot find result binary' in result['compile']['stderr'].lower()
+    assert 'cannot find result binary' in result['compile']['stderr'].decode().lower()
