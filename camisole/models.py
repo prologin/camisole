@@ -79,6 +79,7 @@ class Lang(metaclass=MetaLang):
     Subclass and define the relevant attributes and methods, if need be.
     """
     _registry = {}
+    name = None
 
     source_ext = None
     compiler = None

@@ -1,10 +1,20 @@
 # camisole default configuration (embedded)
 
+# path to isolate configuration
 isolate-conf: /etc/isolate
-max-body-size: 50000000  # 50 MB
 
+# additional directories added to the isolate chroot
 allowed-dirs: []
 
+# camisole HTTP server maximum body (request payload) size in bytes
+max-body-size: 50000000  # 50 MB
+
+# extra directories to append (in this order) to PYTHONPATH
+syspath:
+  - ~/.local/share/camisole/languages
+  - /usr/share/camisole/languages
+
+# see https://docs.python.org/3/library/logging.config.html#dictionary-schema-details
 logging:
   version: 1
 

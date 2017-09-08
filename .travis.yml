@@ -19,13 +19,6 @@ install:
   - bash .travis/install.sh
   - pip install -U -r requirements-dev.txt
 
-env:
-  # Debian has this "alternatives" system that symlinks many common binaries to
-  # /etc/alternative/<stuff>, so we need to allow isolate to traverse these.
-  # (namely: Java, PHP, Rust (for cc) and maybe others in the future)
-  # /var/lib/ghc is a symlink target from ghc (Haskell)
-  - CAMISOLE_ALLOWED_DIRS=/etc/alternatives:/var/lib/ghc
-
 script:
   - .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
   - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
