@@ -1,8 +1,6 @@
 import os
 import pytest
 
-import camisole.languages
-camisole.languages._import_builtins()
 from camisole.httpserver import TYPE_JSON, CONTENT_TYPES
 
 

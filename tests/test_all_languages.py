@@ -1,7 +1,7 @@
 import pytest
 
+
 import camisole.languages
-camisole.languages._import_builtins()
 
 
 @pytest.mark.asyncio
