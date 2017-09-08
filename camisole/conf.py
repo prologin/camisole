@@ -1,8 +1,7 @@
 from collections.abc import Mapping
-import logging
-import yaml
 
-logger = logging.getLogger(__name__)
+import os
+import yaml
 
 DEFAULT_CONF_NAME = 'conf.default.yml'
 
@@ -22,15 +21,20 @@ class Conf(Mapping):
         # lazy loading of default config
         if Conf._instance is not None:
             return
+        Conf._instance = self
+
         import pkg_resources
         default_conf = pkg_resources.resource_stream(
             'camisole', DEFAULT_CONF_NAME)
-        if hasattr(default_conf, 'name'):
-            logger.debug("loading default conf from file %s", default_conf.name)
         self.merge(yaml.load(default_conf))
-        Conf._instance = self
+
+        conf_from_environ = os.environ.get('CAMISOLE_CONF')
+        if conf_from_environ:
+            with open(conf_from_environ) as f:
+                self.merge(yaml.load(f))
 
     def merge(self, data):
+        self._load()
         def merge(data, into):
             for k, v in data.items():
                 if (k in into and
