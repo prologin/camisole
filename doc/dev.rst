@@ -4,6 +4,8 @@ For Developers
 Tests
 -----
 
+.. highlight:: console
+
 Run tests (and coverage) with::
 
     $ pip install -r requirements-dev.txt

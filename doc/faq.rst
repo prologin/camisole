@@ -1,6 +1,8 @@
 Frequently Asked Questions
 ==========================
 
+.. _why-vm:
+
 Can I run this in Docker/LXC/… or even directly on my server?
 -------------------------------------------------------------
 
@@ -13,7 +15,7 @@ thus gain privilege escalation. `This has happened before`_.
 Can I use this to run multiple source files?
 --------------------------------------------
 
-We're not planning on adding this feature. Camisole is designed for "quick and
+We're not planning on adding this feature. |project| is designed for "quick and
 dirty" source code evaluation. If you're planning to do anything more complex
 than "take this source file, compile it and evaluate it", you'd be better off
 using isolate_ directly and make it suit your needs better.
@@ -22,7 +24,7 @@ Why is it called *camisole*?
 ----------------------------
 
 It means *straitjacket*, because we restrain what the programs can do. In
-french, « Ça m'isole » means "It isolates me", it's a fun nod to our isolation
+French, « Ça m'isole » means "It isolates me", it's a fun nod to our isolation
 backend, isolate_.
 
 .. _isolate: https://github.com/ioi/isolate
