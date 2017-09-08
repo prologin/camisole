@@ -13,11 +13,11 @@ async def test_default(http_client):
 
 @pytest.mark.asyncio
 async def test_run_bad_schema(http_request):
-    result = await http_request('/run', {'foo': 'bar'})
+    result = await http_request('/run', {'source': ''})
     assert not result['success']
     message = result['error'].lower()
-    assert 'failed validating' in message
-    assert 'in schema' in message
+    assert "malformed payload" in message
+    assert "'lang' is a required property" in message
 
 
 @pytest.mark.asyncio
@@ -105,7 +105,7 @@ async def test_run_large_payload(http_request, http_client_large_size, accept):
     # not OK with default limit
     res = await http_request('/run', data, accept=accept)
     assert not res['success']
-    assert 'HTTPRequestEntityTooLarge' in res['error']
+    assert 'request entity too large' in res['error'].lower()
 
     # OK with large limit
     res = await http_request(
