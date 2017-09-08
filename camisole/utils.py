@@ -1,5 +1,6 @@
 import math
 import os
+import re
 import textwrap
 from decimal import Decimal
 
@@ -72,6 +73,29 @@ def which(binary):
         if os.access(p, os.X_OK):
             return p
     return binary
+
+
+class cached_classmethod:
+    """
+    Memoize a class method result.
+
+    class Foo:
+        @cached_classmethod
+        def heavy_stuff(cls):
+            return 42
+    """
+
+    def __init__(self, func, name=None):
+        self.func = func
+        self.__doc__ = getattr(func, '__doc__')
+        self.name = name or func.__name__
+
+    def __get__(self, instance, cls=None):
+        if cls is None:
+            return self
+        res = self.func(cls)
+        setattr(cls, self.name, res)
+        return res
 
 
 class AcceptHeader:
