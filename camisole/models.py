@@ -28,6 +28,7 @@ from pathlib import Path
 
 import camisole.isolate
 import camisole.utils
+from camisole.conf import conf
 
 
 class Program:
@@ -210,9 +211,7 @@ class Lang(metaclass=MetaLang):
     def get_allowed_dirs(self):
         allowed_dirs = []
         allowed_dirs += self.allowed_dirs
-        from_environ = os.environ.get('CAMISOLE_ALLOWED_DIRS', '').strip()
-        if from_environ:
-            allowed_dirs += from_environ.split(':')
+        allowed_dirs += conf['allowed-dirs']
         return list(camisole.utils.uniquify(allowed_dirs))
 
     def compile_opt_out(self, output):

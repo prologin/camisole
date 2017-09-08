@@ -1,3 +1,4 @@
 aiohttp
 jsonschema
 msgpack-python
+pyyaml

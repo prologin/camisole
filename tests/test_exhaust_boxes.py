@@ -1,14 +1,16 @@
 import asyncio
 import pytest
 
-from camisole import isolate
+from camisole.isolate import Isolator
 from camisole.languages.python import Python
 
 MAX_BOX_AMOUNT = 5
 
 
 def build_runners(amount):
-    isolate.NUM_BOXES = MAX_BOX_AMOUNT
+    # monkey-patch isolate_conf namedtuple
+    Isolator.isolate_conf = (
+        Isolator.isolate_conf._replace(max_boxes=MAX_BOX_AMOUNT))
     for test in range(amount):
         yield Python({'source': 'print(42)', 'tests': [{}]}).run()
 

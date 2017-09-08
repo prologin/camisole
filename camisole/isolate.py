@@ -17,11 +17,16 @@
 # along with Prologin-SADM.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
+import collections
+import configparser
 import itertools
 import logging
 import pathlib
 import subprocess
 import tempfile
+
+from camisole.conf import conf
+from camisole.utils import cached_classmethod
 
 
 async def communicate(cmdline, data=None, **kwargs):
@@ -45,10 +50,6 @@ OPTIONS = [
     'time',
     'wall-time',
 ]
-
-# TODO(seirl): find a way to get those from the config?
-NUM_BOXES = 1000
-PATH_BOXES = pathlib.Path('/var/lib/isolate')
 
 
 class Isolator:
@@ -74,8 +75,8 @@ class Isolator:
         self.isolate_stderr = None
 
     async def __aenter__(self):
-        busy = {int(p.name) for p in PATH_BOXES.iterdir()}
-        avail = set(range(NUM_BOXES)) - busy
+        busy = {int(p.name) for p in self.isolate_conf.root.iterdir()}
+        avail = set(range(self.isolate_conf.max_boxes)) - busy
         while avail:
             self.box_id = avail.pop()
             self.cmd_base = ['isolate', '--box-id', str(self.box_id), '--cg']
@@ -185,3 +186,18 @@ class Isolator:
             # Something went wrong, isolate was killed before changing the
             # permissions or unreadable stdout/stderr
             pass
+
+    @cached_classmethod
+    def isolate_conf(cls):
+        parser = configparser.ConfigParser()
+        s = 'dummy'
+
+        def dummy_section():
+            yield f'[{s}]'
+            yield from pathlib.Path(conf['isolate-conf']).expanduser().open()
+
+        parser.read_file(dummy_section())
+        root = pathlib.Path(parser.get(s, 'box_root'))
+        max_boxes = parser.getint(s, 'num_boxes')
+        return (collections.namedtuple('conf', 'root, max_boxes')
+                (root, max_boxes))
