@@ -10,13 +10,13 @@ async def run_java(source):
 @pytest.mark.asyncio
 async def test_default_single():
     result = await run_java('''
-class Foo {
-    static class SubFoo { }
+class Noël {
+    static class Læticia { }
     public static void main(String[] args) {
-        System.out.println("default");
+        System.out.println("défaut");
     }
 }''')
-    assert result['tests'][0]['stdout'] == 'default\n'
+    assert result['tests'][0]['stdout'] == 'défaut\n'.encode()
 
 
 @pytest.mark.asyncio
