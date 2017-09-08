@@ -173,13 +173,13 @@ class Isolator:
         self.isolate_retcode, self.isolate_stdout, self.isolate_stderr = (
             await communicate(cmd_run, data=data, **kwargs))
 
-        self.stdout = ''
-        self.stderr = ''
+        self.stdout = b''
+        self.stderr = b''
         try:
-            with (self.path / self.stdout_file).open(errors='ignore') as f:
+            with (self.path / self.stdout_file).open('rb') as f:
                 self.stdout = f.read()
             if not merge_outputs:
-                with (self.path / self.stderr_file).open(errors='ignore') as f:
+                with (self.path / self.stderr_file).open('rb') as f:
                     self.stderr = f.read()
         except (IOError, PermissionError):  # noqa
             # Something went wrong, isolate was killed before changing the

@@ -1,6 +1,13 @@
 import math
 import os
 import textwrap
+from decimal import Decimal
+
+
+def force_bytes(s):
+    if isinstance(s, bytes):
+        return s
+    return s.encode()
 
 
 def uniquify(seq):
