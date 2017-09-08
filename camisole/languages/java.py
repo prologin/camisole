@@ -5,29 +5,29 @@ from pathlib import Path
 from camisole.models import Lang, Program
 
 RE_WRONG_FILENAME_ERROR = re.compile(r'error:\s+class\s+(.+?)\s+is\s+public,')
-PSVMAIN_SIGNATURE = 'public static void main('
 PSVMAIN_DESCRIPTOR = 'descriptor: ([Ljava/lang/String;)V'
 
 
 class Java(Lang):
     source_ext = '.java'
     compiled_ext = '.class'
-    compiler = Program('javac', env={'LANG': 'C'}, version_opt='-version')
+    compiler = Program('javac', opts=['-encoding', 'UTF-8'],
+                       env={'LANG': 'en_US.UTF-8'}, version_opt='-version')
     interpreter = Program('java', version_opt='-version')
     # /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jvm.cfg links to
     # /etc/java-8-openjdk/amd64/jvm.cfg
     allowed_dirs = ['/etc/java-8-openjdk']
     # ensure we can parse the javac(1) stderr
     extra_binaries = {'disassembler': Program('javap', version_opt='-version')}
-    reference_source = r'''
-class SomeClass {
+    reference_source = '''
+class MyπClass {
     static int fortytwo() {
         return 42;
     }
-    static class Subclass {
-        // nested psvmain! wow!
-        public static void main(String args[]) {
-           System.out.println(SomeClass.fortytwo());
+    static class Subclassé {
+        public static void main(String notMe) {}
+        final static public void main(String args[]) {
+           System.out.println(MyπClass.fortytwo());
         }
     }
 }
@@ -81,7 +81,7 @@ class SomeClass {
         return self.class_name + self.compiled_ext
 
     def execute_command(self, output):
-        cmd = [self.interpreter.cmd]
+        cmd = [self.interpreter.cmd] + self.interpreter.opts
 
         # Use the memory limit as a maximum heap size
         if self.heapsize is not None:
@@ -107,7 +107,8 @@ class SomeClass {
             # some other syntax I'm not even aware of
             lines = iter(stdout.decode().split('\n'))
             for line in lines:
-                if line.lstrip().startswith(PSVMAIN_SIGNATURE):
+                line = line.lstrip()
+                if line.startswith('public static') and 'void main(' in line:
                     if next(lines).lstrip() == PSVMAIN_DESCRIPTOR:
                         return file.stem
 
