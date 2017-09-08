@@ -1,0 +1,17 @@
+# camisole default configuration (embedded)
+
+isolate-conf: /etc/isolate
+max-body-size: 50000000  # 50 MB
+
+allowed-dirs: []
+
+logging:
+  version: 1
+
+  root:
+    level: WARNING
+
+  handlers:
+    console:
+      class : logging.StreamHandler
+      stream: ext://sys.stdout
