@@ -19,6 +19,9 @@ install:
   - bash .travis/install.sh
   - pip install -U -r requirements-dev.txt
 
+env:
+  CAMISOLE_CONF: '${TRAVIS_BUILD_DIR}/.travis/debian.yml'
+
 script:
   - .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
   - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'

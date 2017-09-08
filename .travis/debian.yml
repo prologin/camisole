@@ -1,0 +1,3 @@
+allowed-dirs:
+  - /etc/alternatives
+  - /var/lib/ghc
