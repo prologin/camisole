@@ -50,7 +50,7 @@ def tabulate(rows, headers=None, fmt="", margin=1):
         lengths = [max(l, len(col)) for l, col in zip(lengths, row)]
     lengths = [l + margin for l in lengths]
     if not fmt:
-        fmt = "".join("{:<{s%d}}%s" % (i, " | " if i < ncols  - 1 else "")
+        fmt = "".join("{:<{s%d}}%s" % (i, " | " if i < ncols - 1 else "")
                       for i in range(ncols))
     for row in rows:
         yield fmt.format(*row, **{f's{i}': l for i, l in enumerate(lengths)})
@@ -61,8 +61,7 @@ def which(binary):
     path = [*os.environ.get('PATH').split(os.pathsep),
             '/usr/bin',
             '/usr/local/bin'
-            '/bin',
-    ]
+            '/bin']
     if os.path.dirname(binary) and os.access(binary, os.X_OK):
         return binary
     for part in path:
