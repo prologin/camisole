@@ -14,7 +14,7 @@ class BrainfuckToC(Lang, register=False):
         return []
 
     def read_compiled(self, path, isolator):
-        return isolator.stdout.encode()
+        return isolator.stdout
 
 
 class Brainfuck(PipelineLang):

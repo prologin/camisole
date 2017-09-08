@@ -65,7 +65,7 @@ class SomeClass {
         if retcode != 0:
             # error: public class name is not '1337' -- obviously, it's illegal,
             # so find what it actually is
-            match = RE_WRONG_FILENAME_ERROR.search(info['stderr'])
+            match = RE_WRONG_FILENAME_ERROR.search(info['stderr'].decode())
             if match:
                 self.found_public = True
                 self.class_name = match.group(1)

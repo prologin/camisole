@@ -139,8 +139,9 @@ class Lang(metaclass=MetaLang):
             wd = Path(isolator.path)
             source = wd / self.source_filename()
             compiled = wd / self.execute_filename()
-            with source.open('w') as sourcefile:
-                sourcefile.write(self.opts.get('source', ''))
+            with source.open('wb') as sourcefile:
+                sourcefile.write(
+                    camisole.utils.force_bytes(self.opts.get('source', '')))
             cmd = self.compile_command(str(source), str(compiled))
             await isolator.run(cmd, env=self.compiler.env)
             binary = self.read_compiled(str(compiled), isolator)
@@ -155,7 +156,7 @@ class Lang(metaclass=MetaLang):
         opts = {**self.opts.get('execute', {}), **opts}
         input_data = None
         if 'stdin' in opts and opts['stdin']:
-            input_data = opts['stdin'].encode()
+            input_data = camisole.utils.force_bytes(opts['stdin'])
 
         isolator = camisole.isolate.Isolator(
             opts, allowed_dirs=self.get_allowed_dirs())
@@ -175,11 +176,11 @@ class Lang(metaclass=MetaLang):
                 return
             if binary is None:
                 if result['compile']['stderr'].strip():
-                    result['compile']['stderr'] += '\n\n'
-                result['compile']['stderr'] += 'Cannot find result binary.\n'
+                    result['compile']['stderr'] += b'\n\n'
+                result['compile']['stderr'] += b'Cannot find result binary.\n'
                 return
         else:
-            binary = self.opts.get('source', '').encode()
+            binary = camisole.utils.force_bytes(self.opts.get('source', ''))
         return binary
 
     async def run_tests(self, binary, result):
@@ -273,7 +274,7 @@ class PipelineLang(Lang, register=False):
             yield from sub.required_binaries()
 
     async def run_compilation(self, result):
-        source = self.opts.get('source', '')
+        source = camisole.utils.force_bytes(self.opts.get('source', ''))
         for i, lang_cls in enumerate(self.sub_langs):
             lang = lang_cls({**self.opts, 'source': source})
             cretcode, info, binary = await lang.compile()
@@ -282,13 +283,11 @@ class PipelineLang(Lang, register=False):
                 return
             if binary is None:
                 if result['compile']['stderr'].strip():
-                    result['compile']['stderr'] += '\n\n'
-                result['compile']['stderr'] += 'Cannot find result binary.\n'
+                    result['compile']['stderr'] += b'\n\n'
+                result['compile']['stderr'] += b'Cannot find result binary.\n'
                 return
             # compile output is next stage input
             source = binary
-            if i < len(self.sub_langs) - 1:
-                source = source.decode(errors='ignore')
         return binary
 
     async def compile(self):
