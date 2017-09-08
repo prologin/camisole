@@ -28,11 +28,11 @@ async def test_compiler_does_not_create_binary_while_returning_zero():
                     '; import sys; print("hi mom", file=sys.stderr)')
 
     result = await CunningLang({'source': ''}).run()
-    assert 'cannot find result binary' in result['compile']['stderr'].lower()
+    assert b'cannot find result binary' in result['compile']['stderr'].lower()
 
     result = await VerboseCunningLang({'source': ''}).run()
-    assert 'cannot find result binary' in result['compile']['stderr'].lower()
-    assert 'hi mom' in result['compile']['stderr'].lower()
+    assert b'cannot find result binary' in result['compile']['stderr'].lower()
+    assert b'hi mom' in result['compile']['stderr'].lower()
 
 
 @pytest.mark.asyncio
@@ -71,7 +71,7 @@ async def test_input_data():
 
     assert len(result['tests']) == len(inputs)
     for test, stdin in zip(result['tests'], inputs):
-        assert test['stdout'] == stdin
+        assert test['stdout'] == stdin.encode()
 
 
 @pytest.mark.asyncio
