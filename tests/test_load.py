@@ -1,11 +1,10 @@
+from camisole.languages import load_from_environ, by_name
 from pathlib import Path
 import contextlib
 import logging
 import os
 import pytest
 import sys
-
-from camisole.languages import load_from_environ, by_name
 
 
 @contextlib.contextmanager
