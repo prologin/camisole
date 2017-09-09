@@ -4,6 +4,28 @@ from pathlib import Path
 
 from camisole.models import Lang, Program
 
+# In Java, the entry point (main() function) is not trivial to find as it can be
+# defined as a method of any of the classes contained in the source program.
+# Even though we could force Java users to respect a standard name for their
+# class (eg. public class Main), we can do better by finding where the main()
+# method is defined, however deep in the class tree.
+
+# Quick explanation how the Java compile/execute workflow works:
+# 1.  source is written in a file named 1337.java; '1337' cannot be used as a
+#     class name (identifiers cannot start with a number) so this will trigger
+#     the error explained in 3a.
+# 2.  compile (javac) that 1337.java file
+# 3a. if source contains a root *public* class, javac will complain that its
+#     name is different than the .java filename (1337.java), hence:
+#     4a. we look for the actual class name by parsing javac stderr output
+#     5a. compile again with the new, actual class name as filename
+# 3b. if there is no public class, javac will not complain but produce
+#     one or multiple .class files (one per class and nested class), hence:
+#     4b. we iterate over every *.class in the output directory, running javap
+#         (disassembler) so as to find a main() signature
+#     5b. we stop at the first valid main() signature and use the .class file
+#         it belongs to as java (interpreter) target.
+
 RE_WRONG_FILENAME_ERROR = re.compile(r'error:\s+class\s+(.+?)\s+is\s+public,')
 PSVMAIN_DESCRIPTOR = 'descriptor: ([Ljava/lang/String;)V'
 
@@ -47,7 +69,6 @@ class MyπClass {
         # https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/1241926
         # https://bugs.openjdk.java.net/browse/JDK-8071445
         # http://bugs.java.com/view_bug.do?bug_id=8043516
-
         # Instead, pass the memory limit as the maximum heap size of the
         # runtime.
         try:
@@ -63,9 +84,14 @@ class MyπClass {
         # try to compile with default class name (Main)
         retcode, info, binary = await super().compile()
         if retcode != 0:
-            # error: public class name is not '1337' -- obviously, it's illegal,
+            # error: public class name is not '1337' as it's an illegal name,
             # so find what it actually is
-            match = RE_WRONG_FILENAME_ERROR.search(info['stderr'].decode())
+            try:
+                javac_stderr = info['stderr'].decode()
+            except UnicodeDecodeError:
+                raise RuntimeError(
+                    "could not decode javac stderr to find class name")
+            match = RE_WRONG_FILENAME_ERROR.search(javac_stderr)
             if match:
                 self.found_public = True
                 self.class_name = match.group(1)
