@@ -41,7 +41,7 @@ OPTIONS = [
     'mem',
     'processes',
     'quota',
-    'stack'
+    'stack',
     'time',
     'wall-time',
 ]
