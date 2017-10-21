@@ -60,11 +60,70 @@ If you like, you can overwrite the language name::
 
     class Lolcode(Lang, name="roflcode"):
 
+Add a compiled language
+***********************
+
+Many languages are compiled to machine code by a compiler, instead of being
+executed by an interpreter. C, C++ and Rust are just three examples of such
+languages.
+
+To implement a compiled language in |project|, just replace ``interpreter`` with
+``compiler`` in the code above. Let's try with Rust, for instance:
+
+.. code-block:: python
+   :caption: ~/rust.py
+   :name: rust.py
+
+   from camisole.models import Lang, Program
+
+   class Rust(Lang):
+       source_ext = '.rs'
+       compiler = Program('rustc')
+       reference_source = r'fn main() { println!("42"); }'
+
+Of course there are many parameters available to configure the compiler
+or interpreter. For languages that require a more complex build or execute
+workflow, such as Java or Go, you can also override some methods exposed by the
+:class:`Lang` class.
+
+Please read the code of the many built-in languages shipped with |project| for
+more examples on how you can tune program options and more broadly the build
+pipeline itself.
+
+Making the new langage discoverable
+***********************************
+
 .. highlight:: console
 
-To check if |project| recognizes your new language, add the path to
-``lolcode.py`` to ``CAMISOLE_LANGS`` and run :ref:`commands-test`::
+You have one or multiple Python files, say ``/tmp/camisole/lolcode.py`` and
+``/tmp/camisole/rust.py``, containing language declarations ie. :class:`Lang`
+classes. You have to make this file known to |project| in order to use it.
 
-    $ export CAMISOLE_LANGS=~/lolcode.py
+As a Python program, |project| relies on the *Python path* to find modules.
+You can either put your files on the default Python path, but this may not be
+a good idea as it is usually a system path belonging to root and managed by
+your distribution package manager.
+
+Instead, you can put your modules in either:
+
+* ``/usr/share/camisole/languages`` (recommended for system-packaged modules)
+* ``~/.local/share/camisole/languages``
+
+You can also customize the ``PYTHONPATH`` environment variable with the
+**directories** containing your Python file(s).
+
+Then, add your modules (the Python **file names** without extension) to the
+``CAMISOLE_LANGS`` environment variable, separated with semicolons (``:``).
+When run, |project| will recognize your module and imports its :class:`Lang`
+definitions.
+
+    $ export PYTHONPATH=/tmp/camisole
+    $ export CAMISOLE_LANGS=lolcode:rust
     $ camisole test
     lolcode ..... OK
+    rust ........ OK
+
+If your newly defined language does not appear, you can troubleshoot issues by
+running ``test`` in a very verbose mode::
+
+   $ camisole -l debug test
