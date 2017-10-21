@@ -88,7 +88,7 @@ class MyπClass {
             # so find what it actually is
             try:
                 javac_stderr = info['stderr'].decode()
-            except UnicodeDecodeError:
+            except UnicodeDecodeError:  # noqa
                 raise RuntimeError(
                     "could not decode javac stderr to find class name")
             match = RE_WRONG_FILENAME_ERROR.search(javac_stderr)
@@ -125,7 +125,7 @@ class MyπClass {
                 stdout = subprocess.check_output(
                     [self.extra_binaries['disassembler'].cmd, '-s', str(file)],
                     stderr=subprocess.DEVNULL, env=self.compiler.env)
-            except subprocess.SubprocessError:
+            except subprocess.SubprocessError:  # noqa
                 continue
             # iterate on lines to find p s v main() signature and then
             # its descriptor on the line below; we don't rely on the type
