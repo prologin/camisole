@@ -75,7 +75,7 @@ async def http_response_decode(response):
 
 
 @pytest.fixture(params=['json', 'msgpack'])
-def http_request(request, http_client):
+def http_request(request):
     if request.param == 'json':
         return request.getfuncargvalue('json_request')
     if request.param == 'msgpack':
