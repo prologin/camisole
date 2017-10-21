@@ -40,7 +40,7 @@ def parse_float(str_float):
     return float(str_float)
 
 
-def tabulate(rows, headers=None, fmt="", margin=1):
+def tabulate(rows, headers=None, margin=1, align=None):
     ncols = len(rows[0])
     lengths = [-math.inf] * ncols
     if headers:
@@ -49,9 +49,10 @@ def tabulate(rows, headers=None, fmt="", margin=1):
     for row in rows:
         lengths = [max(l, len(col)) for l, col in zip(lengths, row)]
     lengths = [l + margin for l in lengths]
-    if not fmt:
-        fmt = "".join("{:<{s%d}}%s" % (i, " | " if i < ncols - 1 else "")
-                      for i in range(ncols))
+    if align is None:
+        align = ['<'] * ncols
+    fmt = "".join("{:%s{s%d}}%s" % (a, i, " | " if i < ncols - 1 else "")
+                  for i, a in enumerate(align))
     for row in rows:
         yield fmt.format(*row, **{f's{i}': l for i, l in enumerate(lengths)})
 
@@ -83,7 +84,6 @@ class cached_classmethod:
         def heavy_stuff(cls):
             return 42
     """
-
     def __init__(self, func, name=None):
         self.func = func
         self.__doc__ = getattr(func, '__doc__')
