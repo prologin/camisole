@@ -1,5 +1,4 @@
 /.cache/
-/.coverage
 /.idea/
 /htmlcov/
 /build/
@@ -8,3 +7,4 @@
 /.eggs/
 __pycache__/
 *.pyc
+.coverage
