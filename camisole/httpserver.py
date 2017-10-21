@@ -57,7 +57,7 @@ def json_msgpack_handler(wrapped):
                     cls, f"use 'Accept: {TYPE_MSGPACK}' to be able to receive "
                          f"binary payloads")
             # no encoder can work
-            raise cls()
+            raise cls()  # noqa
 
         def error(cls, msg):
             return response({'success': False, 'error': msg}, cls=cls)
@@ -87,7 +87,7 @@ def json_msgpack_handler(wrapped):
         try:
             # actually execute handler
             result = await wrapped(request, data)
-        except Exception:
+        except Exception:  # noqa
             return error(
                 aiohttp.web.HTTPInternalServerError, traceback.format_exc())
 
