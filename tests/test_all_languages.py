@@ -1,6 +1,5 @@
 import pytest
 
-
 import camisole.languages
 
 
