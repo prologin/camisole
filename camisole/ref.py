@@ -1,10 +1,10 @@
 import camisole.languages
 
 
-async def test(lang_name):
+async def test(lang_name, **kw):
     expected = b'42\n'
     lang_cls = camisole.languages.by_name(lang_name)
-    lang = lang_cls({'source': lang_cls.reference_source, 'tests': [{}]})
+    lang = lang_cls({'source': lang_cls.reference_source, 'tests': [{}], **kw})
     raw_result = await lang.run()
     try:
         stdout = raw_result['tests'][0]['stdout']
