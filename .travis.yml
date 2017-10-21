@@ -25,4 +25,5 @@ env:
 script:
   - .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
   - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
+  - .travis/run.sh 'PYTHONPATH=. python -m camisole benchmark'
   - .travis/run.sh 'python setup.py test'
