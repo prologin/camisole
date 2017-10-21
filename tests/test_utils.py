@@ -38,6 +38,11 @@ def test_tabulate():
         'barbar | baz'
     )
 
+    assert '\n'.join(tabulate(rows, margin=0, align='>>')) == (
+        '   foo |   a\n'
+        'barbar | baz'
+    )
+
     assert '\n'.join(tabulate(rows, margin=1)) == (
         'foo     | a   \n'
         'barbar  | baz '
