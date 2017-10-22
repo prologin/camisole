@@ -19,6 +19,7 @@
 import asyncio
 import collections
 import configparser
+import ctypes
 import itertools
 import logging
 import pathlib
@@ -27,6 +28,14 @@ import tempfile
 
 from camisole.conf import conf
 from camisole.utils import cached_classmethod
+
+
+LIBC = ctypes.CDLL('libc.so.6')
+LIBC.strsignal.restype = ctypes.c_char_p
+
+
+def signal_message(signal: int) -> str:
+    return LIBC.strsignal(signal).decode()
 
 
 async def communicate(cmdline, data=None, **kwargs):
@@ -101,7 +110,8 @@ class Isolator:
             'csw-forced': 0,
             'csw-voluntary': 0,
             'exitcode': 0,
-            'exitsig': None,
+            'exitsig': 0,
+            'exitsig-message': None,
             'killed': False,
             'max-rss': 0,
             'message': None,
@@ -115,6 +125,8 @@ class Isolator:
         m = {k: (type(meta_defaults[k])(v)
                  if meta_defaults[k] is not None else v)
              for k, v in m.items()}
+        if 'exitsig' in m:
+            m['exitsig-message'] = signal_message(m['exitsig'])
         self.meta = {**meta_defaults, **m}
         verbose_status = {
             'OK': 'OK',
