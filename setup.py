@@ -25,4 +25,7 @@ setup(
     entry_points={
         'console_scripts': ['camisole = camisole.__main__:main'],
     },
+    package_data={
+        'camisole': ['conf.default.yml'],
+    },
 )
