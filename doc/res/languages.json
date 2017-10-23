@@ -11,7 +11,18 @@
                         "-O2",
                         "-lm"
                     ],
-                    "version": "6.3.1"
+                    "version": "7.2.0"
+                }
+            }
+        },
+        "python": {
+            "name": "Python",
+            "programs": {
+                "python3": {
+                    "opts": [
+                        "-S"
+                    ],
+                    "version": "3.6.2"
                 }
             }
         }

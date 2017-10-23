@@ -4,17 +4,18 @@
         {
             "exitcode": 0,
             "meta": {
-                "cg-mem": 2284,
-                "csw-forced": 7,
-                "csw-voluntary": 2,
+                "cg-mem": 2644,
+                "csw-forced": 6,
+                "csw-voluntary": 3,
                 "exitcode": 0,
-                "exitsig": null,
+                "exitsig": 0,
+                "exitsig-message": null,
                 "killed": false,
-                "max-rss": 6948,
+                "max-rss": 7612,
                 "message": null,
                 "status": "OK",
-                "time": 0.013,
-                "time-wall": 0.036
+                "time": 0.016,
+                "time-wall": 0.06
             },
             "name": "test_h2g2",
             "stderr": "",
@@ -23,17 +24,18 @@
         {
             "exitcode": 0,
             "meta": {
-                "cg-mem": 2280,
-                "csw-forced": 6,
-                "csw-voluntary": 3,
+                "cg-mem": 2520,
+                "csw-forced": 24,
+                "csw-voluntary": 2,
                 "exitcode": 0,
-                "exitsig": null,
+                "exitsig": 0,
+                "exitsig-message": null,
                 "killed": false,
-                "max-rss": 6828,
+                "max-rss": 7448,
                 "message": null,
                 "status": "OK",
-                "time": 0.013,
-                "time-wall": 0.032
+                "time": 0.018,
+                "time-wall": 0.063
             },
             "name": "test_notfound",
             "stderr": "",
@@ -42,17 +44,18 @@
         {
             "exitcode": 0,
             "meta": {
-                "cg-mem": 2280,
-                "csw-forced": 8,
-                "csw-voluntary": 2,
+                "cg-mem": 2520,
+                "csw-forced": 4,
+                "csw-voluntary": 3,
                 "exitcode": 0,
-                "exitsig": null,
+                "exitsig": 0,
+                "exitsig-message": null,
                 "killed": false,
-                "max-rss": 6828,
+                "max-rss": 7428,
                 "message": null,
                 "status": "OK",
-                "time": 0.009,
-                "time-wall": 0.032
+                "time": 0.015,
+                "time-wall": 0.064
             },
             "name": "test_leet",
             "stderr": "",
@@ -61,17 +64,18 @@
         {
             "exitcode": 0,
             "meta": {
-                "cg-mem": 2280,
-                "csw-forced": 8,
-                "csw-voluntary": 2,
+                "cg-mem": 2644,
+                "csw-forced": 34,
+                "csw-voluntary": 3,
                 "exitcode": 0,
-                "exitsig": null,
+                "exitsig": 0,
+                "exitsig-message": null,
                 "killed": false,
-                "max-rss": 6724,
+                "max-rss": 7736,
                 "message": null,
                 "status": "OK",
-                "time": 0.009,
-                "time-wall": 0.028
+                "time": 0.025,
+                "time-wall": 0.082
             },
             "name": "test_666",
             "stderr": "",

@@ -2,17 +2,18 @@
     "compile": {
         "exitcode": 0,
         "meta": {
-            "cg-mem": 13752,
-            "csw-forced": 17,
-            "csw-voluntary": 11,
+            "cg-mem": 14984,
+            "csw-forced": 53,
+            "csw-voluntary": 14,
             "exitcode": 0,
-            "exitsig": null,
+            "exitsig": 0,
+            "exitsig-message": null,
             "killed": false,
-            "max-rss": 13360,
+            "max-rss": 15276,
             "message": null,
             "status": "OK",
-            "time": 0.033,
-            "time-wall": 0.069
+            "time": 0.085,
+            "time-wall": 0.13
         },
         "stderr": "",
         "stdout": ""
@@ -22,17 +23,18 @@
         {
             "exitcode": 0,
             "meta": {
-                "cg-mem": 2424,
+                "cg-mem": 504,
                 "csw-forced": 4,
                 "csw-voluntary": 3,
                 "exitcode": 0,
-                "exitsig": null,
+                "exitsig": 0,
+                "exitsig-message": null,
                 "killed": false,
-                "max-rss": 3572,
+                "max-rss": 1820,
                 "message": null,
                 "status": "OK",
-                "time": 0.0,
-                "time-wall": 0.012
+                "time": 0.001,
+                "time-wall": 0.033
             },
             "name": "test000",
             "stderr": "",

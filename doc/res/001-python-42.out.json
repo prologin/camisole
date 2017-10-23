@@ -4,17 +4,18 @@
         {
             "exitcode": 0,
             "meta": {
-                "cg-mem": 2408,
-                "csw-forced": 9,
-                "csw-voluntary": 2,
+                "cg-mem": 2664,
+                "csw-forced": 4,
+                "csw-voluntary": 3,
                 "exitcode": 0,
-                "exitsig": null,
+                "exitsig": 0,
+                "exitsig-message": null,
                 "killed": false,
-                "max-rss": 6628,
+                "max-rss": 7416,
                 "message": null,
                 "status": "OK",
-                "time": 0.009,
-                "time-wall": 0.028
+                "time": 0.017,
+                "time-wall": 0.072
             },
             "name": "test000",
             "stderr": "",
