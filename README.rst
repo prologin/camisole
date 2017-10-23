@@ -9,7 +9,7 @@ give some untrusted source code and a test suite, and *camisole* compiles the
 code and runs it against the test suite.
 
 It uses isolate_ as a backend to safely compile and execute source codes using
-linux kernel features such as namespaces, cgroups, chroot and resources limits.
+Linux kernel features such as namespaces, cgroups, chroot and resources limits.
 
 Documentation
 -------------
@@ -26,10 +26,12 @@ Features
 - Isolation: *camisole* runs both the compilation and execution stages in a
   **sandboxed** environment provided by isolate_
 - Limitation of resources (time, wall-time, memory…)
-- Simple HTTP/JSON interface
+- Simple HTTP + JSON or MessagePack interface
 
 Demo
 ----
+
+.. highlight:: console
 
 *camisole* is used through a simple HTTP/JSON interface. Sending a program
 is as simple as that::
@@ -46,7 +48,8 @@ is as simple as that::
                     "time-wall": 0.067,
                     "cg-mem": 2528,
                     "killed": 0,
-                    "exitsig": null,
+                    "exitsig": 0,
+                    "exitsig-message": null,
                     "time": 0.019,
                     "max-rss": 6264,
                     "csw-forced": 12,
