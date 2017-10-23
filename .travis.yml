@@ -18,6 +18,7 @@ matrix:
 install:
   - bash .travis/install.sh
   - pip install -U -r requirements-dev.txt
+  - pip install python-coveralls
 
 env:
   CAMISOLE_CONF: '${TRAVIS_BUILD_DIR}/.travis/debian.yml'
@@ -27,3 +28,6 @@ script:
   - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
   - .travis/run.sh 'PYTHONPATH=. python -m camisole benchmark'
   - .travis/run.sh 'python setup.py test'
+
+after_success:
+  - coveralls
