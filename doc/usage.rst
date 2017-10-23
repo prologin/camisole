@@ -19,7 +19,7 @@ always have to provide two mandatory parameters:
  - ``lang``: the language of your input
  - ``source``: the source code to compile and execute.
 
-Example with an intepreted language:
+Example with an interpreted language:
 
 .. literalinclude:: res/001-python-42.in.json
    :language: json
@@ -115,7 +115,7 @@ Here is an example response:
 The three fields of the response are:
 
 - the ``success`` flag indicating whether the request was performed
-  successfully or if an exception occured.
+  successfully or if an exception occurred.
 - the ``compile`` object containing the compilation report
 - the ``tests`` list containing all the executed tests, their names and
   reports.
@@ -151,7 +151,7 @@ reports information about what happened to it. The fields are:
 
 The status code can be one of the following:
 
-- ``OK``: the program ran and exited successfuly
+- ``OK``: the program ran and exited successfully
 - ``RUNTIME_ERROR``: the program exited with a non-zero exit code
 - ``TIMED_OUT``: the program timed out
 - ``SIGNALED``: the program received a fatal signal
