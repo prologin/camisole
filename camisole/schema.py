@@ -11,7 +11,7 @@ ISOLATE_OPTS_PROPERTIES = {
     'mem': {'type': 'number'},
     'processes': {'type': 'number'},
     'quota': {'type': 'string'},
-    'stack': {'type': 'string'},
+    'stack': {'type': 'number'},
     'time': {'type': 'number'},
     'wall-time': {'type': 'number'},
 }
