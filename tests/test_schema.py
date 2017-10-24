@@ -1,7 +1,59 @@
-import jsonschema
 import pytest
 
 import camisole.schema
+
+
+def validate_schema(obj, schema):
+    try:
+        camisole.schema.validate_schema(obj, schema)
+        return True
+    except camisole.schema.ValidationError as e:
+        print(e)
+        return False
+
+
+def test_schema_empty():
+    assert validate_schema({}, {})
+
+
+def test_schema_simple():
+    s = {'a': int}
+    assert validate_schema({'a': 1}, s)
+    assert not validate_schema({}, s)
+    assert not validate_schema({'a': 1.2}, s)
+    assert not validate_schema({'a': 'b'}, s)
+
+
+def test_schema_optional():
+    from camisole.schema import O
+    s = {'a': O(int)}
+    assert validate_schema({}, s)
+    assert validate_schema({'a': 1}, s)
+    assert validate_schema({'a': None}, s)
+
+
+def test_schema_union():
+    from camisole.schema import Union
+    s = {'a': Union(int, str)}
+    assert validate_schema({'a': 1}, s)
+    assert validate_schema({'a': 'b'}, s)
+    assert not validate_schema({}, s)
+    assert not validate_schema({'a': 1.1}, s)
+
+
+def test_schema_list():
+    s = {'a': [int]}
+    assert validate_schema({'a': []}, s)
+    assert validate_schema({'a': [1]}, s)
+    assert validate_schema({'a': [1, 2, 3]}, s)
+    assert not validate_schema({'a': [1, 2, 'b']}, s)
+
+
+def test_schema_nested():
+    s = {'a': {'b': [{'c': int}]}}
+    assert validate_schema({'a': {'b': []}}, s)
+    assert validate_schema({'a': {'b': [{'c': 1}, {'c': 2}]}}, s)
+    assert not validate_schema({'a': {'b': [{'c': 1}, {'c': None}]}}, s)
 
 
 def test_correct_simple():
@@ -10,7 +62,7 @@ def test_correct_simple():
         'source': 'print(42)',
         'tests': [{}],
     }
-    camisole.schema.validate(json)
+    camisole.schema.validate_run(json)
 
 
 def test_correct_complex():
@@ -55,7 +107,7 @@ int main(void) {
             {},
         ],
     }
-    camisole.schema.validate(json)
+    camisole.schema.validate_run(json)
 
 
 def test_bad_type():
@@ -63,15 +115,15 @@ def test_bad_type():
         'lang': 'python',
         'source': 42,
     }
-    with pytest.raises(jsonschema.exceptions.ValidationError) as e:
-        camisole.schema.validate(json)
-    assert "42 is not of type 'string'" in str(e.value)
+    with pytest.raises(camisole.schema.ValidationError) as e:
+        camisole.schema.validate_run(json)
+    assert "expected a string or binary data, got an integer" in str(e)
 
 
 def test_missing_field():
     json = {
         'source': 'print(42)',
     }
-    with pytest.raises(jsonschema.exceptions.ValidationError) as e:
-        camisole.schema.validate(json)
-    assert "'lang' is a required property" in str(e.value)
+    with pytest.raises(camisole.schema.ValidationError) as e:
+        camisole.schema.validate_run(json)
+    assert "expected a string, got nothing" in str(e)
