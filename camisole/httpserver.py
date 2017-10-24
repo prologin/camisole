@@ -1,7 +1,6 @@
 import aiohttp.web
 import functools
 import json
-import jsonschema
 import msgpack
 import traceback
 
@@ -99,9 +98,9 @@ def json_msgpack_handler(wrapped):
 @json_msgpack_handler
 async def run_handler(request, data):
     try:
-        camisole.schema.validate(data)
-    except jsonschema.exceptions.ValidationError as e:
-        return {'success': False, 'error': f"malformed payload: {e.message}"}
+        camisole.schema.validate_run(data)
+    except camisole.schema.ValidationError as e:
+        return {'success': False, 'error': f"malformed payload: {e}"}
 
     lang_name = data['lang'].lower()
     try:

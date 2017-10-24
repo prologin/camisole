@@ -15,7 +15,6 @@ setup(
     description='An asyncio-based source compiler and test runner.',
     install_requires=[
         'aiohttp',
-        'jsonschema',
         'msgpack-python',
         'pyyaml',
     ],

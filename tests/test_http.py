@@ -15,7 +15,7 @@ async def test_run_bad_schema(http_request):
     assert not result['success']
     message = result['error'].lower()
     assert "malformed payload" in message
-    assert "'lang' is a required property" in message
+    assert ".lang: expected a string, got nothing" in message
 
 
 @pytest.mark.asyncio

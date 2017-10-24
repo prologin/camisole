@@ -55,8 +55,7 @@ The |project| core program depends on:
 
 On Archlinux, install those with your favorite AUR helper, eg. pacaur::
 
-   $ pacaur -S isolate-git python-aiohttp python-msgpack python-yaml \
-               python-jsonschema
+   $ pacaur -S isolate-git python-aiohttp python-msgpack python-yaml
 
 Per-language dependencies
 *************************
