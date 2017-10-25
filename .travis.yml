@@ -1,6 +1,9 @@
 language: python
 sudo: required
 
+notifications:
+  email: false
+
 python:
   - '3.6'
   - '3.6-dev'
