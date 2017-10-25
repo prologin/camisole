@@ -47,6 +47,7 @@ def test_schema_list():
     assert validate_schema({'a': [1]}, s)
     assert validate_schema({'a': [1, 2, 3]}, s)
     assert not validate_schema({'a': [1, 2, 'b']}, s)
+    assert not validate_schema({'a': 42}, s)
 
 
 def test_schema_nested():
@@ -54,6 +55,7 @@ def test_schema_nested():
     assert validate_schema({'a': {'b': []}}, s)
     assert validate_schema({'a': {'b': [{'c': 1}, {'c': 2}]}}, s)
     assert not validate_schema({'a': {'b': [{'c': 1}, {'c': None}]}}, s)
+    assert not validate_schema({'a': [1, 2]}, s)
 
 
 def test_correct_simple():
