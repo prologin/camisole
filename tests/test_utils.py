@@ -18,6 +18,7 @@ def test_indent():
 
 
 def test_parse_size():
+    assert parse_size(None) == None
     assert parse_size('1') == 1
     assert parse_size('1024') == 1024
     assert parse_size('1k') == 1024
