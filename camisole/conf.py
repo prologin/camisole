@@ -29,7 +29,7 @@ class Conf(Mapping):
         self.merge(yaml.load(default_conf))
 
         conf_from_environ = os.environ.get('CAMISOLE_CONF')
-        if conf_from_environ:
+        if conf_from_environ:  # noqa
             with open(conf_from_environ) as f:
                 self.merge(yaml.load(f))
 
