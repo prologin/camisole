@@ -90,7 +90,7 @@ class cached_classmethod:
         self.name = name or func.__name__
 
     def __get__(self, instance, cls=None):
-        if cls is None:
+        if cls is None:  # noqa
             return self
         res = self.func(cls)
         setattr(cls, self.name, res)
@@ -99,8 +99,8 @@ class cached_classmethod:
 
 class AcceptHeader:
     class AcceptableType:
-        RE_MIME_TYPE = re.compile(
-            r'^(\*|[a-zA-Z0-9._-]+)(/(\*|[a-zA-Z0-9._-]+))?$')
+        RE_TYPE = r"a-zA-Z0-9!#$%^&_\*\-\+\{\}\|'.`~"
+        RE_MIME_TYPE = re.compile(rf"^([{RE_TYPE}]+)(/[{RE_TYPE}]+)?$")
         RE_Q = re.compile(r'(?:^|;)\s*q=([0-9.-]+)(?:$|;)')
 
         def __init__(self, raw_mime_type):
@@ -130,6 +130,9 @@ class AcceptHeader:
 
         def matches(self, mime_type):
             return self.pattern.match(mime_type)
+
+        def __repr__(self):
+            return f"<AcceptableType {self.mime_type} = {self.weight}>"
 
     @classmethod
     def parse_header(cls, header):

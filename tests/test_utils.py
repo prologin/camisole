@@ -1,4 +1,7 @@
-from camisole.utils import uniquify, indent, parse_size, parse_float, tabulate
+import pytest
+
+from camisole.utils import (
+    uniquify, indent, parse_size, parse_float, tabulate, which, AcceptHeader)
 
 
 def test_uniquify():
@@ -53,3 +56,23 @@ def test_tabulate():
         'foo    | a       \n'
         'barbar | baz     '
     )
+
+
+def test_which():
+    assert which('echo') in ('/usr/bin/echo', '/bin/echo')
+    assert which('/bin/echo') in ('/usr/bin/echo', '/bin/echo')
+    assert which('/a/b/c/idonteven') == '/a/b/c/idonteven'
+
+
+def test_accept_header():
+    h = 'text/html,*/*;q=0.8,application/xhtml+xml,application/xml;q=0.9,'
+    a = AcceptHeader.parse_header(h)
+    assert len(a) == 4
+    assert a[0].mime_type == 'text/html'
+    pytest.approx(a[0].weight, 1)
+    assert a[1].mime_type == 'application/xhtml+xml'
+    pytest.approx(a[1].weight, 1)
+    assert a[2].mime_type == 'application/xml'
+    pytest.approx(a[2].weight, .9)
+    assert a[3].mime_type == '*/*'
+    pytest.approx(a[3].weight, .8)
