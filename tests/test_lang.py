@@ -4,6 +4,12 @@ from camisole.languages.python import Python
 
 
 @pytest.mark.asyncio
+async def test_execute():
+    ret, info = await Python({}).execute(Python.reference_source.encode())
+    assert ret == 0
+
+
+@pytest.mark.asyncio
 async def test_compile_no_compiler():
     with pytest.raises(RuntimeError):
         await Python({'source': 'print(42)'}).compile()
@@ -75,14 +81,26 @@ async def test_input_data():
 
 
 @pytest.mark.asyncio
-async def test_bad_ref():
-    from camisole.languages.python import Python
+async def test_bad_exec_ref():
+    from camisole.languages import by_name
     from camisole.ref import test
 
-    class BadLang(Python):
+    class BadInterLang(by_name('python')):
         reference_source = 'print(43)'
 
-    ok, result = await test('badlang')
+    ok, result = await test(BadInterLang.name)
+    assert not ok
+
+
+@pytest.mark.asyncio
+async def test_bad_compile_ref():
+    from camisole.languages import by_name
+    from camisole.ref import test
+
+    class BadCompLang(by_name('c')):
+        reference_source = 'wtf bbq'
+
+    ok, result = await test(BadCompLang.name)
     assert not ok
 
 
