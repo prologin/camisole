@@ -73,7 +73,7 @@ def json_msgpack_handler(wrapped):
             data = await request.read()
         except aiohttp.web.HTTPClientError as e:
             return error(e.__class__, str(e))
-        except Exception:
+        except Exception:  # noqa
             return error(
                 aiohttp.web.HTTPInternalServerError, traceback.format_exc())
 
