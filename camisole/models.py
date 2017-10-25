@@ -55,7 +55,7 @@ class Program:
         if self.version_opt is None:
             return None
         res = self.version_regex.search(self._version())
-        return res[0] if res else None
+        return res.group(0) if res else None
 
     def long_version(self):
         if self.version_opt is None:
