@@ -1,7 +1,17 @@
 import os
+import json
 import pytest
 
-from camisole.httpserver import TYPE_JSON, CONTENT_TYPES
+from camisole.httpserver import TYPE_JSON, CONTENT_TYPES, BinaryJsonEncoder
+
+
+def test_best_effort_json_binary_encoder():
+    assert json.dumps({"key": "test".encode()}, cls=BinaryJsonEncoder)
+    assert json.dumps({"key": "dédé".encode()}, cls=BinaryJsonEncoder)
+    with pytest.raises(TypeError):
+        assert json.dumps({"key": b"test\xa0"}, cls=BinaryJsonEncoder)
+    with pytest.raises(TypeError):
+        assert json.dumps({"key": object()}, cls=BinaryJsonEncoder)
 
 
 @pytest.mark.asyncio
