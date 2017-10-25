@@ -13,6 +13,6 @@ def handle(args):
 def build(parser):
     p = parser.add_parser('serve', add_help=False)
     p.add_argument('-h', '--host', default='0.0.0.0')
-    p.add_argument('-p', '--port', type=int, default=8080)
+    p.add_argument('-p', '--port', type=int, default=42920)
     p.add_argument('--help', action='help')
     return 'serve', handle
