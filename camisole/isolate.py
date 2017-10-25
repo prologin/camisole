@@ -136,6 +136,9 @@ class Isolator:
             'XX': 'INTERNAL_ERROR',
         }
         self.meta['status'] = verbose_status[self.meta['status']]
+        # replace time-wall with wall-time for consistency with the limit name
+        # https://github.com/ioi/isolate/issues/20
+        self.meta['wall-time'] = self.meta.pop('time-wall')
 
         self.info = {
             'stdout': self.stdout,

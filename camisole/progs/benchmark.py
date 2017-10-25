@@ -50,7 +50,7 @@ async def benchmark(lang_name, verbose):
     return (str(memory),
             format_stats([m['max-rss'] for m in metas], 5),
             format_stats([m['time'] for m in metas], 1, 3),
-            format_stats([m['time-wall'] for m in metas], 1, 3))
+            format_stats([m['wall-time'] for m in metas], 1, 3))
 
 
 def handle(args):

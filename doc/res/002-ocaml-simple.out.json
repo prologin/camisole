@@ -12,8 +12,8 @@
             "max-rss": 15276,
             "message": null,
             "status": "OK",
-            "time": 0.085,
-            "time-wall": 0.13
+            "time": 0.122,
+            "wall-time": 0.344
         },
         "stderr": "",
         "stdout": ""
@@ -33,8 +33,8 @@
                 "max-rss": 1820,
                 "message": null,
                 "status": "OK",
-                "time": 0.001,
-                "time-wall": 0.033
+                "time": 0.002,
+                "wall-time": 0.058
             },
             "name": "test000",
             "stderr": "",

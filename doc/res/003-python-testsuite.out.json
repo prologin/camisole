@@ -15,7 +15,7 @@
                 "message": null,
                 "status": "OK",
                 "time": 0.016,
-                "time-wall": 0.06
+                "wall-time": 0.05
             },
             "name": "test_h2g2",
             "stderr": "",
@@ -34,8 +34,8 @@
                 "max-rss": 7448,
                 "message": null,
                 "status": "OK",
-                "time": 0.018,
-                "time-wall": 0.063
+                "time": 0.026,
+                "wall-time": 0.072
             },
             "name": "test_notfound",
             "stderr": "",
@@ -54,8 +54,8 @@
                 "max-rss": 7428,
                 "message": null,
                 "status": "OK",
-                "time": 0.015,
-                "time-wall": 0.064
+                "time": 0.026,
+                "wall-time": 0.083
             },
             "name": "test_leet",
             "stderr": "",
@@ -74,8 +74,8 @@
                 "max-rss": 7736,
                 "message": null,
                 "status": "OK",
-                "time": 0.025,
-                "time-wall": 0.082
+                "time": 0.029,
+                "wall-time": 0.092
             },
             "name": "test_666",
             "stderr": "",

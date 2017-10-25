@@ -23,7 +23,7 @@ async def test_no_limit():
     r = await python_sleep(duration).run()
     test = r['tests'][0]['meta']
     assert test['status'] == 'OK'
-    assert abs(test['time-wall'] - duration) < tolerance
+    assert abs(test['wall-time'] - duration) < tolerance
 
 
 @pytest.mark.asyncio
@@ -33,7 +33,7 @@ async def test_below_limit():
     r = await python_sleep(duration, limit).run()
     test = r['tests'][0]['meta']
     assert test['status'] == 'OK'
-    assert abs(test['time-wall'] - limit) < tolerance
+    assert abs(test['wall-time'] - limit) < tolerance
 
 
 @pytest.mark.asyncio
@@ -43,7 +43,7 @@ async def test_above_limit():
     r = await python_sleep(duration, limit).run()
     test = r['tests'][0]['meta']
     assert test['status'] == 'TIMED_OUT'
-    assert abs(test['time-wall'] - limit) < tolerance
+    assert abs(test['wall-time'] - limit) < tolerance
     assert "time limit exceeded" in test['message'].lower()
 
 
@@ -55,7 +55,7 @@ async def test_local_limit_stricter():
     r = await python_sleep(duration, glimit, llimit).run()
     test = r['tests'][0]['meta']
     assert test['status'] == 'TIMED_OUT'
-    assert abs(test['time-wall'] - llimit) < tolerance
+    assert abs(test['wall-time'] - llimit) < tolerance
     assert "time limit exceeded" in test['message'].lower()
 
 
@@ -67,4 +67,4 @@ async def test_local_limit_larger():
     r = await python_sleep(duration, glimit, llimit).run()
     test = r['tests'][0]['meta']
     assert test['status'] == 'OK'
-    assert abs(test['time-wall'] - llimit) < tolerance
+    assert abs(test['wall-time'] - llimit) < tolerance
