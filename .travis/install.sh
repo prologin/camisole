@@ -21,8 +21,8 @@ sudo apt-get install -qq -y \
    openjdk-8-jdk-headless \
    perl \
    php5-cli \
-   ruby
-# rust is broken
+   ruby \
+   rustc
 
 # update-alternatives nonsense to force gcc-6
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
