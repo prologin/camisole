@@ -45,14 +45,14 @@ class Program:
 
     @functools.lru_cache()
     def _version(self):
-        if self.version_opt is None:
+        if self.version_opt is None:  # noqa
             return None
         proc = subprocess.run([self.cmd, self.version_opt],
                               stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
         return proc.stdout.decode().strip()
 
     def version(self):
-        if self.version_opt is None:
+        if self.version_opt is None:  # noqa
             return None
         res = self.version_regex.search(self._version())
         return res.group(0) if res else None
