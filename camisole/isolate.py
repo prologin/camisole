@@ -148,12 +148,10 @@ class Isolator:
             'XX': 'INTERNAL_ERROR',
         }
         self.meta['status'] = verbose_status[self.meta['status']]
-        print(self.meta)
 
         for imeta, cmeta in ISOLATE_TO_CAMISOLE_META.items():
             if imeta in self.meta:
                 self.meta[cmeta] = self.meta.pop(imeta)
-        print(self.meta)
 
         self.info = {
             'stdout': self.stdout,
