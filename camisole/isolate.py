@@ -48,8 +48,7 @@ async def communicate(cmdline, data=None, **kwargs):
     return retcode, stdout, stderr
 
 
-OPTIONS = [
-    'cg-mem',
+CAMISOLE_OPTIONS = [
     'extra-time',
     'fsize',
     'mem',
@@ -57,8 +56,21 @@ OPTIONS = [
     'quota',
     'stack',
     'time',
+    'virt-mem',
     'wall-time',
 ]
+
+CAMISOLE_TO_ISOLATE_OPTS = {
+    # Memory is resident, if you want address space it's virtual memory
+    'virt-mem': 'mem',
+    'mem': 'cg-mem',
+}
+
+ISOLATE_TO_CAMISOLE_META = {
+    # Consistency with the limit name
+    # https://github.com/ioi/isolate/issues/20
+    'time-wall': 'wall-time',
+}
 
 
 class Isolator:
@@ -136,9 +148,12 @@ class Isolator:
             'XX': 'INTERNAL_ERROR',
         }
         self.meta['status'] = verbose_status[self.meta['status']]
-        # replace time-wall with wall-time for consistency with the limit name
-        # https://github.com/ioi/isolate/issues/20
-        self.meta['wall-time'] = self.meta.pop('time-wall')
+        print(self.meta)
+
+        for imeta, cmeta in ISOLATE_TO_CAMISOLE_META.items():
+            if imeta in self.meta:
+                self.meta[cmeta] = self.meta.pop(imeta)
+        print(self.meta)
 
         self.info = {
             'stdout': self.stdout,
@@ -161,12 +176,14 @@ class Isolator:
         cmd_run += list(itertools.chain(
             *[('-d', d) for d in self.allowed_dirs]))
 
-        for opt in OPTIONS:
+        for opt in CAMISOLE_OPTIONS:
             v = self.opts.get(opt)
+            iopt = CAMISOLE_TO_ISOLATE_OPTS.get(opt, opt)
+
             if v is not None:
-                cmd_run.append(f'--{opt}={v!s}')
+                cmd_run.append(f'--{iopt}={v!s}')
             # Unlike isolate, we don't limit the number of processes by default
-            elif opt == 'processes':
+            elif iopt == 'processes':
                 cmd_run.append('-p')
 
         for e in ['PATH', 'LD_LIBRARY_PATH', 'LANG']:

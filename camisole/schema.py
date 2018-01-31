@@ -94,6 +94,7 @@ ISOLATE_OPTS_PROPERTIES = {
     'quota': O(str),
     'stack': O(int),
     'time': O(number),
+    'virt-mem': O(int),
     'wall-time': O(number),
 }
 

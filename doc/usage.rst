@@ -47,17 +47,17 @@ for the compilation and the execution, respectively.
 There are a lot of ways you can limit the resources of both the compilation and
 the execution of your program:
 
-- ``cg-mem``: limit the available memory of each process (kilobytes)
+- ``time``: limit the user time of the program (seconds)
+- ``wall-time``: limit the wall time of the program (seconds)
 - ``extra-time``: grace period before killing a program after it exceeded a
   time limit (seconds)
+- ``mem``: limit the available memory of each process (kilobytes)
+- ``virt-mem``: limit the address space of each process (kilobytes)
 - ``fsize``: limit the size of files created by the program (kilobytes)
-- ``mem``: limit the address space of each process (kilobytes)
 - ``processes``: limit the number of processes and/or threads
 - ``quota``: limit the disk quota to a number of blocks and inodes (separate
   both numbers by a comma, eg. ``10,30``)
 - ``stack``: limit the stack size of each process (kilobytes)
-- ``time``: limit the user time of the program (seconds)
-- ``wall-time``: limit the wall time of the program (seconds)
 
 This example demonstrates the use of resource limitations for both the
 compilation and execution:

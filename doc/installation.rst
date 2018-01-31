@@ -25,6 +25,11 @@ instance running on port 42920. Test your installation by visiting this URL::
 
    $ curl http://localhost:42920/
 
+**Note**: You can log into the VM with root:camisole or camisole:camisole. Be
+careful to change the passwords and/or disable sshd before exposing the VM to
+your infrastructure. Ideally, the virtual machine shouldn't be accessible
+directly from the internet.
+
 Archlinux packages
 ------------------
 
