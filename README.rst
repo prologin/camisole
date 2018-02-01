@@ -23,9 +23,9 @@ usage examples, is available at https://camisole.prologin.org
 Features
 --------
 
-- Built-in support for a wide variety of languages, including Ada, Brainfuck,
-  C, C#, C++, F#, Haskell, Java, JavaScript, Lua, OCaml, Pascal, Perl, PHP,
-  Python, Ruby, Scheme, Visual Basic…
+- Built-in support for a wide variety of languages, including Ada, C, C#, C++,
+  Haskell, Java, JavaScript, Lua, OCaml, Pascal, Perl, PHP, Python, Ruby,
+  Scheme, Visual Basic…
 - Isolation: *camisole* runs both the compilation and execution stages in a
   **sandboxed** environment provided by isolate_
 - Limitation of resources (time, wall-time, memory…)

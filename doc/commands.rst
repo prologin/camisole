@@ -29,7 +29,6 @@ List supported languages::
     $ camisole languages
     Name         | Display name  | Module                          | Class name
     ada          | Ada           | camisole.languages.ada          | Ada
-    brainfuck    | Brainfuck     | camisole.languages.brainfuck    | Brainfuck
     c            | C             | camisole.languages.c            | C
 
 .. _commands-test:
@@ -41,7 +40,6 @@ List supported languages and check if they are working::
 
     $ camisole test
     ada ......... FAIL
-    brainfuck ... OK
     c ........... OK
 
 You can show slightly more verbose failures::

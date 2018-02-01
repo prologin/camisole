@@ -5,8 +5,6 @@ import sys
 from camisole.languages import all, by_name, _import_builtins
 _import_builtins()
 
-FROM_AUR = {'esotope-bfc-git': {by_name('brainfuck')},}
-
 # java packages consist of symlinks to handle both Java 7 & 8, so we force
 # the version (8) here
 OVERWRITE = {by_name('java'): {'/usr/lib/jvm/java-8-openjdk/bin/java',
@@ -35,7 +33,6 @@ def get_package(binary):
 if __name__ == '__main__':
     lang_binaries = list_paths()
     packages = defaultdict(set)
-    packages.update(FROM_AUR)
     for lang, binary in lang_binaries:
         pkg = get_package(binary)
         if pkg is None:

@@ -38,11 +38,9 @@ def load_from_environ():
 
 __all__ = [
     'ada',
-    'brainfuck',
     'c',
     'csharp',
     'cxx',
-    'fsharp',
     'haskell',
     'java',
     'javascript',
