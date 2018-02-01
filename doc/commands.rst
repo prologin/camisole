@@ -65,7 +65,7 @@ Or much more verbose failures::
                                      'directory',
                           'status': 'INTERNAL_ERROR',
                           'time': 0.0,
-                          'time-wall': 0.0},
+                          'wall-time': 0.0},
                  'stderr': '',
                  'stdout': ''}}
 

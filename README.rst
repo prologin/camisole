@@ -48,7 +48,7 @@ is as simple as that::
                 "meta": {
                     "status": "OK",
                     "exitcode": 0,
-                    "time-wall": 0.067,
+                    "wall-time": 0.067,
                     "cg-mem": 2528,
                     "killed": 0,
                     "exitsig": 0,
