@@ -79,6 +79,7 @@ class Lang(metaclass=MetaLang):
     Subclass and define the relevant attributes and methods, if need be.
     """
     _registry = {}
+    _full_registry = {}
     name = None
 
     source_ext = None
@@ -95,18 +96,21 @@ class Lang(metaclass=MetaLang):
         if not register:
             return
 
+        registry_name = cls.name.lower()
+        cls._full_registry[registry_name] = cls
+
         for binary in cls.required_binaries():
             if binary is not None and not os.access(binary.cmd, os.X_OK):
                 logging.info(f'{cls.name}: cannot access `{binary.cmd}`, '
                              'language not loaded')
                 return
 
-        registry_name = cls.name.lower()
         if registry_name in cls._registry:
             full_name = lambda c: f"{c.__module__}.{c.__qualname__}"
             warnings.warn(f"Lang registry: name '{registry_name}' for "
                           f"{full_name(cls)} overwrites "
                           f"{full_name(Lang._registry[registry_name])}")
+
         cls._registry[registry_name] = cls
 
     def __init__(self, opts):
