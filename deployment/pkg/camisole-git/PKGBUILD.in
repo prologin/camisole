@@ -11,7 +11,8 @@ provides=('camisole')
 depends=('isolate-git'
          'python'
          'python-aiohttp'
-         'python-msgpack')
+         'python-msgpack'
+         'python-yaml')
 optdepends=('camisole-languages: Metapackage for all the built-in languages')
 makedepends=('git' 'python-setuptools')
 source=("git+${url}.git"
