@@ -7,7 +7,7 @@ PKGBUILD: PKGBUILD.in $(OBJS)
 	updpkgsums
 
 .SRCINFO: PKGBUILD
-	mksrcinfo
+	makepkg --printsrcinfo > .SRCINFO
 
 pkg: PKGBUILD
 	makepkg -fc
