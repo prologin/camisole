@@ -15,7 +15,7 @@ sudo apt-get install -qq -y \
    ghc-dynamic \
    gnat-6 \
    luajit \
-   mono-runtime mono-mcs mono-vbnc \
+   mono-runtime mono-mcs \
    nodejs \
    ocaml-nox \
    openjdk-8-jdk-headless \

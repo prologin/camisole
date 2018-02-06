@@ -25,7 +25,7 @@ Features
 
 - Built-in support for a wide variety of languages, including Ada, C, C#, C++,
   Haskell, Java, JavaScript, Lua, OCaml, Pascal, Perl, PHP, Python, Ruby,
-  Scheme, Visual Basic…
+  Scheme…
 - Isolation: *camisole* runs both the compilation and execution stages in a
   **sandboxed** environment provided by isolate_
 - Limitation of resources (time, wall-time, memory…)

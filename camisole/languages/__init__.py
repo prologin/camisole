@@ -53,5 +53,4 @@ __all__ = [
     'ruby',
     'rust',
     'scheme',
-    'visualbasic',
 ]
