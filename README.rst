@@ -1,6 +1,9 @@
 camisole
 ========
 
+.. image:: https://github.com/prologin/camisole/raw/master/doc/_static/camisole.png
+   :align: right
+
 .. image:: https://travis-ci.org/prologin/camisole.svg?branch=master
    :target: https://travis-ci.org/prologin/camisole
 
