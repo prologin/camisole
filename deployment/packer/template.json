@@ -30,6 +30,7 @@
                 [ "modifyvm", "{{.Name}}", "--natpf1", "camisole,tcp,127.0.0.1,42920,,42920" ],
                 [ "modifyvm", "{{.Name}}", "--natpf1", "ssh,tcp,127.0.0.1,42922,,22" ]
             ],
+            "vm_name": "camisole-{{ isotime \"2006-01-02\" }}",
             "headless" : "{{ user `headless`}}",
             "format": "ova"
         }
