@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" viewbox="130 130 80 85"
+   xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+
+  <defs>
+    <path id="body" d="m 150.8125,134.28121 c 0,0 -15.875,3.96879 -15.875,11.90625 0,7.93745 3.175,59.53125 3.175,59.53125 0,0 0,3.9688 3.96875,3.96875 3.96875,-4e-5 30.69167,-2e-4 49.2125,0 3.96876,5e-5 3.96875,-3.96875 
+3.96875,-3.96875 0,0 3.175,-51.59371 3.175,-59.53121 0,-7.9375 -15.875,-11.90629 -15.875,-11.90629 0,0 -3.96875,7.93754 -15.875,7.9375 -11.90625,-4e-5 -15.875,-7.9375 -15.875,-7.9375 z" />
+    <path d="m 130.96377,157.3 71.44746,16.66875 V 185.875 l -71.44746,-16.66875 z" id="arm1" />
+    <use id="arm2" xlink:href="#arm1" transform="translate(333.3 0) scale(-1 1)" />
+    <mask id="armmask">
+      <g>
+        <use xlink:href="#body" fill="white" />
+        <use xlink:href="#arm1" fill="black" stroke="black" stroke-width="5" />
+        <use xlink:href="#arm2" fill="black" stroke="black" stroke-width="5" />
+      </g>
+    </mask>
+    <mask id="bodymask">
+      <g>
+        <use xlink:href="#body" fill="black" stroke="black" stroke-width="10" />
+        <use xlink:href="#body" fill="white" stroke="none" />
+        <use xlink:href="#body" fill="none" stroke="white" stroke-width="4" />
+      </g>
+    </mask>
+    <clipPath id="arm1cp"><use xlink:href="#arm1"/></clipPath>
+  </defs>
+ 
+  <use xlink:href="#body" fill="#c7c7c7" mask="url(#armmask)" />
+  <use xlink:href="#arm1" fill="#33449d" mask="url(#bodymask)" />
+  <use xlink:href="#arm2" stroke="black" stroke-width="5" opacity="0.8" clip-path="url(#arm1cp)" />
+  <use xlink:href="#arm2" fill="#33449d" mask="url(#bodymask)" />
+
+</svg>
+
