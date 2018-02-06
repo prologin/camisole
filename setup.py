@@ -6,7 +6,7 @@ if sys.version_info < (3, 6):
 
 setup(
     name='camisole',
-    version='0.6',
+    version='1.0',
     packages=find_packages(),
     url='https://github.com/prologin/camisole',
     license='GPL',
@@ -19,7 +19,7 @@ setup(
         'pyyaml',
     ],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'pytest-cov', 'pytest-catchlog', 'pytest-asyncio'],
+    tests_require=['pytest', 'pytest-cov', 'pytest-asyncio'],
     test_suite='pytest',
     entry_points={
         'console_scripts': ['camisole = camisole.__main__:main'],
