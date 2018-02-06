@@ -5,8 +5,9 @@ camisole's documentation
 give some untrusted source code and a test suite, and |project| compiles the
 code and runs it against the test suite.
 
-It uses isolate_ as a backend to safely compile and execute source codes using
-Linux kernel features such as namespaces, cgroups, chroot and resources limits.
+It uses isolate_ [#isolatepaper]_ as a backend to safely compile and execute
+source codes using Linux kernel features such as namespaces, cgroups, chroot
+and resources limits.
 
 |project| is aimed at:
 
@@ -44,6 +45,7 @@ Contents
    extending
    faq
    dev
+   changelog
 
 Indices and tables
 ------------------
