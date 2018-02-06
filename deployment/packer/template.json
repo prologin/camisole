@@ -27,7 +27,7 @@
             "ssh_timeout": "20m",
             "shutdown_command": "sudo systemctl poweroff",
             "vboxmanage": [
-                [ "modifyvm", "{{.Name}}", "--natpf1", "camisole,tcp,127.0.0.1,42920,,8080" ],
+                [ "modifyvm", "{{.Name}}", "--natpf1", "camisole,tcp,127.0.0.1,42920,,42920" ],
                 [ "modifyvm", "{{.Name}}", "--natpf1", "ssh,tcp,127.0.0.1,42922,,22" ]
             ],
             "headless" : "{{ user `headless`}}",
