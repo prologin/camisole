@@ -13,6 +13,7 @@ async def test_stdout_stderr():
 
 
 @pytest.mark.asyncio
+@pytest.mark.xfail(reason="https://github.com/ioi/isolate/issues/44")
 async def test_merge_outputs():
     isolator = camisole.isolate.Isolator({})
     async with isolator:
