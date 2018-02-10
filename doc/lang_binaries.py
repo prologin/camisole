@@ -62,7 +62,7 @@ class CamisoleLanguageTable(ListTable):
 
     def run(self):
         camisole.languages.load_builtins()
-        all_langs = camisole.languages.all().values()
+        all_langs = camisole.languages.Lang._full_registry.values()
 
         self.options['widths'] = 'auto'
         title, messages = self.make_title()
@@ -99,7 +99,7 @@ class CamisoleLanguageList(Directive):
 
     def run(self):
         camisole.languages.load_builtins()
-        langs = sorted(l.name for l in camisole.languages.all().values())
+        langs = sorted(l.name for l in camisole.languages.Lang._full_registry.values())
         return [nodes.paragraph(text=(", ".join(langs) + "."))]
 
 
