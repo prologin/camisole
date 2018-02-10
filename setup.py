@@ -6,7 +6,7 @@ if sys.version_info < (3, 6):
 
 setup(
     name='camisole',
-    version='1.0',
+    version='1.1',
     packages=find_packages(),
     url='https://github.com/prologin/camisole',
     license='GPL',

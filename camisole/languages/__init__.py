@@ -39,6 +39,7 @@ def load_from_environ():
 __all__ = [
     'ada',
     'c',
+    'd',
     'csharp',
     'cxx',
     'haskell',

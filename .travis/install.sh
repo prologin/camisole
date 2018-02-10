@@ -24,6 +24,11 @@ sudo apt-get install -qq -y \
    ruby \
    rustc
 
+# dlang
+wget -O /tmp/dmd_2.078.2-0_amd64.deb http://downloads.dlang.org/releases/2.x/2.078.2/dmd_2.078.2-0_amd64.deb
+sudo dpkg -i /tmp/dmd_2.078.2-0_amd64.deb
+dmd --version | head -1
+
 # update-alternatives nonsense to force gcc-6
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100

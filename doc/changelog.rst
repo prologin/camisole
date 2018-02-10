@@ -1,8 +1,16 @@
 Changelog
 =========
 
-1.0.0
-*****
+1.1
+***
+
+New features
+------------
+
+* Add support for the D language.
+
+1.0
+***
 
 Breaking changes
 ----------------
