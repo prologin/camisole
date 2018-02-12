@@ -1,6 +1,19 @@
 Changelog
 =========
 
+1.2
+***
+
+Fixed regressions
+-----------------
+
+* *camisole* < 1.0 fallbacks to JSON parsing when receiving unsupported
+  content types (eg. curl's default form-encoded); 1.0 ≤ *camisole* < 1.2 used
+  to require that a valid content-type header be present on the request,
+  including JSON requests. *camisole* ≥ 1.2 restores the original behavior, so
+  curl(1) can be used without any specific header, as the documentation
+  command-line examples imply.
+
 1.1
 ***
 

@@ -29,10 +29,16 @@ async def test_run_bad_schema(http_request):
 
 
 @pytest.mark.asyncio
-async def test_bad_content_type(http_client):
-    result = await (await http_client.post('/run', data=b'bad-stuff')).json()
-    assert not result['success']
-    assert 'unknown content-type' in result['error'].lower()
+async def test_default_content_type(http_client):
+    # unsupported content type (eg. curl's default) shall fallback to JSON
+    form = 'application/x-www-form-urlencoded'
+    result = await http_client.post(
+        '/run', data=b'{"lang": "python", "source": "print(42)"}',
+        headers={'content-type': form})
+    assert result.headers['content-type'] == TYPE_JSON
+    data = await result.json()
+    assert data['success']
+    assert data['tests'][0]['stdout'] == '42\n'
 
 
 @pytest.mark.asyncio

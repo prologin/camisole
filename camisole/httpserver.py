@@ -61,13 +61,11 @@ def json_msgpack_handler(wrapped):
         def error(cls, msg):
             return response({'success': False, 'error': msg}, cls=cls)
 
-        if content_type == TYPE_JSON:
-            decoder = lambda e: json.loads(e.decode())
-        elif content_type == TYPE_MSGPACK:
+        if content_type == TYPE_MSGPACK:
             decoder = functools.partial(msgpack.loads, encoding='utf-8')
         else:
-            return error(aiohttp.web.HTTPUnsupportedMediaType,
-                         f"unknown content-type {content_type}")
+            content_type = TYPE_JSON
+            decoder = lambda e: json.loads(e.decode())
 
         try:
             data = await request.read()
