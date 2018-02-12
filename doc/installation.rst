@@ -56,7 +56,6 @@ The |project| core program depends on:
 * Python aiohttp_ (HTTP server)
 * Python MessagePack_ (alternative to JSON)
 * Python PyYAML_ (configuration)
-* Python `JSON Schema`_ (user input validation)
 
 On Archlinux, install those with your favorite AUR helper, eg. pacaur::
 
@@ -91,7 +90,6 @@ you will need to add your user to the ``isolate`` group.
 
 .. _Python: https://python.org
 .. _aiohttp: https://aiohttp.readthedocs.io
-.. _JSON Schema: http://json-schema.org
 .. _isolate: https://github.com/ioi/isolate
 .. _MessagePack: https://pypi.python.org/pypi/msgpack-python
 .. _PyYAML: http://pyyaml.org/
