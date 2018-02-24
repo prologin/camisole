@@ -5,7 +5,8 @@ cd $( dirname $0 )
 latest=$( ls output-virtualbox-iso/*.ova | sort | tail -n1 )
 
 date=$( date --rfc-3339=date )
-relpath="camisole-$date.ova"
+desc=$( git describe )
+relpath="camisole-$desc-$date.ova"
 path="/home/camisole/www/ova/$relpath"
 
 scp "$latest" "camisole@prologin.org:$path"
