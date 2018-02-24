@@ -13,10 +13,14 @@ def by_name(name):
     return Lang._full_registry[name]
 
 
-# java packages consist of symlinks to handle both Java 7 & 8, so we force
-# the version (8) here
-OVERWRITE = {by_name('java'): {'/usr/lib/jvm/java-8-openjdk/bin/java',
-                               '/usr/lib/jvm/java-8-openjdk/bin/javac'}}
+OVERWRITE = {
+    # java packages consist of symlinks to handle both Java 7 & 8, so we force
+    # the version (8) here
+    by_name('java'): {'/usr/lib/jvm/java-8-openjdk/bin/java',
+                      '/usr/lib/jvm/java-8-openjdk/bin/javac'},
+    # go is provided by both 'go' and 'gcc-go'
+    by_name('go'): {'/usr/lib/go/bin/go'},
+}
 
 
 def list_paths():
