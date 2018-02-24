@@ -195,7 +195,9 @@ class Isolator:
             '--stdout={}'.format(self.stdout_file),
         ]
 
-        if not merge_outputs:
+        if merge_outputs:
+            cmd_run.append('--stderr-to-stdout')
+        else:
             cmd_run.append('--stderr={}'.format(self.stderr_file))
 
         cmd_run += ['--run', '--']
