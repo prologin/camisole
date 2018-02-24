@@ -91,5 +91,5 @@ you will need to add your user to the ``isolate`` group.
 .. _Python: https://python.org
 .. _aiohttp: https://aiohttp.readthedocs.io
 .. _isolate: https://github.com/ioi/isolate
-.. _MessagePack: https://pypi.python.org/pypi/msgpack-python
+.. _MessagePack: https://pypi.python.org/pypi/msgpack
 .. _PyYAML: http://pyyaml.org/
