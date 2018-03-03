@@ -4,8 +4,8 @@ from pathlib import Path
 
 from camisole.models import Lang, Program
 
-# In Java, the entry point (main() function) is not trivial to find as it can be
-# defined as a method of any of the classes contained in the source program.
+# In Java, the entry point (main() function) is not trivial to find as it can
+# be defined as a method of any of the classes contained in the source program.
 # Even though we could force Java users to respect a standard name for their
 # class (eg. public class Main), we can do better by finding where the main()
 # method is defined, however deep in the class tree.
@@ -64,17 +64,15 @@ class MyπClass {
         # found such a public class
         self.found_public = False
 
-        # Don't even try to cgroup the java process:
+        # Don't even try to limit the address space of Java:
         # http://stackoverflow.com/questions/19910468
         # https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/1241926
         # https://bugs.openjdk.java.net/browse/JDK-8071445
         # http://bugs.java.com/view_bug.do?bug_id=8043516
-        # Instead, pass the memory limit as the maximum heap size of the
-        # runtime.
         try:
-            self.heapsize = self.opts['execute'].pop('mem')
+            self.opts['execute'].pop('virt-mem')
         except KeyError:
-            self.heapsize = None
+            pass
 
     def compile_opt_out(self, output):
         # javac has no output directive, file name is class name
@@ -108,10 +106,6 @@ class MyπClass {
 
     def execute_command(self, output):
         cmd = [self.interpreter.cmd] + self.interpreter.opts
-
-        # Use the memory limit as a maximum heap size
-        if self.heapsize is not None:
-            cmd.append(f'-Xmx{self.heapsize}k')
 
         # foo/Bar.class is run with $ java -cp foo Bar
         cmd += ['-cp', str(Path(self.filter_box_prefix(output)).parent),

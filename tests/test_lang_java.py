@@ -71,21 +71,3 @@ class OtherPrivate {
     }
 }''')
     assert result['tests'][0]['stdout'] == b'public\n'
-
-
-@pytest.mark.asyncio
-async def test_heap_size_too_small():
-    result = await Java({'source': Java.reference_source,
-                         'execute': {'mem': 42},
-                         'tests': [{}]}).run()
-    assert result['tests'][0]['meta']['status'] == 'RUNTIME_ERROR'
-    assert b'Too small initial heap' in result['tests'][0]['stdout']
-
-
-@pytest.mark.asyncio
-async def test_heap_size_big_enough():
-    result = await Java({'source': Java.reference_source,
-                         'execute': {'mem': 4200},
-                         'tests': [{}]}).run()
-    assert result['tests'][0]['meta']['status'] == 'OK'
-    assert result['tests'][0]['stdout'] == b'42\n'
