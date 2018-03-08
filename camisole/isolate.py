@@ -119,6 +119,7 @@ class Isolator:
     async def __aexit__(self, exc, value, tb):
         meta_defaults = {
             'cg-mem': 0,
+            'cg-oom-killed': 0,
             'csw-forced': 0,
             'csw-voluntary': 0,
             'exitcode': 0,
@@ -148,6 +149,9 @@ class Isolator:
             'XX': 'INTERNAL_ERROR',
         }
         self.meta['status'] = verbose_status[self.meta['status']]
+
+        if self.meta.get('cg-oom-killed'):
+            self.meta['status'] = 'OUT_OF_MEMORY'
 
         for imeta, cmeta in ISOLATE_TO_CAMISOLE_META.items():
             if imeta in self.meta:
