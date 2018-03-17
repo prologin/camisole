@@ -14,7 +14,7 @@ sudo apt-get install -qq -y \
    gambc \
    ghc-dynamic \
    gnat-6 \
-   lua5.3 \
+   lua5.2 \
    mono-runtime mono-mcs \
    nodejs \
    ocaml-nox \
