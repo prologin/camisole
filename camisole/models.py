@@ -240,6 +240,9 @@ class Lang(metaclass=MetaLang):
         return 'source' + self.source_ext
 
     def execute_filename(self):
+        if self.compiler is None and self.source_ext:
+            return 'compiled' + self.source_ext
+
         return 'compiled'
 
     @staticmethod
