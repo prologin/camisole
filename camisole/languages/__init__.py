@@ -51,6 +51,7 @@ __all__ = [
     'pascal',
     'perl',
     'php',
+    'prolog',
     'python',
     'ruby',
     'rust',
