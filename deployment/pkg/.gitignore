@@ -1,8 +1,0 @@
-*/src/
-*/pkg/
-camisole-git/camisole/
-camisole-git/camisole-git/
-camisole-languages/camisole-languages/
-*.tar.*
-.SRCINFO
-PKGBUILD
