@@ -102,7 +102,8 @@ classes. You have to make this file known to |project| in order to use it.
 As a Python program, |project| relies on the *Python path* to find modules.
 You can either put your files on the default Python path, but this may not be
 a good idea as it is usually a system path belonging to root and managed by
-your distribution package manager.
+your distribution package manager. It will also pollute your global namespace
+with modules that cannot be used standalone.
 
 Instead, you can put your modules in either:
 
@@ -115,7 +116,7 @@ You can also customize the ``PYTHONPATH`` environment variable with the
 Then, add your modules (the Python **file names** without extension) to the
 ``CAMISOLE_LANGS`` environment variable, separated with semicolons (``:``).
 When run, |project| will recognize your module and imports its :class:`Lang`
-definitions.
+definitions::
 
     $ export PYTHONPATH=/tmp/camisole
     $ export CAMISOLE_LANGS=lolcode:rust
