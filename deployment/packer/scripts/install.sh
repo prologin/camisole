@@ -73,32 +73,21 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 EOF
 
 cat <<-EOF > "${TARGET_DIR}${CONFIG_USER_SCRIPT}"
-    mkdir -p /tmp/pacaur_install
-    pushd /tmp/pacaur_install
-
-    export PATH="/usr/bin/core_perl:$PATH"
-
-    if [ ! -n "$(pacman -Qs cower)" ]; then
-        curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=cower
-        makepkg PKGBUILD --skippgpcheck --install --needed --noconfirm
+    if [ ! -n "$(pacman -Qs yay)" ]; then
+        git clone https://aur.archlinux.org/yay.git /tmp/yay_install
+        pushd /tmp/yay_install
+        makepkg -si --noconfirm
+        popd
+        rm -rf /tmp/yay_install
     fi
 
-    if [ ! -n "$(pacman -Qs pacaur)" ]; then
-        curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=pacaur
-        makepkg PKGBUILD --install --needed --noconfirm
-    fi
-
-    popd
-    rm -rf /tmp/pacaur_install
-
-    pacaur -S camisole-git camisole-languages --noconfirm --noedit
+    yay -S camisole-git camisole-languages --noconfirm
     sudo systemctl enable camisole
 
     # clean up
     sudo /usr/bin/pacman -Rcns --noconfirm gptfdisk
 
     /usr/bin/yes | sudo /usr/bin/pacman -Scc
-    sudo /usr/bin/pacman-optimize
     sudo pacman --noconfirm -Rsn \$(pacman -Qdtq)
 
     # Write zeros to improve virtual disk compaction.

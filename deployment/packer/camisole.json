@@ -1,9 +1,9 @@
 {
     "variables": {
-        "iso_url": "https://mirrors.kernel.org/archlinux/iso/2017.03.01/archlinux-2017.03.01-dual.iso",
-        "iso_checksum_url": "https://mirrors.kernel.org/archlinux/iso/2017.03.01/sha1sums.txt",
+        "iso_url": "https://mirrors.kernel.org/archlinux/iso/{{isotime \"2006.01\"}}.01/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
+        "iso_checksum_url": "https://mirrors.kernel.org/archlinux/iso/{{isotime \"2006.01\"}}.01/sha1sums.txt",
         "iso_checksum_type": "sha1",
-        "country": "US",
+        "country": "FR",
         "headless": "true"
     },
     "builders": [
@@ -14,7 +14,7 @@
             "iso_checksum_type": "{{ user `iso_checksum_type` }}",
             "guest_os_type": "ArchLinux_64",
             "guest_additions_mode": "disable",
-            "http_directory": ".",
+            "http_directory": "scripts",
             "boot_wait": "5s",
             "boot_command": [
                 "<enter><wait10><wait10><wait10>",
@@ -39,7 +39,7 @@
         {
             "type": "shell",
             "execute_command": "{{ .Vars }} COUNTRY={{ user `country` }} sudo -E -S bash '{{ .Path }}'",
-            "script": "install.sh"
+            "script": "scripts/install.sh"
         }
     ]
 }
