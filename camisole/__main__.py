@@ -32,7 +32,7 @@ def main():
 
     if args.conf:
         # merge user defined conf
-        conf.merge(yaml.load(args.conf))
+        conf.merge(yaml.safe_load(args.conf))
 
     # default logging config from conf
     logging.config.dictConfig(conf['logging'])

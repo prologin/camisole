@@ -26,15 +26,16 @@ class Conf(Mapping):
         import pkg_resources
         default_conf = pkg_resources.resource_stream(
             'camisole', DEFAULT_CONF_NAME)
-        self.merge(yaml.load(default_conf))
+        self.merge(yaml.safe_load(default_conf))
 
         conf_from_environ = os.environ.get('CAMISOLE_CONF')
         if conf_from_environ:  # noqa
             with open(conf_from_environ) as f:
-                self.merge(yaml.load(f))
+                self.merge(yaml.safe_load(f))
 
     def merge(self, data):
         self._load()
+
         def merge(data, into):
             for k, v in data.items():
                 if (k in into and
