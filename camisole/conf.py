@@ -26,7 +26,8 @@ class Conf(Mapping):
         import pkg_resources
         default_conf = pkg_resources.resource_stream(
             'camisole', DEFAULT_CONF_NAME)
-        self.merge(yaml.safe_load(default_conf))
+        with default_conf:
+            self.merge(yaml.safe_load(default_conf))
 
         conf_from_environ = os.environ.get('CAMISOLE_CONF')
         if conf_from_environ:  # noqa

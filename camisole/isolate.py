@@ -230,7 +230,8 @@ class Isolator:
 
         def dummy_section():
             yield f'[{s}]'
-            yield from pathlib.Path(conf['isolate-conf']).expanduser().open()
+            with pathlib.Path(conf['isolate-conf']).expanduser().open() as f:
+                yield from f
 
         parser.read_file(dummy_section())
         root = pathlib.Path(parser.get(s, 'box_root'))
