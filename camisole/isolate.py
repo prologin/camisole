@@ -22,6 +22,7 @@ import configparser
 import ctypes
 import itertools
 import logging
+import os
 import pathlib
 import subprocess
 import tempfile
@@ -189,7 +190,9 @@ class Isolator:
                 cmd_run.append('-p')
 
         for e in ['PATH', 'LD_LIBRARY_PATH', 'LANG']:
-            cmd_run += ['--env', e]
+            env_value = os.getenv(e)
+            if env_value:
+                cmd_run += ['--env', e + '=' + env_value]
 
         for key, value in (env or {}).items():
             cmd_run += ['--env={}={}'.format(key, value)]
