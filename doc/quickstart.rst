@@ -11,7 +11,7 @@ See :ref:`installation` to install |project|.
 Once the |project| server is running, you can query it with an HTTP client like
 ``curl``::
 
-    $ curl localhost:8080/run -d \
+    $ curl localhost:42920/run -d \
         '{"lang": "python", "source": "print(42)"}'
 
 Result:
