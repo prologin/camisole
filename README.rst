@@ -43,7 +43,7 @@ Demo
 *camisole* is used through a simple HTTP/JSON interface. Sending a program
 is as simple as that::
 
-    $ curl -s localhost:8080/run -d '{"lang": "python", "source": "print(42)"}' | python -m json.tool
+    $ curl -s localhost:42920/run -d '{"lang": "python", "source": "print(42)"}' | python -m json.tool
     {
         "tests": [
             {
