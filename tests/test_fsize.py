@@ -2,9 +2,6 @@ import pytest
 
 from camisole.languages.python import Python
 
-# fsize quota needs ext filesystem
-pytestmark = pytest.mark.ext4
-
 
 def python_file(n, fsize=None):
     args = {}
