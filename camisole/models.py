@@ -34,7 +34,7 @@ from camisole.conf import conf
 class Program:
     def __init__(self, cmd, *, opts=None, env=None,
                  version_opt='--version', version_lines=1,
-                 version_regex='\d+(\.\d+)+'):
+                 version_regex=r'[0-9]+(\.[0-9]+)+'):
         self.cmd = camisole.utils.which(cmd)
         self.cmd_name = cmd
         self.opts = opts or []
