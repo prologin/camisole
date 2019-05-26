@@ -14,6 +14,7 @@ sudo apt-get install -qq -y \
    gambc \
    ghc-dynamic \
    gnat-6 \
+   golang-go \
    lua5.2 \
    mono-runtime mono-mcs \
    nodejs \
