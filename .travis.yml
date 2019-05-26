@@ -1,5 +1,6 @@
 language: python
 sudo: required
+dist: xenial
 
 notifications:
   email: false
@@ -7,11 +8,13 @@ notifications:
 python:
   - '3.6'
   - '3.7'
+  - '3.8-dev'
   - 'nightly'
   - 'pypy'
 
 matrix:
   allow_failures:
+    - python: '3.8-dev'
     - python: 'nightly'
     - python: 'pypy'
 
