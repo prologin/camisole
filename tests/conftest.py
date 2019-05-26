@@ -77,10 +77,10 @@ async def http_response_decode(response):
 @pytest.fixture(params=['json', 'msgpack'])
 def http_request(request):
     if request.param == 'json':
-        return request.getfuncargvalue('json_request')
+        return request.getfixturevalue('json_request')
     if request.param == 'msgpack':
         pytest.importorskip('msgpack')
-        return request.getfuncargvalue('msgpack_request')
+        return request.getfixturevalue('msgpack_request')
 
 
 @pytest.fixture
