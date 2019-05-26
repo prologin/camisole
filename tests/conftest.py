@@ -68,7 +68,7 @@ async def http_response_decode(response):
     if content_type.endswith('json'):
         return await response.json()
     elif content_type.endswith('msgpack'):
-        return msgpack.loads(await response.read(), encoding='utf-8')
+        return msgpack.loads(await response.read(), raw=False)
     else:
         return await response.read()
 

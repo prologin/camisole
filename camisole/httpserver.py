@@ -63,7 +63,7 @@ def json_msgpack_handler(wrapped):
             return response({'success': False, 'error': msg}, code)
 
         if content_type == TYPE_MSGPACK:
-            decoder = functools.partial(msgpack.loads, encoding='utf-8')
+            decoder = functools.partial(msgpack.loads, raw=False)
         else:
             content_type = TYPE_JSON
             decoder = lambda e: json.loads(e.decode())
