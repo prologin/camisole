@@ -20,7 +20,7 @@ sudo apt-get install -qq -y \
    ocaml-nox \
    openjdk-8-jdk-headless \
    perl \
-   php5-cli \
+   php-cli \
    ruby \
    rustc \
    swi-prolog-nox
