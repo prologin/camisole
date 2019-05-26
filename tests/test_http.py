@@ -113,7 +113,7 @@ async def test_run_bin_source_bin_stdout_decodes_to_bytes(msgpack_request):
 @pytest.mark.asyncio
 @pytest.mark.parametrize('accept', CONTENT_TYPES)
 async def test_run_large_payload(http_request, http_client_large_size, accept):
-    test = {'stdin': 'A' * 1024 * 1024 * 1}
+    test = {'stdin': 'A' * 1024 * 90}
     data = {'lang': 'python', 'source': 'print(input())', 'tests': [test]}
 
     # not OK with default limit

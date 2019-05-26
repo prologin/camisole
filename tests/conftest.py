@@ -1,5 +1,4 @@
 import asyncio
-import collections
 import msgpack
 import pytest
 
@@ -23,7 +22,7 @@ def aio_client(event_loop):
     @asyncio.coroutine
     def go(__param, *args, server_kwargs={}, **kwargs):
 
-        if isinstance(__param, collections.Callable) and \
+        if callable(__param) and \
                 not isinstance(__param, (Application, BaseTestServer)):
             __param = __param(event_loop, *args, **kwargs)
             kwargs = {}
@@ -54,13 +53,13 @@ def aio_client(event_loop):
 
 @pytest.fixture
 async def http_client(aio_client, event_loop):
-    app = make_application(loop=event_loop)
+    app = make_application(loop=event_loop, client_max_size=1024 * 1)
     return await aio_client(app)
 
 
 @pytest.fixture
 async def http_client_large_size(aio_client, event_loop):
-    app = make_application(loop=event_loop, client_max_size=1024 * 1024 * 2)
+    app = make_application(loop=event_loop, client_max_size=1024 * 100)
     return await aio_client(app)
 
 

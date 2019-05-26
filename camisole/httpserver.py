@@ -41,25 +41,26 @@ def json_msgpack_handler(wrapped):
             elif content_type == TYPE_MSGPACK:
                 return functools.partial(msgpack.dumps, use_bin_type=True)
 
-        def response(payload, cls=aiohttp.web.Response):
+        def response(payload, code=200):
             for content_type in accepted_types:
                 try:
                     data = encoder_for(content_type)(payload)
                 except Exception:
                     continue
-                return cls(body=data, content_type=content_type)
+                return aiohttp.web.Response(status=code, body=data,
+                                            content_type=content_type)
             # no acceptable content type
-            cls = aiohttp.web.HTTPNotAcceptable
+            code = aiohttp.web.HTTPNotAcceptable.status_code
             if TYPE_MSGPACK not in accepted_types:
                 # explain how to work around the issue
-                return error(
-                    cls, f"use 'Accept: {TYPE_MSGPACK}' to be able to receive "
-                         f"binary payloads")
+                return error(code,
+                             f"use 'Accept: {TYPE_MSGPACK}' to be able to "
+                             f"receive binary payloads")
             # no encoder can work
-            raise cls()  # noqa
+            return aiohttp.web.Response(status=code)
 
-        def error(cls, msg):
-            return response({'success': False, 'error': msg}, cls=cls)
+        def error(code, msg):
+            return response({'success': False, 'error': msg}, code)
 
         if content_type == TYPE_MSGPACK:
             decoder = functools.partial(msgpack.loads, encoding='utf-8')
@@ -70,23 +71,26 @@ def json_msgpack_handler(wrapped):
         try:
             data = await request.read()
         except aiohttp.web.HTTPClientError as e:
-            return error(e.__class__, str(e))
+            return error(e.status_code, str(e))
         except Exception:  # noqa
             return error(
-                aiohttp.web.HTTPInternalServerError, traceback.format_exc())
+                aiohttp.web.HTTPInternalServerError.status_code,
+                traceback.format_exc())
 
         try:
             data = decoder(data) if data else {}
         except Exception:
             return error(
-                aiohttp.web.HTTPBadRequest, f"malformed {content_type}")
+                aiohttp.web.HTTPBadRequest.status_code,
+                f"malformed {content_type}")
 
         try:
             # actually execute handler
             result = await wrapped(request, data)
         except Exception:  # noqa
             return error(
-                aiohttp.web.HTTPInternalServerError, traceback.format_exc())
+                aiohttp.web.HTTPInternalServerError.status_code,
+                traceback.format_exc())
 
         return response({'success': True, **result})
 
