@@ -143,13 +143,14 @@ class Lang(metaclass=MetaLang):
             allowed_dirs=self.get_allowed_dirs() + tmparg)
         async with isolator:
             wd = Path(isolator.path)
+            env = {'HOME': self.filter_box_prefix(str(wd))}
             source = wd / self.source_filename()
             compiled = wd / self.execute_filename()
             with source.open('wb') as sourcefile:
                 sourcefile.write(
                     camisole.utils.force_bytes(self.opts.get('source', '')))
             cmd = self.compile_command(str(source), str(compiled))
-            await isolator.run(cmd, env=self.compiler.env)
+            await isolator.run(cmd, env={**env, **self.compiler.env})
             binary = self.read_compiled(str(compiled), isolator)
 
         root_tmp.cleanup()
@@ -168,8 +169,9 @@ class Lang(metaclass=MetaLang):
             opts, allowed_dirs=self.get_allowed_dirs())
         async with isolator:
             wd = isolator.path
+            env = {'HOME': self.filter_box_prefix(str(wd))}
             compiled = self.write_binary(Path(wd), binary)
-            env = self.interpreter.env if self.interpreter else None
+            env = {**env, **(self.interpreter.env if self.interpreter else {})}
             await isolator.run(self.execute_command(str(compiled)),
                                env=env, data=input_data)
         return (isolator.isolate_retcode, isolator.info)
