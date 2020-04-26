@@ -25,7 +25,7 @@ from camisole.utils import parse_size, parse_float
 
 
 def lscpu():
-    out = subprocess.check_output(['lscpu','-B'])
+    out = subprocess.check_output(['lscpu'])
     out = out.decode().strip().split('\n')
     return {k: v.strip() for line in out for k, v in (line.split(':', 1),)}
 
