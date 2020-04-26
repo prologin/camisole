@@ -5,6 +5,7 @@ class CSharp(Lang, name="C#"):
     source_ext = '.cs'
     compiler = Program('mcs', opts=['-optimize+'])
     interpreter = Program('mono')
+    allowed_dirs = ['/etc/mono']
     reference_source = r'''
 using System;
 class Program
