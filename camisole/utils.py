@@ -27,7 +27,7 @@ def parse_size(str_size):
     """
     if str_size is None:
         return None
-    str_size = str_size.lower().strip().rstrip('b')
+    str_size = str_size.lower().strip().rstrip('ib')
     for l, m in (('k', 1 << 10), ('m', 1 << 20), ('g', 1 << 30)):
         if str_size.endswith(l):
             return int(str_size.rstrip(l)) * m
