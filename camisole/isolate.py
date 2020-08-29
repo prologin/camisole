@@ -74,6 +74,28 @@ ISOLATE_TO_CAMISOLE_META = {
 }
 
 
+class IsolateInternalError(RuntimeError):
+    def __init__(
+        self,
+        command,
+        isolate_stdout,
+        isolate_stderr,
+        message="Isolate encountered an internal error."
+    ):
+        self.command = command
+        self.isolate_stdout = isolate_stdout.decode(errors='replace').strip()
+        self.isolate_stderr = isolate_stderr.decode(errors='replace').strip()
+
+        message_list = [message]
+        if self.isolate_stdout:
+            message_list.append("Isolate output:\n    " + self.isolate_stdout)
+        if self.isolate_stderr:
+            message_list.append("Isolate error:\n    " + self.isolate_stderr)
+        message_list.append("Command:\n    " + ' '.join(self.command))
+
+        super().__init__('\n\n'.join(message_list))
+
+
 class Isolator:
     def __init__(self, opts, allowed_dirs=None):
         self.opts = opts
@@ -134,8 +156,8 @@ class Isolator:
             'time-wall': 0.0,
         }
         with open(self.meta_file.name) as f:
-            m = (l.strip() for l in f.readlines())
-        m = dict(l.split(':', 1) for l in m if l)
+            m = (line.strip() for line in f.readlines())
+        m = dict(line.split(':', 1) for line in m if line)
         m = {k: (type(meta_defaults[k])(v)
                  if meta_defaults[k] is not None else v)
              for k, v in m.items()}
@@ -215,16 +237,27 @@ class Isolator:
 
         self.stdout = b''
         self.stderr = b''
+        if self.isolate_retcode >= 2:  # Internal error
+            raise IsolateInternalError(
+                cmd_run,
+                self.isolate_stdout,
+                self.isolate_stderr
+            )
         try:
             with (self.path / self.stdout_file).open('rb') as f:
                 self.stdout = f.read()
             if not merge_outputs:
                 with (self.path / self.stderr_file).open('rb') as f:
                     self.stderr = f.read()
-        except (IOError, PermissionError):  # noqa
+        except (IOError, PermissionError) as e:
             # Something went wrong, isolate was killed before changing the
             # permissions or unreadable stdout/stderr
-            pass
+            raise IsolateInternalError(
+                cmd_run,
+                self.isolate_stdout,
+                self.isolate_stderr,
+                message="Error while reading stdout/stderr: " + e.message,
+            )
 
     @cached_classmethod
     def isolate_conf(cls):

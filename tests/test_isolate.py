@@ -23,4 +23,14 @@ async def test_merge_outputs():
     assert isolator.info['stderr'] == b''
 
 
+@pytest.mark.asyncio
+async def test_invalid_binary():
+    isolator = camisole.isolate.Isolator({})
+    with pytest.raises(camisole.isolate.IsolateInternalError):
+        async with isolator:
+            await isolator.run(['/bin/thisdoesntexist', '-c', 'test'])
+    assert b'No such file or directory' in isolator.isolate_stderr
+    assert b'execve' in isolator.isolate_stderr
+
+
 # TODO: test a lot of error cases!
