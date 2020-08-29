@@ -1,4 +1,3 @@
-import asyncio
 import msgpack
 import pytest
 
@@ -19,8 +18,7 @@ def aio_client(event_loop):
     """
     clients = []
 
-    @asyncio.coroutine
-    def go(__param, *args, server_kwargs={}, **kwargs):
+    async def go(__param, *args, server_kwargs={}, **kwargs):
 
         if callable(__param) and \
                 not isinstance(__param, (Application, BaseTestServer)):
@@ -30,36 +28,35 @@ def aio_client(event_loop):
             assert not args, "args should be empty"
 
         if isinstance(__param, Application):
-            server = TestServer(__param, loop=event_loop, **server_kwargs)
-            client = TestClient(server, loop=event_loop, **kwargs)
+            server = TestServer(__param, **server_kwargs)
+            client = TestClient(server, **kwargs)
         elif isinstance(__param, BaseTestServer):
-            client = TestClient(__param, loop=event_loop, **kwargs)
+            client = TestClient(__param, **kwargs)
         else:
             raise ValueError("Unknown argument type: %r" % type(__param))
 
-        yield from client.start_server()
+        await client.start_server()
         clients.append(client)
         return client
 
     yield go
 
-    @asyncio.coroutine
-    def finalize():
+    async def finalize():
         while clients:
-            yield from clients.pop().close()
+            await clients.pop().close()
 
     event_loop.run_until_complete(finalize())
 
 
 @pytest.fixture
-async def http_client(aio_client, event_loop):
-    app = make_application(loop=event_loop, client_max_size=1024 * 1)
+async def http_client(aio_client):
+    app = make_application(client_max_size=1024 * 1)
     return await aio_client(app)
 
 
 @pytest.fixture
-async def http_client_large_size(aio_client, event_loop):
-    app = make_application(loop=event_loop, client_max_size=1024 * 100)
+async def http_client_large_size(aio_client):
+    app = make_application(client_max_size=1024 * 100)
     return await aio_client(app)
 
 
