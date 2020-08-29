@@ -1,3 +1,4 @@
 aiohttp
 msgpack
 pyyaml
+setuptools_scm

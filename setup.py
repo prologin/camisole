@@ -6,7 +6,7 @@ if sys.version_info < (3, 6):
 
 setup(
     name='camisole',
-    version='1.4',
+    use_scm_version=True,
     packages=find_packages(),
     url='https://github.com/prologin/camisole',
     license='GPL',
@@ -18,7 +18,7 @@ setup(
         'msgpack',
         'pyyaml',
     ],
-    setup_requires=['pytest-runner'],
+    setup_requires=['pytest-runner', 'setuptools_scm'],
     tests_require=['pytest', 'pytest-cov', 'pytest-asyncio'],
     test_suite='pytest',
     entry_points={
