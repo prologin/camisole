@@ -38,7 +38,7 @@ class Java(Lang):
     interpreter = Program('java', version_opt='-version')
     # /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jvm.cfg links to
     # /etc/java-8-openjdk/amd64/jvm.cfg
-    allowed_dirs = ['/etc/java-8-openjdk']
+    allowed_dirs = ['/etc']
     # ensure we can parse the javac(1) stderr
     extra_binaries = {'disassembler': Program('javap', version_opt='-version')}
     reference_source = '''
