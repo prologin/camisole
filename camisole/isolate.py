@@ -40,7 +40,7 @@ def signal_message(signal: int) -> str:
 
 
 async def communicate(cmdline, data=None, **kwargs):
-    logging.debug('Running %s', ' '.join(cmdline))
+    logging.debug('Running %s', ' '.join(str(a) for a in cmdline))
     proc = await asyncio.create_subprocess_exec(
         *cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.PIPE, **kwargs)
