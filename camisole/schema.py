@@ -67,6 +67,14 @@ def validate_schema(obj, schema):
                 raise ValidationError(
                     path, f"expected a list, got {htn(obj.__class__)}")
 
+        elif isinstance(schema, tuple):
+            try:
+                for i, item in enumerate(obj):
+                    explore(item, schema[i], f'{path}[{i}]')
+            except TypeError:
+                raise ValidationError(
+                    path, f"expected a list, got {htn(obj.__class__)}")
+
         elif isinstance(schema, dict):
             try:
                 for key, subtype in schema.items():
