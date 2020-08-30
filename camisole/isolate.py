@@ -244,11 +244,9 @@ class Isolator:
                 self.isolate_stderr
             )
         try:
-            with (self.path / self.stdout_file).open('rb') as f:
-                self.stdout = f.read()
+            self.stdout = (self.path / self.stdout_file).read_bytes()
             if not merge_outputs:
-                with (self.path / self.stderr_file).open('rb') as f:
-                    self.stderr = f.read()
+                self.stderr = (self.path / self.stderr_file).read_bytes()
         except (IOError, PermissionError) as e:
             # Something went wrong, isolate was killed before changing the
             # permissions or unreadable stdout/stderr
