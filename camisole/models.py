@@ -25,6 +25,7 @@ import subprocess
 import tempfile
 import warnings
 from pathlib import Path
+from typing import Dict, List, Optional, Type
 
 import camisole.isolate
 import camisole.utils
@@ -78,16 +79,16 @@ class Lang(metaclass=MetaLang):
 
     Subclass and define the relevant attributes and methods, if need be.
     """
-    _registry = {}
-    _full_registry = {}
-    name = None
+    _registry: Dict[str, Type['Lang']] = {}
+    _full_registry: Dict[str, Type['Lang']] = {}
+    name: Optional[str] = None
 
-    source_ext = None
-    compiler = None
-    interpreter = None
-    allowed_dirs = []
-    extra_binaries = {}
-    reference_source = None
+    source_ext: Optional[str] = None
+    compiler: Optional[Program] = None
+    interpreter: Optional[Program] = None
+    allowed_dirs: List[str] = []
+    extra_binaries: Dict[str, Program] = {}
+    reference_source: Optional[str] = None
 
     def __init_subclass__(cls, register=True, name=None, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -274,7 +275,7 @@ class PipelineLang(Lang, register=False):
 
     Subclass and define the ``sub_langs`` attribute.
     """
-    sub_langs = []
+    sub_langs: List[Type[Lang]] = []
 
     @classmethod
     def required_binaries(cls):
