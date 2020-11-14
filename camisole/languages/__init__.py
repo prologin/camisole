@@ -56,4 +56,5 @@ __all__ = [
     'ruby',
     'rust',
     'scheme',
+    'scala'
 ]

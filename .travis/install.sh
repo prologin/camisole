@@ -24,7 +24,8 @@ sudo apt-get install -qq -y \
    php-cli \
    ruby \
    rustc \
-   swi-prolog-nox
+   swi-prolog-nox \
+   scala
 
 # dlang
 wget -O /tmp/dmd_2.078.2-0_amd64.deb http://downloads.dlang.org/releases/2.x/2.078.2/dmd_2.078.2-0_amd64.deb
