@@ -2,8 +2,10 @@ from camisole.models import Lang, Program
 
 class LLVMAsm(Lang):
     source_ext = '.ll'
+    compiler = Program('clang-8')
     interpreter = Program('lli-8')
-    reference_source = """@str42 = internal constant [4 x i8] c"42\0A\00"
+    reference_source = r"""
+@str42 = internal constant [4 x i8] c"42\0A\00"
 
 declare i32 @printf(i8*, ...)
 
