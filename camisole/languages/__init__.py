@@ -46,6 +46,7 @@ __all__ = [
     'haskell',
     'java',
     'javascript',
+    'julia',
     'lua',
     'ocaml',
     'pascal',
