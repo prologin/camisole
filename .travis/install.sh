@@ -15,6 +15,7 @@ sudo apt-get install -qq -y \
    ghc-dynamic \
    gnat-6 \
    golang-go \
+   julia \
    lua5.2 \
    mono-runtime mono-mcs \
    nodejs \
